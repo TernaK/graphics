@@ -31,8 +31,7 @@ int main(int argc, char* args[]) {
   
   glfwSetErrorCallback(helper::error_callback);
   
-  //create context before initializing glew
-  GLFWwindow* window = helper::make_window(800, 600, "hello");
+  GLFWwindow* window = helper::make_window(800, 600, "triangle");
   glfwMakeContextCurrent(window);
   
   if(!(glewInit() == GLEW_OK)) {
@@ -42,12 +41,10 @@ int main(int argc, char* args[]) {
   
   /* code */
   while(!glfwWindowShouldClose(window)) {
-    
     glfwPollEvents();
   }
   /* code */
-
-  //cleanup
+  
   glfwDestroyWindow(window);
   glfwTerminate();
 }
