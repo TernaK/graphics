@@ -18,7 +18,6 @@ namespace helper {
       }
     }
   }
-  
 }
 
 int main(int argc, char* args[]) {
@@ -27,7 +26,7 @@ int main(int argc, char* args[]) {
     exit(EXIT_FAILURE);
   }
   
-  glfwSetErrorCallback(graphics::util::error_callback);
+  glfwSetErrorCallback(graphics::util::glfw_error_callback);
   
   GLFWwindow* window = graphics::util::make_window(800, 600, "triangle");
   glfwMakeContextCurrent(window);
@@ -55,7 +54,6 @@ int main(int argc, char* args[]) {
   graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "vshader.glsl",
                           string(GRAPHICS_SHADERS_DIRECTORY) + "fshader.glsl");
 
-
   while(!glfwWindowShouldClose(window)) {
     glClearColor(0.1, 0.4, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -63,6 +61,7 @@ int main(int argc, char* args[]) {
     node.render(shader);
     glfwPollEvents();
     glfwSwapBuffers(window);
+    graphics::util::check_gl_errors();
   }
   /* code */
   

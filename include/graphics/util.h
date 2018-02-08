@@ -17,9 +17,16 @@ namespace graphics {
       return window;
     }
 
-    void error_callback(int err, const char* desc) {
+    void glfw_error_callback(int err, const char* desc) {
       fprintf(stderr, "error [%d]: %s\n", err, desc);
       glfwTerminate();
+    }
+    
+    void check_gl_errors() {
+      GLenum err;
+      while((err = glGetError()) && err != GL_NO_ERROR) {
+        throw std::runtime_error(std::string("GL_ERROR(" + std::to_string(err) + ")\n"));
+      }
     }
   }
 }

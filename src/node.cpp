@@ -8,16 +8,20 @@ Node::~Node() {
 
 void Node::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
   glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER,
-               data.size() * sizeof(GLfloat), data.data(), GL_STATIC_DRAW);
   //position
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)0);
+  glGenBuffers(1, &vbo_vertices);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+  glBufferData(GL_ARRAY_BUFFER,
+               vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
   //color
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+  glGenBuffers(1, &vbo_colors);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_colors);
+  glBufferData(GL_ARRAY_BUFFER,
+               colors.size() * sizeof(GLfloat), colors.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -25,50 +29,36 @@ void Node::bind_vertex_data() {
 }
 
 void Node::release_vertex_data() {
-  glDeleteBuffers(1, &vbo);
+  glDeleteBuffers(1, &vbo_vertices);
+  glDeleteBuffers(1, &vbo_colors);
 }
 
-void Node::pack_vertex_data(const std::vector<GLfloat>& vertices,
-                            const std::vector<GLfloat>& colors) {
-  data.clear();
-  for(int i = 0; i < vertices.size() / 3; i++) {
-    data.push_back(vertices[i*3]);
-    data.push_back(vertices[i*3+1]);
-    data.push_back(vertices[i*3+2]);
-    data.push_back(colors[i*4]);
-    data.push_back(colors[i*4+1]);
-    data.push_back(colors[i*4+2]);
-    data.push_back(colors[i*4+3]);
-  }
-}
-
-void Node::pack_vertex_data(const std::vector<glm::vec3>& vertices,
-                            const std::vector<glm::vec4>& colors) {
-  data.clear();
-  for(int i = 0; i < vertices.size(); i++) {
-    data.push_back(vertices[i].x);
-    data.push_back(vertices[i].y);
-    data.push_back(vertices[i].z);
-    data.push_back(colors[i].r);
-    data.push_back(colors[i].g);
-    data.push_back(colors[i].b);
-    data.push_back(colors[i].a);
+void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
+                             const std::vector<glm::vec4>& _colors) {
+  vertices.clear();
+  colors.clear();
+  for(int i = 0; i < _vertices.size(); i++) {
+    vertices.push_back(_vertices[i].x);
+    vertices.push_back(_vertices[i].y);
+    vertices.push_back(_vertices[i].z);
+    colors.push_back(_colors[i].r);
+    colors.push_back(_colors[i].g);
+    colors.push_back(_colors[i].b);
+    colors.push_back(_colors[i].a);
   }
 }
 
 Node::Node(const std::vector<GLfloat>& vertices,
-           const std::vector<GLfloat>& colors) {
-  pack_vertex_data(vertices, colors);
+           const std::vector<GLfloat>& colors)
+: vertices(vertices), colors(colors) {
   bind_vertex_data();
 }
 
-
-Node::Node(const std::vector<glm::vec3>& vertices,
-           const std::vector<glm::vec4>& colors) {
-//  if(vertices.size() != colors.size())
-//    throw std::runtime_error("vertices and colors vectors must have the same size");
-
-  pack_vertex_data(vertices, colors);
+Node::Node(const std::vector<glm::vec3>& _vertices,
+           const std::vector<glm::vec4>& _colors) {
+  if(vertices.size() != colors.size())
+    throw std::runtime_error("vertices and colors vectors must have the same size");
+  store_vertex_data(_vertices, _colors);
   bind_vertex_data();
 }
 
