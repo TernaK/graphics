@@ -41,12 +41,17 @@ int main(int argc, char* args[]) {
   glfwSetKeyCallback(window, helper::key_callback);
   
   /* code */
-//  std::vector<glm::vec3> vertices = {
-//    glm::vec3(0.5,0.5,0),
-//    glm::vec3(-0.5,-0.5,0),
-//    glm::vec3(0.5,-0.5,0)
-//  };
-//  graphics::Node node(vertices, {});
+  std::vector<glm::vec3> vertices = {
+    glm::vec3(0,0.5,0),
+    glm::vec3(-0.5,-0.5,0),
+    glm::vec3(0.5,-0.5,0)
+  };
+  std::vector<glm::vec4> colors = {
+    glm::vec4(1,0,0,1),
+    glm::vec4(0,1,0,1),
+    glm::vec4(0,0,1,1)
+  };
+  graphics::Node node(vertices, colors);
   graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "vshader.glsl",
                           string(GRAPHICS_SHADERS_DIRECTORY) + "fshader.glsl");
 
@@ -54,7 +59,8 @@ int main(int argc, char* args[]) {
   while(!glfwWindowShouldClose(window)) {
     glClearColor(0.1, 0.4, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    
+
+    node.render(shader);
     glfwPollEvents();
     glfwSwapBuffers(window);
   }
