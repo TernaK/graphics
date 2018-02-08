@@ -1,27 +1,10 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <exception>
+#include <graphics/node.h>
+#include <graphics/util.h>
+#include <graphics/shader.h>
 
 using namespace std;
 
 namespace helper {
-  GLFWwindow* make_window(int w, int h, std::string name) {
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    GLFWwindow* window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
-    if(!window)
-      throw std::runtime_error("window could not be created");
-    return window;
-  }
-  
-  void error_callback(int err, const char* desc) {
-    fprintf(stderr, "error [%d]: %s\n", err, desc);
-    glfwTerminate();
-  }
-  
   void resize_callback(GLFWwindow* window, int w, int h) {
     glViewport(0, 0, w, h);
   }
@@ -44,9 +27,9 @@ int main(int argc, char* args[]) {
     exit(EXIT_FAILURE);
   }
   
-  glfwSetErrorCallback(helper::error_callback);
+  glfwSetErrorCallback(graphics::util::error_callback);
   
-  GLFWwindow* window = helper::make_window(800, 600, "triangle");
+  GLFWwindow* window = graphics::util::make_window(800, 600, "triangle");
   glfwMakeContextCurrent(window);
   
   if(!(glewInit() == GLEW_OK)) {
@@ -58,6 +41,16 @@ int main(int argc, char* args[]) {
   glfwSetKeyCallback(window, helper::key_callback);
   
   /* code */
+//  std::vector<glm::vec3> vertices = {
+//    glm::vec3(0.5,0.5,0),
+//    glm::vec3(-0.5,-0.5,0),
+//    glm::vec3(0.5,-0.5,0)
+//  };
+//  graphics::Node node(vertices, {});
+  graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "vshader.glsl",
+                          string(GRAPHICS_SHADERS_DIRECTORY) + "fshader.glsl");
+
+
   while(!glfwWindowShouldClose(window)) {
     glClearColor(0.1, 0.4, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);

@@ -7,5 +7,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 find_package(opengl REQUIRED)
 find_package(glew REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
+
+add_definitions(-DGRAPHICS_SHADERS_DIRECTORY="${CMAKE_SOURCE_DIR}/shaders/")
 
 add_subdirectory(src)
