@@ -1,4 +1,4 @@
-set(libs_list glfw ${GLEW_LIBRARIES})
+set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw)
 
 add_executable(hello hello.cpp)
 target_link_libraries(hello ${libs_list})
