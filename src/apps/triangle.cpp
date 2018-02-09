@@ -52,8 +52,8 @@ int main(int argc, char* args[]) {
   };
   std::vector<GLint> indices = { 0, 1, 2 };
   graphics::Node node(vertices, colors, indices);
-  graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "vshader.glsl",
-                          string(GRAPHICS_SHADERS_DIRECTORY) + "fshader.glsl");
+  graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "2d_vshader.glsl",
+                          string(GRAPHICS_SHADERS_DIRECTORY) + "2d_fshader.glsl");
   shader.use();
 
   while(!glfwWindowShouldClose(window)) {
