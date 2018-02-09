@@ -84,21 +84,16 @@ void Node::create_indices(int len) {
   std::iota(indices.begin(), indices.end() + len, 0);
 }
 
-void Node::set_uniforms(const Shader& shader) {
-  //_model_mat
-  glm::mat4 model_mat = glm::translate(glm::mat4(1.0), translation);
+glm::mat4 Node::get_model_mat() const {
+  glm::mat4 model_mat = glm::translate(glm::mat4(1.0), position);
   model_mat = glm::rotate(model_mat, glm::radians(rotation.x), glm::vec3(1,0,0));
   model_mat = glm::rotate(model_mat, glm::radians(rotation.y), glm::vec3(0,1,0));
   model_mat = glm::rotate(model_mat, glm::radians(rotation.z), glm::vec3(0,0,1));
   model_mat = glm::scale(model_mat, scale);
-  
-  GLint loc = glGetUniformLocation(shader.shader_program, "_model_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+  return model_mat;
 }
 
-void Node::render(const Shader& shader) {
-  shader.use();
-  set_uniforms(shader);
+void Node::draw() const {
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

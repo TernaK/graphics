@@ -7,7 +7,6 @@ Shader::Shader() {
 
 }
 
-
 Shader::~Shader() {
   glDeleteProgram(shader_program);
 }

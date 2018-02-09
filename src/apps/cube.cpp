@@ -1,8 +1,5 @@
-#include <graphics/node.h>
-#include <graphics/shader.h>
 #include <graphics/util.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <graphics/renderer.h>
 #include <glm/gtx/string_cast.hpp>
 using namespace std;
 
@@ -14,8 +11,8 @@ int main(int argc, char* args[]) {
 
   glfwSetErrorCallback(graphics::util::glfw_error_callback);
 
-  int win_width = 800;
-  int win_height = 600;
+  int win_width = 1280;
+  int win_height = 720;
   GLFWwindow* window = graphics::util::make_window(win_width, win_height, "cube");
   glfwMakeContextCurrent(window);
 
@@ -47,30 +44,29 @@ int main(int argc, char* args[]) {
     2,3,7, 3,6,7//bottom
   };
   graphics::Node cube(vertices, colors, indices);
-  cube.scale = glm::vec3(0.7);
   
-  graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
-                          string(GRAPHICS_SHADERS_DIRECTORY) + "3d_fshader.glsl");
+  shared_ptr<graphics::Shader>
+  shader = make_shared<graphics::Shader>(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
+                                         string(GRAPHICS_SHADERS_DIRECTORY) + "3d_fshader.glsl");
   
-  shader.use();
-  glm::mat4 proj_mat = glm::perspective(glm::radians(45.0f), GLfloat(win_width)/GLfloat(win_height), 0.1f, 50.f);
-  GLint loc = glGetUniformLocation(shader.shader_program, "_proj_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(proj_mat));
-
-  glm::mat4 view_mat = glm::lookAt(glm::vec3(0,5,8), glm::vec3(0,0,0), glm::vec3(0,1,0));
-  loc = glGetUniformLocation(shader.shader_program, "_view_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view_mat));
+  shared_ptr<graphics::Camera> camera = make_shared<graphics::Camera>();
+  camera->aspect_ratio = GLfloat(win_width)/win_height;
+  camera->position = glm::vec3(0,5,8);
+  
+  graphics::Renderer renderer = graphics::Renderer(shader, camera);
 
   while(!glfwWindowShouldClose(window)) {
     glClearColor(0.1, 0.6, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    cube.translation.x = 2 * sin(2*M_PI*2*glfwGetTime() / 5.0);
-    cube.translation.z = 2 * cos(2*M_PI*2*glfwGetTime() / 5.0);
+    cube.scale = glm::vec3(0.7);
+    cube.position.x = 2 * sin(2*M_PI*2*glfwGetTime() / 5.0);
+    cube.position.z = 2 * cos(2*M_PI*2*glfwGetTime() / 5.0);
     cube.rotation.x += 2;
     cube.rotation.y += 5;
 
-    cube.render(shader);
+    renderer.render(cube);
+    
     glfwPollEvents();
     glfwSwapBuffers(window);
     graphics::util::check_gl_errors();
