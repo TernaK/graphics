@@ -53,7 +53,7 @@ void Node::bind_vertex_data() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                indices.size() * sizeof(GLint), indices.data(), GL_STATIC_DRAW);
 
-//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
@@ -84,11 +84,24 @@ void Node::create_indices(int len) {
   std::iota(indices.begin(), indices.end() + len, 0);
 }
 
-void Node::render() {
+void Node::set_uniforms(const Shader& shader) {
+  //_model_mat
+  glm::mat4 model_mat = glm::translate(glm::mat4(1.0), translation);
+  model_mat = glm::rotate(model_mat, glm::radians(rotation.x), glm::vec3(1,0,0));
+  model_mat = glm::rotate(model_mat, glm::radians(rotation.y), glm::vec3(0,1,0));
+  model_mat = glm::rotate(model_mat, glm::radians(rotation.z), glm::vec3(0,0,1));
+  model_mat = glm::scale(model_mat, scale);
+  
+  GLint loc = glGetUniformLocation(shader.shader_program, "_model_mat");
+  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+}
+
+void Node::render(const Shader& shader) {
+  shader.use();
+  set_uniforms(shader);
   glBindVertexArray(vao);
-//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-//  glDisableVertexAttribArray(0);
-//  glDisableVertexAttribArray(1);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }

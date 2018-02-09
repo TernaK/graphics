@@ -9,7 +9,7 @@ Shader::Shader() {
 
 
 Shader::~Shader() {
-
+  glDeleteProgram(shader_program);
 }
 
 Shader::Shader(std::string vshader_path, std::string fshader_path) {
@@ -74,10 +74,12 @@ void Shader::create_shader_program(std::string vshader_str, std::string fshader_
   }
 
   //cleanup
+//  glDetachShader(shader_program, vertex_shader);
+//  glDetachShader(shader_program, fragment_shader);
   glDeleteShader(vertex_shader);
   glDeleteShader(fragment_shader);
 }
 
-void Shader::use() {
+void Shader::use() const {
   glUseProgram(shader_program);
 }

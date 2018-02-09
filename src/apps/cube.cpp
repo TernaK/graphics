@@ -47,28 +47,31 @@ int main(int argc, char* args[]) {
     2,3,7, 3,6,7//bottom
   };
   graphics::Node cube(vertices, colors, indices);
+  cube.scale = glm::vec3(0.7);
+  
   graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
                           string(GRAPHICS_SHADERS_DIRECTORY) + "3d_fshader.glsl");
+  
   shader.use();
-
   glm::mat4 proj_mat = glm::perspective(glm::radians(45.0f), GLfloat(win_width)/GLfloat(win_height), 0.1f, 50.f);
   GLint loc = glGetUniformLocation(shader.shader_program, "_proj_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(proj_mat));
 
-  glm::mat4 view_mat = glm::lookAt(glm::vec3(0,2,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
+  glm::mat4 view_mat = glm::lookAt(glm::vec3(0,5,8), glm::vec3(0,0,0), glm::vec3(0,1,0));
   loc = glGetUniformLocation(shader.shader_program, "_view_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view_mat));
 
-  glm::mat4 model_mat = glm::rotate(glm::mat4(1.0), glm::radians(20.0f), glm::vec3(0,1,0));
-  loc = glGetUniformLocation(shader.shader_program, "_model_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
-
   while(!glfwWindowShouldClose(window)) {
-    glClearColor(0.1, 0.4, 0.2, 1.0);
+    glClearColor(0.1, 0.6, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    cube.translation.x = 2 * sin(2*M_PI*2*glfwGetTime() / 5.0);
+    cube.translation.z = 2 * cos(2*M_PI*2*glfwGetTime() / 5.0);
+    cube.rotation.x += 2;
+    cube.rotation.y += 5;
 
-    cube.render();
-    glfwWaitEvents();
+    cube.render(shader);
+    glfwPollEvents();
     glfwSwapBuffers(window);
     graphics::util::check_gl_errors();
   }

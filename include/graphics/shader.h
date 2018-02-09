@@ -19,6 +19,6 @@ namespace graphics {
     Shader();
     ~Shader();
     Shader(std::string vshader_path, std::string fshader_path);
-    void use();
+    void use() const;
   };
 }
