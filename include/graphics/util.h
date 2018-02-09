@@ -28,5 +28,19 @@ namespace graphics {
         throw std::runtime_error(std::string("GL_ERROR(" + std::to_string(err) + ")\n"));
       }
     }
+
+    void resize_callback(GLFWwindow* window, int w, int h) {
+      glViewport(0, 0, w, h);
+    }
+
+    void esc_close_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+      if(action == GLFW_RELEASE) {
+        switch(key) {
+          case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            break;
+        }
+      }
+    }
   }
 }

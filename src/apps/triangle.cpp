@@ -5,10 +5,6 @@
 using namespace std;
 
 namespace helper {
-  void resize_callback(GLFWwindow* window, int w, int h) {
-    glViewport(0, 0, w, h);
-  }
-  
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(action == GLFW_RELEASE) {
       switch(key) {
@@ -36,7 +32,7 @@ int main(int argc, char* args[]) {
     exit(EXIT_FAILURE);
   }
   
-  glfwSetFramebufferSizeCallback(window, helper::resize_callback);
+  glfwSetFramebufferSizeCallback(window, graphics::util::resize_callback);
   glfwSetKeyCallback(window, helper::key_callback);
   
   /* code */
