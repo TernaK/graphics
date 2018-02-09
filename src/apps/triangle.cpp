@@ -50,7 +50,8 @@ int main(int argc, char* args[]) {
     glm::vec4(0,1,0,1),
     glm::vec4(0,0,1,1)
   };
-  graphics::Node node(vertices, colors);
+  std::vector<GLint> indices = { 0, 1, 2 };
+  graphics::Node node(vertices, colors, indices);
   graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "vshader.glsl",
                           string(GRAPHICS_SHADERS_DIRECTORY) + "fshader.glsl");
 
