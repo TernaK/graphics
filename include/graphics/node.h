@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/shader.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -34,6 +33,6 @@ namespace graphics {
 
     void bind_vertex_data();
     void release_vertex_data();
-    void render(const Shader& shader);
+    void render();
   };
 }

@@ -77,3 +77,7 @@ void Shader::create_shader_program(std::string vshader_str, std::string fshader_
   glDeleteShader(vertex_shader);
   glDeleteShader(fragment_shader);
 }
+
+void Shader::use() {
+  glUseProgram(shader_program);
+}

@@ -84,8 +84,7 @@ void Node::create_indices(int len) {
   std::iota(indices.begin(), indices.end() + len, 0);
 }
 
-void Node::render(const Shader& shader) {
-  glUseProgram(shader.shader_program);
+void Node::render() {
   glBindVertexArray(vao);
 //  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
