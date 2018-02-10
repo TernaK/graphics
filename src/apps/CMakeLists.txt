@@ -8,3 +8,6 @@ target_link_libraries(hello ${libs_list})
 
 add_executable(cube cube.cpp)
 target_link_libraries(cube ${libs_list})
+
+add_executable(material_cube material_cube.cpp)
+target_link_libraries(material_cube ${libs_list})

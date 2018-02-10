@@ -1,6 +1,5 @@
 #version 330 core
 
-in vec4 _frag_color;
 in vec3 _frag_pos;
 in vec3 _frag_normal;
 
@@ -13,6 +12,10 @@ uniform struct Light {
   vec3 ambient;
   vec3 color;
 } _light;
+uniform struct Material {
+  vec3 color;
+  float alpha;
+} _material;
 
 void main() {
   vec3 l = normalize(_light.position - _frag_pos);
@@ -23,7 +26,7 @@ void main() {
   float l_reflected_on_c = dot(normalize(reflect(-l, _frag_normal)), c);
   float spec = pow( max(l_reflected_on_c, 0.0), _light.ph_exp );
   vec3 specular = spec * _light.color;
-  
-  _frag_color_out = vec4((diffuse + specular + _light.ambient) * _frag_color.xyz,
-                         _frag_color.a);
+
+  _frag_color_out = vec4((diffuse + specular + _light.ambient) * _material.color,
+                         _material.alpha);
 }
