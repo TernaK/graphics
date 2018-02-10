@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
 
@@ -38,6 +39,7 @@ namespace graphics {
          std::vector<GLint> indices = {});
     ~Node();
 
+    void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;

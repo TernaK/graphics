@@ -6,7 +6,7 @@ set(graphics_srcs
   shader.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shader.h
   camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
   renderer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/renderer.h
-  ${CMAKE_SOURCE_DIR}/include/graphics/light.h
+  light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
   material_node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material_node.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm)

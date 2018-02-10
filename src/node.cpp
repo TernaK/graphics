@@ -97,6 +97,16 @@ glm::mat4 Node::get_model_mat() const {
   return model_mat;
 }
 
+void Node::set_uniforms(GLuint program) const {
+  glm::mat4 model_mat = get_model_mat();
+  GLint loc = glGetUniformLocation(program, "_model_mat");
+  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+
+  glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
+  loc = glGetUniformLocation(program, "_normal_mat");
+  glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
+}
+
 void Node::draw() const {
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);

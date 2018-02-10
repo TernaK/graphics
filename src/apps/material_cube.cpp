@@ -41,17 +41,16 @@ int main(int argc, char* args[]) {
     2,3,7, 3,6,7//bottom
   };
   graphics::MaterialNode cube(vertices, indices, graphics::Material());
-  cube.material.alpha = 0.6;
   
   shared_ptr<graphics::Shader>
-  shader = make_shared<graphics::Shader>(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_vshader.glsl",
-                                         string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_fshader.glsl");
+  shader = make_shared<graphics::Shader>(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_vshader.glsl",
+                                         string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_fshader.glsl");
   
   shared_ptr<graphics::Camera> camera = make_shared<graphics::Camera>();
   camera->aspect_ratio = GLfloat(win_width)/win_height;
   camera->position = glm::vec3(0,5,8);
 
-  shared_ptr<graphics::Light> light = make_shared<graphics::Light>();
+  shared_ptr<graphics::PointLight> light = make_shared<graphics::PointLight>();
   
   graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
 
@@ -65,6 +64,7 @@ int main(int argc, char* args[]) {
     cube.position.z = 2 * cos(2*M_PI*glfwGetTime() * 0.1);
     cube.rotation.x += 2;
     cube.rotation.y += 1;
+    cube.material.color = glm::vec3(0.6, 0.2, 0.7);
     
     renderer.render(cube);
     
@@ -74,6 +74,7 @@ int main(int argc, char* args[]) {
     cube.position.z = 2 * sin(2*M_PI*glfwGetTime() * 0.1);
     cube.rotation.x += 2;
     cube.rotation.y += 1;
+    cube.material.color = glm::vec3(0.1, 0.7, 0.6);
     
     renderer.render(cube);
     

@@ -18,5 +18,6 @@ namespace graphics {
     Camera() = default;
     glm::mat4 get_proj_mat();
     glm::mat4 get_view_mat();
+    void set_uniforms(GLuint program);
   };
 }

@@ -53,7 +53,7 @@ int main(int argc, char* args[]) {
   camera->aspect_ratio = GLfloat(win_width)/win_height;
   camera->position = glm::vec3(0,5,8);
 
-  shared_ptr<graphics::Light> light = make_shared<graphics::Light>();
+  shared_ptr<graphics::PointLight> light = make_shared<graphics::PointLight>();
   
   graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
 
