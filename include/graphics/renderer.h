@@ -10,7 +10,7 @@ namespace graphics {
   class Renderer {
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Camera> camera;
-    std::shared_ptr<PointLight> light;
+    std::shared_ptr<Light> light;
 
     void set_light_uniforms();
     
@@ -18,7 +18,7 @@ namespace graphics {
     Renderer() = default;
     Renderer(std::shared_ptr<Shader> shader,
              std::shared_ptr<Camera> camera,
-             std::shared_ptr<PointLight> light);
+             std::shared_ptr<Light> light);
     void set_shader(std::shared_ptr<Shader> shader);
     void set_camera(std::shared_ptr<Camera> camera);
     void set_light(std::shared_ptr<PointLight> light);

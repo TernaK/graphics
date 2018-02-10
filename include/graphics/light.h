@@ -5,8 +5,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace graphics {
-  struct PointLight {
+  struct Light {
+    virtual void set_uniforms(GLuint program) = 0;
+  };
 
+  struct PointLight : public Light {
     glm::vec3 position;
     glm::vec3 color;
     glm::vec3 ambient;
@@ -19,7 +22,7 @@ namespace graphics {
     void set_uniforms(GLuint program);
   };
 
-  struct DirectionalLight {
+  struct DirectionalLight : public Light {
 
     glm::vec3 direction;
     glm::vec3 color;

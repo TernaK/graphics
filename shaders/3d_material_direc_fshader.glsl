@@ -8,7 +8,7 @@ out vec4 _frag_color_out;
 uniform vec3 _cam_pos;
 uniform struct Light {
   float ph_exp;
-  vec3 position;
+  vec3 direction;
   vec3 ambient;
   vec3 color;
 } _light;
@@ -18,8 +18,8 @@ uniform struct Material {
 } _material;
 
 void main() {
-  vec3 l = normalize(_light.position - _frag_pos);
-  float cos_t = clamp(dot(_frag_normal, l), 0, 1);
+  vec3 l = normalize(-_light.direction);
+  float cos_t = clamp(dot(l, _frag_normal), 0, 1);
   vec3 diffuse = cos_t * _light.color;
 
   vec3 c = normalize(_cam_pos - _frag_pos);

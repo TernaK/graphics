@@ -24,6 +24,13 @@ void PointLight::set_uniforms(GLuint program) {
   glUniform1f(loc, ph_exp);
 }
 
+DirectionalLight::DirectionalLight(glm::vec3 direction,
+                                   glm::vec3 color,
+                                   glm::vec3 ambient)
+: direction(direction), color(color), ambient(ambient) {
+
+}
+
 void DirectionalLight::set_uniforms(GLuint program) {
   GLint loc = glGetUniformLocation(program, "_light.color");
   glUniform3fv(loc, 1, glm::value_ptr(color));

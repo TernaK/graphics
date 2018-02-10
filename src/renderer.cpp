@@ -5,7 +5,7 @@ using namespace std;
 
 Renderer::Renderer(std::shared_ptr<Shader> _shader,
                    std::shared_ptr<Camera> _camera,
-                   std::shared_ptr<PointLight> _light)
+                   std::shared_ptr<Light> _light)
 : shader(_shader), camera(_camera), light(_light) {
   
 }
