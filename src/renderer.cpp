@@ -34,6 +34,15 @@ void Renderer::set_node_uniforms(const Node& node) {
   glm::mat4 model_mat = node.get_model_mat();
   loc = glGetUniformLocation(shader->shader_program, "_model_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+
+  glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
+  loc = glGetUniformLocation(shader->shader_program, "_normal_mat");
+  glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
+}
+
+void Renderer::set_camera_uniforms() {
+  GLint loc = glGetUniformLocation(shader->shader_program, "_cam_pos");
+  glUniform3fv(loc, 1, glm::value_ptr(camera->position));
 }
 
 void Renderer::set_light_uniforms() {
@@ -45,13 +54,17 @@ void Renderer::set_light_uniforms() {
 
   loc = glGetUniformLocation(shader->shader_program, "_light.position");
   glUniform3fv(loc, 1, glm::value_ptr(light->position));
+
+  loc = glGetUniformLocation(shader->shader_program, "_light.ph_exp");
+  glUniform1f(loc, light->ph_exp);
 }
 
 void Renderer::render(const Node& node) {
   shader->use();
 
   set_light_uniforms();
-
+  set_camera_uniforms();
   set_node_uniforms(node);
+
   node.draw();
 }

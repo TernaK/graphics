@@ -8,12 +8,6 @@ Node::~Node() {
   release_vertex_data();
 }
 
-Node::Node(const std::vector<GLfloat>& _vertices,
-           const std::vector<GLfloat>& _colors)
-: vertices(_vertices), colors(_colors) {
-  bind_vertex_data();
-}
-
 Node::Node(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
@@ -21,27 +15,35 @@ Node::Node(const std::vector<glm::vec3>& _vertices,
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
     store_vertex_data(_vertices, _colors, _indices);
+  compute_store_normals();
   bind_vertex_data();
 }
 
 void Node::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
-  //position
+  //positions
   glGenBuffers(1, &vbo_vertices);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
   glBufferData(GL_ARRAY_BUFFER,
                vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
-  //color
+  //colors
   glGenBuffers(1, &vbo_colors);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_colors);
   glBufferData(GL_ARRAY_BUFFER,
                colors.size() * sizeof(GLfloat), colors.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(1);
-//  //element array
+  //normals
+  glGenBuffers(1, &vbo_normals);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_normals);
+  glBufferData(GL_ARRAY_BUFFER,
+               normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+  glEnableVertexAttribArray(2);
+
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
@@ -49,7 +51,6 @@ void Node::bind_vertex_data() {
 void Node::release_vertex_data() {
   glDeleteBuffers(1, &vbo_vertices);
   glDeleteBuffers(1, &vbo_colors);
-//  glDeleteBuffers(1, &ebo);
 }
 
 void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
@@ -66,6 +67,23 @@ void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
     colors.push_back(_colors[idx].g);
     colors.push_back(_colors[idx].b);
     colors.push_back(_colors[idx].a);
+  }
+}
+
+void Node::compute_store_normals() {
+  for(int i = 0; i < vertices.size() / 9; i++) {
+    auto iter = vertices.begin() + i*9;
+    glm::vec3 v1(*iter++, *iter++, *iter++);
+    glm::vec3 v2(*iter++, *iter++, *iter++);
+    glm::vec3 v3(*iter++, *iter++, *iter++);
+    glm::vec3 l1 = v1 - v2;
+    glm::vec3 l2 = v3 - v2;
+    glm::vec3 normal = glm::cross(l1, l2);
+    for(int j = 0; j < 3; j++) {
+      normals.push_back(normal.x);
+      normals.push_back(normal.y);
+      normals.push_back(normal.z);
+    }
   }
 }
 

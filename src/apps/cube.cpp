@@ -71,7 +71,7 @@ int main(int argc, char* args[]) {
     renderer.render(cube);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    cube.scale = glm::vec3(0.7);
+    cube.scale = glm::vec3(1.5);
     cube.position.x = 2 * cos(2*M_PI*glfwGetTime() * 0.1);
     cube.position.z = 2 * sin(2*M_PI*glfwGetTime() * 0.1);
     cube.rotation.x += 2;

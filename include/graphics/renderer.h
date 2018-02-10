@@ -12,6 +12,7 @@ namespace graphics {
     std::shared_ptr<Light> light;
 
     void set_light_uniforms();
+    void set_camera_uniforms();
     void set_node_uniforms(const Node& node);
     
   public:
