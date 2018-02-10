@@ -11,16 +11,13 @@ namespace graphics {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_colors;    //vertex buffer object for colors
-    GLuint ebo;           //vertex buffer object for element array
     std::vector<GLfloat> vertices;
     std::vector<GLfloat> colors;
-    std::vector<GLint> indices;
 
     ///Convert glm arrays to primitive type arrays and store
     void store_vertex_data(const std::vector<glm::vec3>& vertices,
-                           const std::vector<glm::vec4>& colors);
-    ///Create array with values from 0 to (len - 1)
-    void create_indices(int len);
+                           const std::vector<glm::vec4>& colors,
+                           const std::vector<GLint>& indices);
 
   public:
     glm::vec3 rotation = glm::vec3(0,0,0);
@@ -29,11 +26,10 @@ namespace graphics {
     
     Node() = default;
     Node(const std::vector<GLfloat>& vertices,
-         const std::vector<GLfloat>& colors,
-         std::vector<int> indices = {});
+         const std::vector<GLfloat>& colors);
     Node(const std::vector<glm::vec3>& vertices,
          const std::vector<glm::vec4>& colors,
-         std::vector<int> indices = {});
+         std::vector<GLint> indices = {});
     ~Node();
 
     void bind_vertex_data();
