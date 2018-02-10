@@ -4,8 +4,9 @@ using namespace graphics;
 using namespace std;
 
 Renderer::Renderer(std::shared_ptr<Shader> _shader,
-                   std::shared_ptr<Camera> _camera)
-: shader(_shader), camera(_camera) {
+                   std::shared_ptr<Camera> _camera,
+                   std::shared_ptr<Light> _light)
+: shader(_shader), camera(_camera), light(_light) {
   
 }
 
@@ -17,20 +18,40 @@ void Renderer::set_camera(std::shared_ptr<Camera> _camera) {
   camera = _camera;
 }
 
-void Renderer::render(const Node& node) {
-  shader->use();
-  
+void Renderer::set_light(std::shared_ptr<Light> _light) {
+  light = _light;
+}
+
+void Renderer::set_node_uniforms(const Node& node) {
   glm::mat4 proj_mat = camera->get_proj_mat();
   GLint loc = glGetUniformLocation(shader->shader_program, "_proj_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(proj_mat));
-  
+
   glm::mat4 view_mat = camera->get_view_mat();
   loc = glGetUniformLocation(shader->shader_program, "_view_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view_mat));
-  
+
   glm::mat4 model_mat = node.get_model_mat();
   loc = glGetUniformLocation(shader->shader_program, "_model_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
-  
+}
+
+void Renderer::set_light_uniforms() {
+  GLint loc = glGetUniformLocation(shader->shader_program, "_light.color");
+  glUniform3fv(loc, 1, glm::value_ptr(light->color));
+
+  loc = glGetUniformLocation(shader->shader_program, "_light.ambient");
+  glUniform3fv(loc, 1, glm::value_ptr(light->ambient));
+
+  loc = glGetUniformLocation(shader->shader_program, "_light.position");
+  glUniform3fv(loc, 1, glm::value_ptr(light->position));
+}
+
+void Renderer::render(const Node& node) {
+  shader->use();
+
+  set_light_uniforms();
+
+  set_node_uniforms(node);
   node.draw();
 }

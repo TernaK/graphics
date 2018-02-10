@@ -11,8 +11,8 @@ int main(int argc, char* args[]) {
 
   glfwSetErrorCallback(graphics::util::glfw_error_callback);
 
-  int win_width = 1280;
-  int win_height = 720;
+  int win_width = 720;
+  int win_height = 360;
   GLFWwindow* window = graphics::util::make_window(win_width, win_height, "cube");
   glfwMakeContextCurrent(window);
 
@@ -52,19 +52,31 @@ int main(int argc, char* args[]) {
   shared_ptr<graphics::Camera> camera = make_shared<graphics::Camera>();
   camera->aspect_ratio = GLfloat(win_width)/win_height;
   camera->position = glm::vec3(0,5,8);
+
+  shared_ptr<graphics::Light> light = make_shared<graphics::Light>();
   
-  graphics::Renderer renderer = graphics::Renderer(shader, camera);
+  graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
 
   while(!glfwWindowShouldClose(window)) {
-    glClearColor(0.1, 0.6, 0.2, 1.0);
+    glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     cube.scale = glm::vec3(0.7);
-    cube.position.x = 2 * sin(2*M_PI*2*glfwGetTime() / 5.0);
-    cube.position.z = 2 * cos(2*M_PI*2*glfwGetTime() / 5.0);
+    cube.position.x = 2 * sin(2*M_PI*glfwGetTime() * 0.1);
+    cube.position.z = 2 * cos(2*M_PI*glfwGetTime() * 0.1);
     cube.rotation.x += 2;
-    cube.rotation.y += 5;
-
+    cube.rotation.y += 1;
+    
+    renderer.render(cube);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    cube.scale = glm::vec3(0.7);
+    cube.position.x = 2 * cos(2*M_PI*glfwGetTime() * 0.1);
+    cube.position.z = 2 * sin(2*M_PI*glfwGetTime() * 0.1);
+    cube.rotation.x += 2;
+    cube.rotation.y += 1;
+    
     renderer.render(cube);
     
     glfwPollEvents();
