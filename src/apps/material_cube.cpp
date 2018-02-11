@@ -43,16 +43,15 @@ int main(int argc, char* args[]) {
   graphics::MaterialNode cube(vertices, indices, graphics::Material());
   
   shared_ptr<graphics::Shader>
-  shader = make_shared<graphics::Shader>(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_direc_vshader.glsl",
-                                         string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_direc_fshader.glsl");
+  shader = make_shared<graphics::Shader>(string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_vshader.glsl",
+                                         string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_fshader.glsl");
   
   shared_ptr<graphics::Camera> camera = make_shared<graphics::Camera>();
   camera->aspect_ratio = GLfloat(win_width)/win_height;
   camera->position = glm::vec3(0,5,8);
 
-//  shared_ptr<graphics::Light> light = make_shared<graphics::PointLight>();
-  shared_ptr<graphics::DirectionalLight> light = make_shared<graphics::DirectionalLight>();
-  light->shininess = 256;
+  shared_ptr<graphics::Light> light = make_shared<graphics::PointLight>();
+//  shared_ptr<graphics::DirectionalLight> light = make_shared<graphics::DirectionalLight>();
   
   graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
 

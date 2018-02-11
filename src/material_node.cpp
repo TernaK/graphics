@@ -95,6 +95,9 @@ void MaterialNode::set_uniforms(GLuint program) const {
 
   loc = glGetUniformLocation(program, "_material.alpha");
   glUniform1f(loc, material.alpha);
+
+  loc = glGetUniformLocation(program, "_material.shininess");
+  glUniform1f(loc, material.shininess);
 }
 
 void MaterialNode::draw() const {
