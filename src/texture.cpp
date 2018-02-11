@@ -3,28 +3,6 @@
 using namespace std;
 using namespace graphics;
 
-void check_gl_errors() {
-  GLenum err;
-  while((err = glGetError()) && err != GL_NO_ERROR) {
-    switch(err) {
-      case GL_INVALID_ENUM:
-        throw std::runtime_error(std::string("GL_ERROR(GL_INVALID_ENUM)\n"));
-        break;
-      case GL_INVALID_OPERATION:
-        throw std::runtime_error(std::string("GL_ERROR(GL_INVALID_OPERATION)\n"));
-        break;
-      case GL_INVALID_VALUE:
-        throw std::runtime_error(std::string("GL_ERROR(GL_INVALID_VALUE)\n"));
-        break;
-      case GL_INVALID_FRAMEBUFFER_OPERATION:
-        throw std::runtime_error(std::string("GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION)\n"));
-        break;
-      default:
-        throw std::runtime_error(std::string("GL_ERROR(" + std::to_string(err) + ")\n"));
-    }
-  }
-}
-
 Texture::Texture(cv::Mat image)
 : image(image) {
   if(image.empty())
@@ -44,15 +22,19 @@ Texture::~Texture() {
 }
 
 void Texture::bind_texture_data() {
+  cv::Mat temp;
+  if(image.channels() == 1)
+    cv::cvtColor(image, temp, CV_GRAY2BGR);
+  else
+    temp = image;
+
   glGenTextures(1, &texture0);
   glBindTexture(GL_TEXTURE_2D, texture0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
-//  glGenerateMipmap(GL_TEXTURE_2D);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, temp.cols, temp.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, temp.data);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 

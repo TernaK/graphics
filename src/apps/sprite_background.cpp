@@ -1,6 +1,5 @@
 #include <graphics/util.h>
 #include <graphics/renderer.h>
-#include <glm/gtx/string_cast.hpp>
 #include <graphics/sprite.h>
 using namespace std;
 
@@ -51,7 +50,7 @@ int main(int argc, char* args[]) {
     2,3,7, 3,6,7//bottom
   };
   graphics::MaterialNode cube(vertices, indices, graphics::Material());
-  cube.material.shininess = 1;
+  cube.material.shininess = 8;
   cube.material.color = glm::vec3(0,0,1);
 
   shared_ptr<graphics::Camera> camera = make_shared<graphics::Camera>();
@@ -60,7 +59,7 @@ int main(int argc, char* args[]) {
 
   shared_ptr<graphics::PointLight> light = make_shared<graphics::PointLight>();
 //  shared_ptr<graphics::DirectionalLight> light = make_shared<graphics::DirectionalLight>();
-  light->color *= 0.8;
+  light->color *= 0.9;
 
   graphics::SpriteRenderer sprite_renderer = graphics::SpriteRenderer(sprite_shader);
   graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
@@ -72,11 +71,18 @@ int main(int argc, char* args[]) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     sprite_renderer.render(sprite);
 
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    renderer.render(cube);
     cube.rotation.y += 0.5;
     cube.rotation.z += 0.9;
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    cube.scale.y = 1;
+    renderer.render(cube);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    cube.scale.y = 2;
+    renderer.render(cube);
+
 
     glfwPollEvents();
     glfwSwapBuffers(window);
