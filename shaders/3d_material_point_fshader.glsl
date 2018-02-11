@@ -7,7 +7,7 @@ out vec4 _frag_color_out;
 
 uniform vec3 _cam_pos;
 uniform struct Light {
-  float ph_exp;
+  float shininess;
   vec3 position;
   vec3 ambient;
   vec3 color;
@@ -24,7 +24,7 @@ void main() {
 
   vec3 c = normalize(_cam_pos - _frag_pos);
   float l_reflected_on_c = dot(normalize(reflect(-l, _frag_normal)), c);
-  float spec = pow( max(l_reflected_on_c, 0.0), _light.ph_exp );
+  float spec = pow( max(l_reflected_on_c, 0.0), _light.shininess );
   vec3 specular = spec * _light.color;
 
   _frag_color_out = vec4((diffuse + specular + _light.ambient) * _material.color,

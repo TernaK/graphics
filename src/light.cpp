@@ -20,8 +20,8 @@ void PointLight::set_uniforms(GLuint program) {
   loc = glGetUniformLocation(program, "_light.position");
   glUniform3fv(loc, 1, glm::value_ptr(position));
 
-  loc = glGetUniformLocation(program, "_light.ph_exp");
-  glUniform1f(loc, ph_exp);
+  loc = glGetUniformLocation(program, "_light.shininess");
+  glUniform1f(loc, shininess);
 }
 
 DirectionalLight::DirectionalLight(glm::vec3 direction,
@@ -41,7 +41,7 @@ void DirectionalLight::set_uniforms(GLuint program) {
   loc = glGetUniformLocation(program, "_light.direction");
   glUniform3fv(loc, 1, glm::value_ptr(direction));
 
-  loc = glGetUniformLocation(program, "_light.ph_exp");
-  glUniform1f(loc, ph_exp);
+  loc = glGetUniformLocation(program, "_light.shininess");
+  glUniform1f(loc, shininess);
 }
 

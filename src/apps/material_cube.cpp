@@ -51,7 +51,8 @@ int main(int argc, char* args[]) {
   camera->position = glm::vec3(0,5,8);
 
 //  shared_ptr<graphics::Light> light = make_shared<graphics::PointLight>();
-  shared_ptr<graphics::Light> light = make_shared<graphics::DirectionalLight>();
+  shared_ptr<graphics::DirectionalLight> light = make_shared<graphics::DirectionalLight>();
+  light->shininess = 256;
   
   graphics::Renderer renderer = graphics::Renderer(shader, camera, light);
 

@@ -13,7 +13,7 @@ namespace graphics {
     glm::vec3 position;
     glm::vec3 color;
     glm::vec3 ambient;
-    GLfloat ph_exp = 32;
+    GLfloat shininess = 32;
 
     PointLight(glm::vec3 positon = glm::vec3(20,20,20),
                glm::vec3 color = glm::vec3(0.7),
@@ -27,7 +27,7 @@ namespace graphics {
     glm::vec3 direction;
     glm::vec3 color;
     glm::vec3 ambient;
-    GLfloat ph_exp = 32;
+    GLfloat shininess = 32;
 
     DirectionalLight(glm::vec3 direction = glm::vec3(-1.0),
                      glm::vec3 color = glm::vec3(0.7),
