@@ -10,6 +10,7 @@ uniform struct Light {
   vec3 position;
   vec3 ambient;
   vec3 color;
+  vec3 attenuation;
 } _light;
 uniform struct Material {
   vec3 color;
@@ -27,6 +28,12 @@ void main() {
   float spec = pow( max(l_reflected_on_c, 0.0), _material.shininess );
   vec3 specular = spec * _light.color;
 
-  _frag_color_out = vec4((diffuse + specular + _light.ambient) * _material.color,
-                         _material.alpha);
+  float distance = length(_light.position - _frag_pos);
+  float attenuation = 1.0 / (_light.attenuation.x +
+                             _light.attenuation.y * distance +
+                             _light.attenuation.z * distance * distance);
+
+  vec3 light_color = (diffuse + specular + _light.ambient) * attenuation;
+
+  _frag_color_out = vec4(light_color * _material.color, _material.alpha);
 }

@@ -8,6 +8,7 @@ find_package(opengl REQUIRED)
 find_package(glew REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
+find_package(OpenCV REQUIRED)
 
 add_definitions(-DGRAPHICS_SHADERS_DIRECTORY="${CMAKE_SOURCE_DIR}/shaders/")
 

@@ -6,15 +6,20 @@
 
 namespace graphics {
   struct Light {
-    virtual void set_uniforms(GLuint program) = 0;
+  public:
+    glm::vec3 color = glm::vec3(0.7);
+    glm::vec3 ambient = glm::vec3(0.3);
+    virtual void set_uniforms(GLuint program);
+
+  protected:
+    Light() = default;
   };
 
   struct PointLight : public Light {
     glm::vec3 position;
-    glm::vec3 color;
-    glm::vec3 ambient;
+    glm::vec3 attenuation = glm::vec3(1.0, 0.002, 0.0005);
 
-    PointLight(glm::vec3 positon = glm::vec3(20,20,20),
+    PointLight(glm::vec3 positon = glm::vec3(2,10,20),
                glm::vec3 color = glm::vec3(0.7),
                glm::vec3 ambient = glm::vec3(0.3));
 
@@ -22,12 +27,9 @@ namespace graphics {
   };
 
   struct DirectionalLight : public Light {
-
     glm::vec3 direction;
-    glm::vec3 color;
-    glm::vec3 ambient;
 
-    DirectionalLight(glm::vec3 direction = glm::vec3(-1.0),
+    DirectionalLight(glm::vec3 direction = glm::vec3(-0.3,-1,-1),
                      glm::vec3 color = glm::vec3(0.7),
                      glm::vec3 ambient = glm::vec3(0.3));
 

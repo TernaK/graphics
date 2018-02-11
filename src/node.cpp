@@ -52,6 +52,7 @@ void Node::release_vertex_data() {
   glDeleteBuffers(1, &vbo_vertices);
   glDeleteBuffers(1, &vbo_colors);
   glDeleteBuffers(1, &vbo_normals);
+  glDeleteVertexArrays(1, &vao);
 }
 
 void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
