@@ -102,6 +102,10 @@ void Node::set_uniforms(GLuint program) const {
   GLint loc = glGetUniformLocation(program, "_model_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
 
+  //n2.l2 = (R.n1)' . R1.l1 == 0
+  //n2.l2 = n1'.R' . R1.l1 --> if R'.R1 == I, then n1'.I.l1 == 0
+  //hence R' = I.R1^-1 --> R = I.(R^-1)' == (R^-1)'
+  //therefore normal rotation R = (R^-1)', transpose of inverse
   glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
   loc = glGetUniformLocation(program, "_normal_mat");
   glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
