@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
+#include <memory>
+#include <graphics/canvas.h>
 
 namespace graphics {
   class Node {
@@ -32,6 +34,7 @@ namespace graphics {
     glm::vec3 rotation = glm::vec3(0,0,0);
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
+    std::shared_ptr<Canvas> canvas;
     
     Node() = default;
     Node(const std::vector<glm::vec3>& vertices,
@@ -44,5 +47,6 @@ namespace graphics {
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
     void draw() const;
+    GLuint get_shader_prog() const;
   };
 }

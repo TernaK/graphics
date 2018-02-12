@@ -25,7 +25,7 @@ using namespace std;
 //  }
 //}
 
-Renderer::Renderer(std::shared_ptr<Shader> _shader,
+Renderer::Renderer(std::shared_ptr<MaterialShader> _shader,
                    std::shared_ptr<Camera> _camera,
                    std::shared_ptr<Light> _light)
 : shader(_shader), camera(_camera), light(_light) {
@@ -43,12 +43,6 @@ void Renderer::render(const Node& node) {
 }
 
 void Renderer::render(const MaterialNode& node) {
-  shader->use();
-
-  light->set_uniforms(shader->shader_program);
-  camera->set_uniforms(shader->shader_program);
-  node.set_uniforms(shader->shader_program);
-
   node.draw();
 }
 

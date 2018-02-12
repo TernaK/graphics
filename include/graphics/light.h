@@ -9,7 +9,7 @@ namespace graphics {
   public:
     glm::vec3 color = glm::vec3(0.7);
     glm::vec3 ambient = glm::vec3(0.3);
-    virtual void set_uniforms(GLuint program);
+    virtual void set_uniforms(GLuint program) const ;
 
   protected:
     Light() = default;
@@ -23,7 +23,7 @@ namespace graphics {
                glm::vec3 color = glm::vec3(0.7),
                glm::vec3 ambient = glm::vec3(0.3));
 
-    void set_uniforms(GLuint program);
+    void set_uniforms(GLuint program) const ;
   };
 
   struct DirectionalLight : public Light {
@@ -33,6 +33,6 @@ namespace graphics {
                      glm::vec3 color = glm::vec3(0.7),
                      glm::vec3 ambient = glm::vec3(0.3));
 
-    void set_uniforms(GLuint program);
+    void set_uniforms(GLuint program) const ;
   };
 }

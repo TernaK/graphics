@@ -10,7 +10,7 @@ MaterialNode::~MaterialNode() {
 
 MaterialNode::MaterialNode(const std::vector<glm::vec3>& _vertices,
                            std::vector<int> _indices,
-                           Material material) {
+                           Material_ material) {
   if(!_indices.empty())
     store_vertex_data(_vertices, _indices);
   compute_store_normals();
@@ -101,7 +101,14 @@ void MaterialNode::set_uniforms(GLuint program) const {
 }
 
 void MaterialNode::draw() const {
+  set_uniforms(canvas->material_shader->shader_program);
+
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
 }
+
+GLuint MaterialNode::get_shader_prog() const {
+  return canvas->material_shader->shader_program;
+}
+

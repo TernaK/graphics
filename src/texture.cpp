@@ -43,6 +43,6 @@ void Texture::release_texture_data() {
 }
 
 void Texture::activate() {
-  glBindTexture(GL_TEXTURE_2D, texture0);
   glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture0);
 }

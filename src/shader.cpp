@@ -82,3 +82,33 @@ void Shader::create_shader_program(std::string vshader_str, std::string fshader_
 void Shader::use() const {
   glUseProgram(shader_program);
 }
+
+LightCameraShader::LightCameraShader(std::string v_path,
+                                     std::string f_path)
+: Shader(v_path, f_path) {
+
+}
+
+void LightCameraShader::set_uniforms(const Light& light, const Camera& camera) const {
+  light.set_uniforms(shader_program);
+  camera.set_uniforms(shader_program);
+}
+
+MaterialShader::MaterialShader(std::string v_path,
+               std::string f_path)
+: LightCameraShader(v_path, f_path) {
+
+}
+
+void MaterialShader::set_uniforms(const Material_& material, const Light& light, const Camera& camera) const {
+  LightCameraShader::set_uniforms(light, camera);
+  material.set_uniforms(shader_program);
+}
+
+
+SolidShader::SolidShader(std::string v_path,
+                               std::string f_path)
+: LightCameraShader(v_path, f_path) {
+
+}
+

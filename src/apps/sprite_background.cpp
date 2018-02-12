@@ -1,6 +1,7 @@
 #include <graphics/util.h>
 #include <graphics/renderer.h>
 #include <graphics/sprite.h>
+#include <graphics/scene.h>
 using namespace std;
 
 int main(int argc, char* args[]) {
