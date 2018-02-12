@@ -1,9 +1,8 @@
 #pragma once
 #include <graphics/canvas.h>
-#include <graphics/light.h>
-#include <graphics/camera.h>
 #include <graphics/solid.h>
 #include <graphics/node.h>
+#include <graphics/shader.h>
 
 namespace graphics {
   struct Scene3D {
