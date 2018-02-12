@@ -8,13 +8,22 @@ Solid::~Solid() {
   release_vertex_data();
 }
 
+Solid::Solid() {
+  init();
+}
+
 Solid::Solid(const std::vector<glm::vec3>& _vertices,
-                           std::vector<int> _indices,
-                           Material material) {
+             std::vector<int> _indices,
+             Material material) {
+  init();
   if(!_indices.empty())
     store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
+}
+
+void Solid::init() {
+  shader_type = ShaderType::Solid;
 }
 
 void Solid::bind_vertex_data() {

@@ -40,7 +40,7 @@ namespace graphics {
   };
 
   struct Node3DShader : public LightCameraShader {
-    Node3DShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
-                   std::string f_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_fshader.glsl");
+    Node3DShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_solid_point_vshader.glsl",
+                   std::string f_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_solid_point_fshader.glsl");
   };
 }

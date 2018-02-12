@@ -7,9 +7,10 @@
 #include <vector>
 #include <numeric>
 #include <graphics/material.h>
+#include <graphics/drawable.h>
 
 namespace graphics {
-  class Solid {
+  class Solid : public Drawable  {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_normals;    //vertex buffer object for colors
@@ -31,16 +32,17 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    Solid() = default;
+    Solid();
     Solid(const std::vector<glm::vec3>& vertices,
-                 std::vector<GLint> indices = {},
-                 Material material = Material());
+          std::vector<GLint> indices = {},
+          Material material = Material());
     ~Solid();
 
+    void init() override;
     void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw(GLuint prog) const;
+    void draw(GLuint prog) const override;
   };
 }

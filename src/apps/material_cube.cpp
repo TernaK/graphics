@@ -1,4 +1,5 @@
 #include <graphics/scene.h>
+#include <graphics/solid.h>
 
 using namespace std;
 
@@ -34,8 +35,8 @@ int main(int argc, char* args[]) {
   std::shared_ptr<graphics::Node>
   node = std::make_shared<graphics::Node>(vertices, colors, indices);
   
-  scene.add_drawable(cube);
   scene.add_drawable(node);
+  scene.add_drawable(cube);
 
   while(!glfwWindowShouldClose(canvas->window)) {
 
@@ -45,6 +46,8 @@ int main(int argc, char* args[]) {
     cube->position.z = 2 * sin(2*M_PI*glfwGetTime() * 0.1);
     cube->rotation.x += 2;
     cube->rotation.y += 1;
+    
+    node->rotation.y += 1;
 
     scene.draw_scene();
   }

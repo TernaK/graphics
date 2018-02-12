@@ -8,15 +8,24 @@ Node::~Node() {
   release_vertex_data();
 }
 
+Node::Node() {
+  init();
+}
+
 Node::Node(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
+  init();
   if(vertices.size() != colors.size())
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
     store_vertex_data(_vertices, _colors, _indices);
   compute_store_normals();
   bind_vertex_data();
+}
+
+void Node::init() {
+  shader_type = ShaderType::Node3D;
 }
 
 void Node::bind_vertex_data() {

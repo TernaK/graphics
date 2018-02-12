@@ -11,19 +11,7 @@ namespace graphics {
     float alpha = 1.0;
 
     Material() = default;
-    Material(glm::vec3 color, float shininess = 32, float alpha = 1.0)
-    : color(color), shininess(shininess), alpha(alpha) {
-
-    }
-    void set_uniforms(GLuint program) const {
-      GLint loc = glGetUniformLocation(program, "_material.color");
-      glUniform3fv(loc, 1, glm::value_ptr(color));
-
-      loc = glGetUniformLocation(program, "_material.alpha");
-      glUniform1f(loc, alpha);
-
-      loc = glGetUniformLocation(program, "_material.shininess");
-      glUniform1f(loc, shininess);
-    }
+    Material(glm::vec3 color, float shininess = 32, float alpha = 1.0);
+    void set_uniforms(GLuint program) const;
   };
 }
