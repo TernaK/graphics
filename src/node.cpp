@@ -89,7 +89,7 @@ void Node::compute_store_normals() {
     glm::vec3 v3(*iter++, *iter++, *iter++);
     glm::vec3 l1 = v1 - v2;
     glm::vec3 l2 = v3 - v2;
-    glm::vec3 normal = glm::cross(l1, l2);
+    glm::vec3 normal = glm::normalize(glm::cross(l1, l2));
     for(int j = 0; j < 3; j++) {
       normals.push_back(normal.x);
       normals.push_back(normal.y);
