@@ -6,11 +6,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
-#include <graphics/canvas.h>
 #include <graphics/material.h>
 
 namespace graphics {
-  class MaterialNode {
+  class Solid {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_normals;    //vertex buffer object for colors
@@ -27,23 +26,21 @@ namespace graphics {
     void compute_store_normals();
 
   public:
-    std::shared_ptr<Canvas> canvas;
-    Material_ material;
+    Material material;
     glm::vec3 rotation = glm::vec3(0,0,0);
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    MaterialNode() = default;
-    MaterialNode(const std::vector<glm::vec3>& vertices,
+    Solid() = default;
+    Solid(const std::vector<glm::vec3>& vertices,
                  std::vector<GLint> indices = {},
-                 Material_ material = Material_());
-    ~MaterialNode();
+                 Material material = Material());
+    ~Solid();
 
     void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw() const;
-    GLuint get_shader_prog() const;
+    void draw(GLuint prog) const;
   };
 }

@@ -22,14 +22,14 @@ int main(int argc, char* args[]) {
     2,3,7, 3,6,7  //bottom
   };
   std::vector<glm::vec4> colors = {
-    glm::vec4(1,0,0,1), glm::vec4(1,0,0,1),      //front top left 0, top right 1
-    glm::vec4(1,0,0,1), glm::vec4(1,0,0,1),    //front low left 2, low right 3
-    glm::vec4(0,1,0,1), glm::vec4(0,1,0,1),    //back top left 4, top right 5
-    glm::vec4(0,1,0,1), glm::vec4(0,1,0,1),  //back low left 6, low right 7
+    glm::vec4(1,0,0,1), glm::vec4(1,0,0,1), //front top left 0, top right 1
+    glm::vec4(1,0,0,1), glm::vec4(1,0,0,1), //front low left 2, low right 3
+    glm::vec4(0,1,0,1), glm::vec4(0,1,0,1), //back top left 4, top right 5
+    glm::vec4(0,1,0,1), glm::vec4(0,1,0,1), //back low left 6, low right 7
   };
 
-  std::shared_ptr<graphics::MaterialNode>
-  cube = std::make_shared<graphics::MaterialNode>(vertices, indices, graphics::Material_());
+  std::shared_ptr<graphics::Solid>
+  cube = std::make_shared<graphics::Solid>(vertices, indices, graphics::Material());
 
   std::shared_ptr<graphics::Node>
   node = std::make_shared<graphics::Node>(vertices, colors, indices);

@@ -33,14 +33,14 @@ namespace graphics {
     void set_uniforms(const Light& light, const Camera& camera) const;
   };
 
-  struct MaterialShader : public LightCameraShader {
-    MaterialShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_vshader.glsl",
+  struct SolidShader : public LightCameraShader {
+    SolidShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_vshader.glsl",
                    std::string f_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_material_point_fshader.glsl");
-    void set_uniforms(const Material_& material, const Light& light, const Camera& camera) const;
+    void set_uniforms(const Material& material, const Light& light, const Camera& camera) const;
   };
 
-  struct SolidShader : public LightCameraShader {
-    SolidShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
+  struct Node3DShader : public LightCameraShader {
+    Node3DShader(std::string v_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_vshader.glsl",
                    std::string f_path = std::string(GRAPHICS_SHADERS_DIRECTORY) + "3d_fshader.glsl");
   };
 }

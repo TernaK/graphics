@@ -64,7 +64,5 @@ namespace graphics {
     Canvas(int width = 800, int height = 600, std::string name = "canvas");
     ~Canvas();
     GLFWwindow* window;
-    std::shared_ptr<MaterialShader> material_shader;
-    std::shared_ptr<SolidShader> solid_shader;
   };
 }

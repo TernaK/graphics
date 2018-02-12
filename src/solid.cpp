@@ -1,23 +1,23 @@
-#include <graphics/material_node.h>
+#include <graphics/solid.h>
 #include <iostream>
 #include <exception>
 using namespace graphics;
 using namespace std;
 
-MaterialNode::~MaterialNode() {
+Solid::~Solid() {
   release_vertex_data();
 }
 
-MaterialNode::MaterialNode(const std::vector<glm::vec3>& _vertices,
+Solid::Solid(const std::vector<glm::vec3>& _vertices,
                            std::vector<int> _indices,
-                           Material_ material) {
+                           Material material) {
   if(!_indices.empty())
     store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
 
-void MaterialNode::bind_vertex_data() {
+void Solid::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   //positions
@@ -39,12 +39,12 @@ void MaterialNode::bind_vertex_data() {
   glBindVertexArray(0);
 }
 
-void MaterialNode::release_vertex_data() {
+void Solid::release_vertex_data() {
   glDeleteBuffers(1, &vbo_vertices);
   glDeleteBuffers(1, &vbo_normals);
 }
 
-void MaterialNode::store_vertex_data(const std::vector<glm::vec3>& _vertices,
+void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
                                      const std::vector<GLint>& _indices) {
   //unpack vertex data
   for(int i = 0; i < _indices.size(); i++) {
@@ -55,7 +55,7 @@ void MaterialNode::store_vertex_data(const std::vector<glm::vec3>& _vertices,
   }
 }
 
-void MaterialNode::compute_store_normals() {
+void Solid::compute_store_normals() {
   for(int i = 0; i < vertices.size() / 9; i++) {
     auto iter = vertices.begin() + i*9;
     glm::vec3 v1(*iter++, *iter++, *iter++);
@@ -72,7 +72,7 @@ void MaterialNode::compute_store_normals() {
   }
 }
 
-glm::mat4 MaterialNode::get_model_mat() const {
+glm::mat4 Solid::get_model_mat() const {
   glm::mat4 model_mat = glm::translate(glm::mat4(1.0), position);
   model_mat = glm::rotate(model_mat, glm::radians(rotation.x), glm::vec3(1,0,0));
   model_mat = glm::rotate(model_mat, glm::radians(rotation.y), glm::vec3(0,1,0));
@@ -81,7 +81,7 @@ glm::mat4 MaterialNode::get_model_mat() const {
   return model_mat;
 }
 
-void MaterialNode::set_uniforms(GLuint program) const {
+void Solid::set_uniforms(GLuint program) const {
   glm::mat4 model_mat = get_model_mat();
   GLint loc = glGetUniformLocation(program, "_model_mat");
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
@@ -100,15 +100,10 @@ void MaterialNode::set_uniforms(GLuint program) const {
   glUniform1f(loc, material.shininess);
 }
 
-void MaterialNode::draw() const {
-  set_uniforms(canvas->material_shader->shader_program);
+void Solid::draw(GLuint prog) const {
+  set_uniforms(prog);
 
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
 }
-
-GLuint MaterialNode::get_shader_prog() const {
-  return canvas->material_shader->shader_program;
-}
-

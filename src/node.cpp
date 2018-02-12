@@ -112,15 +112,10 @@ void Node::set_uniforms(GLuint program) const {
   glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 }
 
-void Node::draw() const {
-  set_uniforms(canvas->solid_shader->shader_program);
+void Node::draw(GLuint prog) const {
+  set_uniforms(prog);
 
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
 }
-
-GLuint Node::get_shader_prog() const {
-  return canvas->solid_shader->shader_program;
-}
-

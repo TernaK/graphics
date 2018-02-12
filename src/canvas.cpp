@@ -22,9 +22,6 @@ Canvas::Canvas(int width, int height, std::string name)
   glfwSetFramebufferSizeCallback(window, Helper::resize_callback);
   glfwSetKeyCallback(window, Helper::esc_close_callback);
   glEnable(GL_DEPTH_TEST);
-
-  material_shader = std::make_shared<MaterialShader>();
-  solid_shader = std::make_shared<SolidShader>();
 }
 
 Canvas::~Canvas() {
