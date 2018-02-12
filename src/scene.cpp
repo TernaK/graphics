@@ -27,10 +27,12 @@ GLuint Scene3D::select_shader(std::shared_ptr<Drawable> drawable) {
 void Scene3D::draw_scene() {
   clear();
   for(auto drawable: drawables) {
-    GLuint shader_prog = select_shader(drawable);
-    light->set_uniforms(shader_prog);
-    camera->set_uniforms(shader_prog);
-    drawable->draw(shader_prog);
+    if(!drawable->hidden) {
+      GLuint shader_prog = select_shader(drawable);
+      light->set_uniforms(shader_prog);
+      camera->set_uniforms(shader_prog);
+      drawable->draw(shader_prog);
+    }
   }
   
   glfwPollEvents();
