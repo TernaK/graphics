@@ -13,6 +13,7 @@ set(graphics_srcs
   canvas.cpp ${CMAKE_SOURCE_DIR}/include/graphics/canvas.h
   material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
   ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
+  shape.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shape.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})

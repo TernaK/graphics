@@ -14,3 +14,6 @@ target_link_libraries(material_cube ${libs_list})
 
 add_executable(sprite_background sprite_background.cpp)
 target_link_libraries(sprite_background ${libs_list})
+
+add_executable(shapes shapes.cpp)
+target_link_libraries(shapes ${libs_list})
