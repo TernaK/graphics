@@ -1,14 +1,14 @@
 #pragma once
+#include <graphics/drawable.h>
 #include <graphics/texture.h>
 #include <memory>
 
 namespace graphics {
-  class Sprite {
+  class Sprite : public Drawable {
   private:
     GLuint vbo;
     GLuint vao;
     void create_data();
-
 
   public:
     std::vector<GLfloat> vertex_data;
@@ -20,6 +20,7 @@ namespace graphics {
 
     void bind_vertex_data();
     void release_vertex_data();
-    void draw() const;
+    void init_shader_type() override;
+    void draw(GLuint shader_prog) const override;
   };
 }

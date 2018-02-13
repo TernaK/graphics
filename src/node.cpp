@@ -9,13 +9,13 @@ Node::~Node() {
 }
 
 Node::Node() {
-  init();
+  init_shader_type();
 }
 
 Node::Node(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
-  init();
+  init_shader_type();
   if(vertices.size() != colors.size())
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
@@ -24,7 +24,7 @@ Node::Node(const std::vector<glm::vec3>& _vertices,
   bind_vertex_data();
 }
 
-void Node::init() {
+void Node::init_shader_type() {
   shader_type = ShaderType::Node3D;
 }
 

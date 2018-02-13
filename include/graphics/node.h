@@ -41,7 +41,7 @@ namespace graphics {
          std::vector<GLint> indices = {});
     ~Node();
 
-    void init() override;
+    void init_shader_type() override;
     void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();

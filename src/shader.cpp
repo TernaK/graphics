@@ -105,10 +105,15 @@ void SolidShader::set_uniforms(const Material& material, const Light& light, con
   material.set_uniforms(shader_program);
 }
 
-
 Node3DShader::Node3DShader(std::string v_path,
-                               std::string f_path)
+                           std::string f_path)
 : LightCameraShader(v_path, f_path) {
+  
+}
 
+SpriteShader::SpriteShader(std::string v_path,
+                           std::string f_path)
+: Shader(v_path, f_path) {
+  
 }
 

@@ -9,20 +9,20 @@ Solid::~Solid() {
 }
 
 Solid::Solid() {
-  init();
+  init_shader_type();
 }
 
 Solid::Solid(const std::vector<glm::vec3>& _vertices,
              std::vector<int> _indices,
              Material material) {
-  init();
+  init_shader_type();
   if(!_indices.empty())
     store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
 
-void Solid::init() {
+void Solid::init_shader_type() {
   shader_type = ShaderType::Solid;
 }
 

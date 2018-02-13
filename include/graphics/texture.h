@@ -8,7 +8,7 @@
 
 namespace graphics {
   class Texture {
-    GLuint texture0;
+    GLuint texture_id;
 
   public:
     cv::Mat image;
@@ -19,6 +19,7 @@ namespace graphics {
 
     void bind_texture_data();
     void release_texture_data();
-    void activate();
+    void activate(GLuint texture_unit = 0);
+    void set_uniforms(GLuint shader_program, GLuint texture_unit = 0);
   };
 }
