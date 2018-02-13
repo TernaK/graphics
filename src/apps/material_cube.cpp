@@ -1,5 +1,6 @@
 #include <graphics/scene.h>
 #include <graphics/solid.h>
+#include <graphics/node.h>
 
 using namespace std;
 
