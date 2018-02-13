@@ -1,10 +1,9 @@
 #pragma once
 #include <graphics/canvas.h>
-//#include <graphics/drawable.h>
-#include <graphics/solid.h>
-#include <graphics/node.h>
-#include <graphics/sprite.h>
+#include <graphics/drawable.h>
 #include <graphics/shader.h>
+#include <memory>
+#include <vector>
 
 namespace graphics {
   class Scene3D {

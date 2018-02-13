@@ -1,4 +1,5 @@
 #include <graphics/scene.h>
+#include <graphics/solid.h>
 #include <graphics/sprite.h>
 using namespace std;
 
