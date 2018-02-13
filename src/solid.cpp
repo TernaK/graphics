@@ -98,18 +98,10 @@ void Solid::set_uniforms(GLuint program) const {
   glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
   loc = glGetUniformLocation(program, "_normal_mat");
   glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
-
-  loc = glGetUniformLocation(program, "_material.color");
-  glUniform3fv(loc, 1, glm::value_ptr(material.color));
-
-  loc = glGetUniformLocation(program, "_material.alpha");
-  glUniform1f(loc, material.alpha);
-
-  loc = glGetUniformLocation(program, "_material.shininess");
-  glUniform1f(loc, material.shininess);
 }
 
 void Solid::draw(GLuint prog) const {
+  material.set_uniforms(prog);     
   set_uniforms(prog);
 
   glBindVertexArray(vao);
