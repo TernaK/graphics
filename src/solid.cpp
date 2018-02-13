@@ -16,8 +16,7 @@ Solid::Solid(const std::vector<glm::vec3>& _vertices,
              std::vector<int> _indices,
              Material material) {
   init_shader_type();
-  if(!_indices.empty())
-    store_vertex_data(_vertices, _indices);
+  store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
@@ -55,12 +54,20 @@ void Solid::release_vertex_data() {
 
 void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
                                      const std::vector<GLint>& _indices) {
-  //unpack vertex data
-  for(int i = 0; i < _indices.size(); i++) {
-    int idx = _indices[i];
-    vertices.push_back(_vertices[idx].x);
-    vertices.push_back(_vertices[idx].y);
-    vertices.push_back(_vertices[idx].z);
+  if(_indices.empty()) {
+    for(int i = 0; i < _vertices.size(); i++) {
+      vertices.push_back(_vertices[i].x);
+      vertices.push_back(_vertices[i].y);
+      vertices.push_back(_vertices[i].z);
+    }
+  } else  {
+    //unpack vertex data
+    for(int i = 0; i < _indices.size(); i++) {
+      int idx = _indices[i];
+      vertices.push_back(_vertices[idx].x);
+      vertices.push_back(_vertices[idx].y);
+      vertices.push_back(_vertices[idx].z);
+    }
   }
 }
 

@@ -21,8 +21,7 @@ std::shared_ptr<Solid> SolidShape::make_cuboid(GLfloat x, GLfloat y, GLfloat z) 
     5,4,0, 4,1,0, //top
     2,3,7, 3,6,7  //bottom
   };
-  shared_ptr<graphics::Solid>
-  solid = std::make_shared<graphics::Solid>(vertices, indices, graphics::Material());
+  shared_ptr<graphics::Solid> solid = std::make_shared<graphics::Solid>(vertices, indices);
   return solid;
 }
 
@@ -60,14 +59,33 @@ std::shared_ptr<Solid> SolidShape::make_sphere(GLfloat r, int st, int sc) {
   
   //assign vertices and indices
   //top
+  for(int j = 0; j < temp[1].size(); j++) {
+    vertices.push_back(temp[0][0]);
+    vertices.push_back(temp[1][(j + 1) % temp[1].size()]);
+    vertices.push_back(temp[1][j]);
+  }
   
   //mid
-  for(int i = 1; i < temp.size() - 1; i++) {
-    for(int j = 0; j < temp[0].size(); j++) {
+  for(int i = 1; i < temp.size() - 2; i++) {
+    for(int j = 0; j < temp[i].size(); j++) {
       vertices.push_back(temp[i][j]);
+      vertices.push_back(temp[i + 1][(j + 1) % temp[i].size()]);
+      vertices.push_back(temp[i + 1][j]);
+
+      vertices.push_back(temp[i][j]);
+      vertices.push_back(temp[i][(j + 1) % temp[i].size()]);
+      vertices.push_back(temp[i + 1][(j + 1) % temp[i].size()]);
     }
   }
-  //bottom
   
-  return nullptr;
+  //bottom
+  int pen_idx = temp.size() - 2;
+  for(int j = 0; j < temp[pen_idx].size(); j++) {
+    vertices.push_back(temp.back()[0]);
+    vertices.push_back(temp[pen_idx][j]);
+    vertices.push_back(temp[pen_idx][(j + 1) % temp[pen_idx].size()]);
+  }
+  
+  shared_ptr<graphics::Solid> solid = std::make_shared<graphics::Solid>(vertices);
+  return solid;
 }
