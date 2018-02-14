@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/canvas.h>
 #include <graphics/texture.h>
+#include <opencv2/opencv.hpp>
 
 namespace graphics {
   class Framebuffer {
@@ -22,5 +23,6 @@ namespace graphics {
     ~Framebuffer();
     void begin_render();
     void end_render();
+    cv::Mat read_to_mat();
   };
 }

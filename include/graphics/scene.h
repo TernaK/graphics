@@ -21,6 +21,8 @@ namespace graphics {
     std::shared_ptr<Node3DShader> node_shader;
     std::shared_ptr<SpriteShader> sprite_shader;
 
+    glm::vec4 clear_color = glm::vec4(0.8,0.8,0.8,1);
+
     Scene3D(std::shared_ptr<Canvas> canvas);
 
     void draw_scene();
