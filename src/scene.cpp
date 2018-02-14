@@ -53,7 +53,7 @@ void Scene3D::draw_scene() {
   
   glfwPollEvents();
   glfwSwapBuffers(canvas->window);
-  Helper::check_gl_errors();
+  CanvasHelper::check_gl_errors();
 }
 
 void Scene3D::add_drawable(std::shared_ptr<Drawable> solid_node) {

@@ -5,12 +5,15 @@
 #include <iostream>
 
 namespace graphics {
-  struct Helper {
-    static GLFWwindow* make_window(int w, int h, std::string name) {
+  struct CanvasHelper {
+    static GLFWwindow* make_window(int w, int h, bool hidden, std::string name) {
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+      glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+      if(hidden)
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
       GLFWwindow* window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
       if(!window)
         throw std::runtime_error("window could not be created");
@@ -64,8 +67,11 @@ namespace graphics {
     int width;
     int height;
     std::string name;
-    Canvas(int width = 800, int height = 600, std::string name = "canvas");
-    ~Canvas();
     GLFWwindow* window;
+    
+    Canvas(int width = 800, int height = 600, bool hidden = false, std::string name = "canvas");
+    ~Canvas();
+    bool still_open();
+    void close_window();
   };
 }
