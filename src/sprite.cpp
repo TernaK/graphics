@@ -25,10 +25,17 @@ Sprite::Sprite(std::shared_ptr<Texture> texture)
 }
 
 void Sprite::create_data() {
-  vertex_data = {
-    -1,1,0, 0,0,  1,1,0, 1,0,   -1,-1,0, 0,1,
-    1,1,0, 1,0,   1,-1,0, 1,1,  -1,-1,0, 0,1
-  };
+  if(!texture->is_filpped()) {
+    vertex_data = {
+      -1,1,0, 0,0,  1,1,0, 1,0,   -1,-1,0, 0,1,
+      1,1,0, 1,0,   1,-1,0, 1,1,  -1,-1,0, 0,1
+    };
+  } else {
+    vertex_data = {
+      -1,1,0, 0,1,  1,1,0, 1,1,   -1,-1,0, 0,0,
+      1,1,0, 1,1,   1,-1,0, 1,0,  -1,-1,0, 0,0
+    };
+  }
 }
 
 void Sprite::bind_vertex_data() {

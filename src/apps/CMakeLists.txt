@@ -17,3 +17,6 @@ target_link_libraries(sprite_background ${libs_list})
 
 add_executable(shapes shapes.cpp)
 target_link_libraries(shapes ${libs_list})
+
+add_executable(post_fx post_fx.cpp)
+target_link_libraries(post_fx ${libs_list})

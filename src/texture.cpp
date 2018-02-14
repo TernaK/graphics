@@ -17,8 +17,17 @@ Texture::Texture(std::string _image)
   bind_texture_data();
 }
 
+Texture::Texture(GLuint _texture_id)
+: texture_id(_texture_id){
+
+}
+
 Texture::~Texture() {
   release_texture_data();
+}
+
+GLuint Texture::get_texture_id() {
+  return texture_id;
 }
 
 void Texture::bind_texture_data() {
@@ -51,4 +60,12 @@ void Texture::set_uniforms(GLuint shader_program, GLuint texture_unit) {
   std::string texture_name = "_texture" + std::to_string(texture_unit);
   GLint loc = glGetUniformLocation(shader_program, texture_name.c_str());
   glUniform1i(loc, texture_unit);
+}
+
+void Texture::set_filpped() {
+  flipped = true;
+}
+
+bool Texture::is_filpped() {
+  return flipped;
 }
