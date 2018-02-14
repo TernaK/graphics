@@ -73,5 +73,7 @@ namespace graphics {
     ~Canvas();
     bool still_open();
     void close_window();
+    void get_true_frame_size(int& width, int& height);
+    void swap_buffers();
   };
 }

@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-  shared_ptr<graphics::Canvas> canvas = make_shared<graphics::Canvas>(800,600);
+  shared_ptr<graphics::Canvas> canvas = make_shared<graphics::Canvas>(400,300);
   graphics::Scene3D scene(canvas);
   scene.clear_color = glm::vec4(0);
   scene.sprite_shader = make_shared<graphics::SpriteShader>(std::string(GRAPHICS_SHADERS_DIRECTORY) + "sprite_vshader.glsl",

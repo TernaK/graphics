@@ -72,7 +72,9 @@ void Framebuffer::end_render() {
 }
 
 cv::Mat Framebuffer::read_to_mat() {
-  cv::Mat image(canvas->height*2, canvas->width*2, CV_8UC3);
+  int width, height;
+  canvas->get_true_frame_size(width, height);
+  cv::Mat image(height, width, CV_8UC3);
   ///https://stackoverflow.com/questions/9097756/converting-data-from-glreadpixels-to-opencvmat/9098883
   //use fast 4-byte alignment (default anyway) if possible
   glPixelStorei(GL_PACK_ALIGNMENT, (image.step & 3) ? 1 : 4);

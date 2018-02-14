@@ -37,3 +37,10 @@ void Canvas::close_window() {
   return glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+void Canvas::get_true_frame_size(int& width, int& height) {
+  glfwGetFramebufferSize(window, &width, &height);
+}
+
+void Canvas::swap_buffers() {
+  glfwSwapBuffers(window);
+}
