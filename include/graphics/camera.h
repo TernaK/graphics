@@ -16,8 +16,8 @@ namespace graphics {
     glm::vec3 up = glm::vec3(0,1,0);
     
     Camera() = default;
-    glm::mat4 get_proj_mat();
-    glm::mat4 get_view_mat();
-    void set_uniforms(GLuint program);
+    glm::mat4 get_proj_mat() const;
+    glm::mat4 get_view_mat() const;
+    void set_uniforms(GLuint program) const;
   };
 }

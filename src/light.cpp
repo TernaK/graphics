@@ -3,7 +3,7 @@
 using namespace std;
 using namespace graphics;
 
-void Light::set_uniforms(GLuint program) {
+void Light::set_uniforms(GLuint program) const {
   GLint loc = glGetUniformLocation(program, "_light.color");
   glUniform3fv(loc, 1, glm::value_ptr(color));
 
@@ -19,7 +19,7 @@ PointLight::PointLight(glm::vec3 _positon,
   ambient = _ambient;
 }
 
-void PointLight::set_uniforms(GLuint program) {
+void PointLight::set_uniforms(GLuint program) const {
   Light::set_uniforms(program);
 
   GLint loc = glGetUniformLocation(program, "_light.position");
@@ -37,7 +37,7 @@ DirectionalLight::DirectionalLight(glm::vec3 _direction,
   ambient = _ambient;
 }
 
-void DirectionalLight::set_uniforms(GLuint program) {
+void DirectionalLight::set_uniforms(GLuint program) const {
   Light::set_uniforms(program);
 
   GLint loc = glGetUniformLocation(program, "_light.direction");

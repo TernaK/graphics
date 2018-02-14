@@ -6,21 +6,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
+#include <graphics/material.h>
+#include <graphics/drawable.h>
 
 namespace graphics {
-  struct Material {
-    glm::vec3 color = glm::vec3(0.6, 0.2, 0.7);
-    GLfloat shininess = 32;
-    float alpha = 1.0;
-
-    Material() = default;
-    Material(glm::vec3 color, float shininess = 32, float alpha = 1.0)
-    : color(color), shininess(shininess), alpha(alpha) {
-
-    }
-  };
-
-  class MaterialNode {
+  class Solid : public Drawable  {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_normals;    //vertex buffer object for colors
@@ -42,16 +32,17 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    MaterialNode() = default;
-    MaterialNode(const std::vector<glm::vec3>& vertices,
-                 std::vector<GLint> indices = {},
-                 Material material = Material());
-    ~MaterialNode();
+    Solid();
+    Solid(const std::vector<glm::vec3>& vertices,
+          std::vector<GLint> indices = {},
+          Material material = Material());
+    ~Solid();
 
+    void init_shader_type() override;
     void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw() const;
+    void draw(GLuint prog) const override;
   };
 }

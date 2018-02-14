@@ -6,9 +6,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
+#include <memory>
+#include <graphics/drawable.h>
 
 namespace graphics {
-  class Node {
+  class Node : public Drawable {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_colors;    //vertex buffer object for colors
@@ -33,16 +35,17 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    Node() = default;
+    Node();
     Node(const std::vector<glm::vec3>& vertices,
          const std::vector<glm::vec4>& colors,
          std::vector<GLint> indices = {});
     ~Node();
 
+    void init_shader_type() override;
     void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw() const;
+    void draw(GLuint prog) const override;
   };
 }

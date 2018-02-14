@@ -8,15 +8,24 @@ Node::~Node() {
   release_vertex_data();
 }
 
+Node::Node() {
+  init_shader_type();
+}
+
 Node::Node(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
+  init_shader_type();
   if(vertices.size() != colors.size())
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
     store_vertex_data(_vertices, _colors, _indices);
   compute_store_normals();
   bind_vertex_data();
+}
+
+void Node::init_shader_type() {
+  shader_type = ShaderType::Node3D;
 }
 
 void Node::bind_vertex_data() {
@@ -80,7 +89,7 @@ void Node::compute_store_normals() {
     glm::vec3 v3(*iter++, *iter++, *iter++);
     glm::vec3 l1 = v1 - v2;
     glm::vec3 l2 = v3 - v2;
-    glm::vec3 normal = glm::cross(l1, l2);
+    glm::vec3 normal = glm::normalize(glm::cross(l1, l2));
     for(int j = 0; j < 3; j++) {
       normals.push_back(normal.x);
       normals.push_back(normal.y);
@@ -112,7 +121,9 @@ void Node::set_uniforms(GLuint program) const {
   glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 }
 
-void Node::draw() const {
+void Node::draw(GLuint prog) const {
+  set_uniforms(prog);
+
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
