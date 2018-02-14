@@ -10,7 +10,7 @@ int main() {
   scene.clear_color = glm::vec4(0);
   scene.sprite_shader = make_shared<graphics::SpriteShader>(std::string(GRAPHICS_SHADERS_DIRECTORY) + "sprite_vshader.glsl",
                                                             std::string(GRAPHICS_SHADERS_DIRECTORY) + "sprite_fshader_post.glsl");
-  graphics::Framebuffer framebuffer(canvas, true, true);
+  graphics::Framebuffer framebuffer(canvas, true, false);
 
   shared_ptr<graphics::Sprite> sprite = std::make_shared<graphics::Sprite>(framebuffer.color_texture);
   shared_ptr<graphics::Solid> solid = graphics::SolidShape::make_sphere(2, 30, 30);

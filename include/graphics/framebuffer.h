@@ -5,11 +5,14 @@
 
 namespace graphics {
   class Framebuffer {
-    GLuint fbo;
     bool use_color;
     bool use_depth;
     std::shared_ptr<Canvas> canvas;
+    GLuint fbo;
+    GLuint rbo_color;
+    GLuint rbo_depth;
 
+    void create_renderbuffers();
     void create_textures();
     void create_framebuffer();
 

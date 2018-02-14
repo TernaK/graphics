@@ -7,10 +7,11 @@ Framebuffer::Framebuffer(std::shared_ptr<Canvas> _canvas,
                          bool _use_color,
                          bool _use_depth)
 : use_color(_use_color), use_depth(_use_depth), canvas(_canvas) {
-  if(use_color && use_depth == 0)
+  if((use_color || use_depth) == false)
     throw runtime_error("Framebuffer must use the color or(and) depth buffers");
 
   create_textures();
+  create_renderbuffers();
   create_framebuffer();
 }
 
@@ -20,7 +21,7 @@ Framebuffer::~Framebuffer() {
 
 void Framebuffer::create_textures() {
   int w, h;
-  glfwGetFramebufferSize(canvas->window, &w, &h);
+  canvas->get_true_frame_size(w, h);
   if(use_color) {
     GLuint color_tex_id;
     glGenTextures(1, &color_tex_id);
@@ -51,12 +52,36 @@ void Framebuffer::create_textures() {
   }
 }
 
+void Framebuffer::create_renderbuffers() {
+  int w, h;
+  canvas->get_true_frame_size(w, h);
+  if(!use_color) {
+    glGenRenderbuffers(1, &rbo_color);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo_color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, w, h);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  }
+  if(!use_depth) {
+    glGenRenderbuffers(1, &rbo_depth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo_depth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  }
+}
+
 void Framebuffer::create_framebuffer() {
   glGenFramebuffers(1, &fbo);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture->get_texture_id(), 0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture->get_texture_id(), 0);
-
+  if(use_color)
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture->get_texture_id(), 0);
+  else
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo_color);
+  
+  if(use_depth)
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture->get_texture_id(), 0);
+  else
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_depth);
+  
   //check completeness
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     throw runtime_error("framebuffer is incomplete");
