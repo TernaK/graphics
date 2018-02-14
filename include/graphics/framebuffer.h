@@ -4,16 +4,17 @@
 
 namespace graphics {
   class Framebuffer {
+    GLuint fbo;
+    bool use_color;
+    bool use_depth;
+    std::shared_ptr<Canvas> canvas;
+
     void create_textures();
     void create_framebuffer();
 
   public:
-    std::shared_ptr<Canvas> canvas;
     std::shared_ptr<Texture> color_texture;
     std::shared_ptr<Texture> depth_texture;
-    bool use_color;
-    bool use_depth;
-    GLuint fbo;
 
     Framebuffer(std::shared_ptr<Canvas> canvas,
                 bool use_color = true,

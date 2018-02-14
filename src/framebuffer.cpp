@@ -6,7 +6,7 @@ using namespace graphics;
 Framebuffer::Framebuffer(std::shared_ptr<Canvas> _canvas,
                          bool _use_color,
                          bool _use_depth)
-: canvas(_canvas), use_color(_use_color), use_depth(_use_depth){
+: use_color(_use_color), use_depth(_use_depth), canvas(_canvas) {
   if(use_color && use_depth == 0)
     throw runtime_error("Framebuffer must use the color or(and) depth buffers");
 
