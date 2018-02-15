@@ -3,8 +3,6 @@
 using namespace std;
 using namespace graphics;
 
-const std::string Shader::SHADERS_DIR = std::string(GRAPHICS_SHADERS_DIRECTORY);
-
 Shader::Shader() {
 
 }
@@ -93,6 +91,15 @@ GLint Shader::add_uniform(std::string uniform_name) {
   GLint location = glGetUniformLocation(shader_program, uniform_name.c_str());
   if(location == -1)
     throw runtime_error(uniform_name + " uniform not found in shader");
+  uniforms[uniform_name] = location;
+  return location;
+}
+
+GLint Shader::add_attribute(std::string attribute_name) {
+  GLint location = glGetAttribLocation(shader_program, attribute_name.c_str());
+  if(location == -1)
+    throw runtime_error(attribute_name + " attribute not found in shader");
+  attributes[attribute_name] = location;
   return location;
 }
 
@@ -102,6 +109,11 @@ GLint Shader::operator()(std::string uniform_name) {
   return uniforms[uniform_name];
 }
 
+GLint Shader::operator[](std::string attribute_name) {
+  if(attributes.find(attribute_name) == attributes.end())
+    throw runtime_error(attribute_name + " attribute not found in shader");
+  return attributes[attribute_name];
+}
 //LightCameraShader::LightCameraShader(std::string v_path,
 //                                     std::string f_path)
 //: Shader(v_path, f_path) {

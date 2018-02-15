@@ -1,67 +1,46 @@
-#include <graphics/node.h>
-#include <graphics/util.h>
+#include <graphics/canvas.h>
 #include <graphics/shader.h>
-
+#include <memory>
+#include <vector>
 using namespace std;
-
-namespace helper {
-  void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if(action == GLFW_RELEASE) {
-      switch(key) {
-        case GLFW_KEY_ESCAPE:
-          glfwSetWindowShouldClose(window, GLFW_TRUE);
-          break;
-      }
-    }
-  }
-}
+using namespace graphics;
 
 int main(int argc, char* args[]) {
-  if(!glfwInit()) {
-    glfwTerminate();
-    exit(EXIT_FAILURE);
-  }
-  
-  glfwSetErrorCallback(graphics::util::glfw_error_callback);
-  
-  GLFWwindow* window = graphics::util::make_window(800, 600, "triangle");
-  glfwMakeContextCurrent(window);
-  
-  if(!(glewInit() == GLEW_OK)) {
-    glfwTerminate();
-    exit(EXIT_FAILURE);
-  }
-  
-  glfwSetFramebufferSizeCallback(window, graphics::util::resize_callback);
-  glfwSetKeyCallback(window, helper::key_callback);
-  
-  /* code */
-  std::vector<glm::vec3> vertices = {
-    glm::vec3(0,0.5,0),
-    glm::vec3(-0.5,-0.5,0),
-    glm::vec3(0.5,-0.5,0)
-  };
-  std::vector<glm::vec4> colors = {
-    glm::vec4(1,0,0,1),
-    glm::vec4(0,1,0,1),
-    glm::vec4(0,0,1,1)
-  };
-  std::vector<GLint> indices = { 0, 1, 2 };
-  graphics::Node node(vertices, colors, indices);
-  graphics::Shader shader(string(GRAPHICS_SHADERS_DIRECTORY) + "2d_vshader.glsl",
-                          string(GRAPHICS_SHADERS_DIRECTORY) + "2d_fshader.glsl");
+  auto canvas = make_shared<Canvas>(800,600);
+  Shader shader(graphics::SHADERS_DIR + "2d_vshader.glsl",
+                graphics::SHADERS_DIR + "2d_fshader.glsl");
 
-  while(!glfwWindowShouldClose(window)) {
-    glClearColor(0.1, 0.4, 0.2, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+  std::vector<float> data = {
+    0,0.5,0, 1,0,0,1,
+    -0.5,-0.5,0, 0,1,0,1,
+    0.5,-0.5,0, 0,0,1 ,1,
+  };
 
-    node.render(shader);
+  shader.add_attribute("_color");
+  shader.add_attribute("_pos");
+
+  GLuint vao, vbo;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  glGenBuffers(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(GLfloat), data.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(shader["_pos"], 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(shader["_color"], 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
+
+  glEnable(GL_DEPTH_TEST);
+  glClearColor(0, 0, 0, 1.0);
+
+  shader.use();
+  while(canvas->still_open()) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
     glfwPollEvents();
-    glfwSwapBuffers(window);
-    graphics::util::check_gl_errors();
+    canvas->swap_buffers();
   }
-  /* code */
-  
-  glfwDestroyWindow(window);
-  glfwTerminate();
+  void close_window();
 }
+
