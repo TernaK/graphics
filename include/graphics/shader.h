@@ -9,6 +9,7 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace graphics {
   const std::string SHADERS_DIR = std::string(GRAPHICS_SHADERS_DIRECTORY);
@@ -39,7 +40,8 @@ namespace graphics {
     void set_uniform(std::string uniform, const glm::mat3& value);
     void set_uniform(std::string uniform, const glm::mat4& value);
 
-    static Shader make_simple2d_shader();
-    static Shader make_mesh_point_shader();
+    static std::shared_ptr<Shader> make_simple2d_shader();
+    static std::shared_ptr<Shader> make_mesh_point_shader();
+    static std::shared_ptr<Shader> make_solid_point_shader();
   };
 }

@@ -8,13 +8,8 @@ Material::Material(glm::vec3 color, float shininess, float alpha)
   
 }
 
-void Material::set_uniforms(GLuint program) const {
-  GLint loc = glGetUniformLocation(program, "_material.color");
-  glUniform3fv(loc, 1, glm::value_ptr(color));
-  
-  loc = glGetUniformLocation(program, "_material.alpha");
-  glUniform1f(loc, alpha);
-  
-  loc = glGetUniformLocation(program, "_material.shininess");
-  glUniform1f(loc, shininess);
+void Material::set_uniforms(std::shared_ptr<Shader> shader) const {
+  shader->set_uniform("_material.color", color);
+  shader->set_uniform("_material.alpha", alpha);
+  shader->set_uniform("_material.shininess", shininess);
 }

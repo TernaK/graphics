@@ -1,16 +1,12 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <graphics/shader.h>
+#include <graphics/material.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
-#include <graphics/material.h>
-#include <graphics/drawable.h>
 
 namespace graphics {
-  class Solid : public Drawable  {
+  class Solid  {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_normals;    //vertex buffer object for colors
@@ -38,11 +34,11 @@ namespace graphics {
           Material material = Material());
     ~Solid();
 
-    void init_shader_type() override;
-    void set_uniforms(GLuint program) const;
+//    void init_shader_type() override;
+    void set_uniforms(std::shared_ptr<Shader> shader) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw(GLuint prog) const override;
+    void draw(std::shared_ptr<Shader> shader) const;
   };
 }

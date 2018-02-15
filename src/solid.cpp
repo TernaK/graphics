@@ -9,21 +9,21 @@ Solid::~Solid() {
 }
 
 Solid::Solid() {
-  init_shader_type();
+//  init_shader_type();
 }
 
 Solid::Solid(const std::vector<glm::vec3>& _vertices,
              std::vector<int> _indices,
              Material material) {
-  init_shader_type();
+//  init_shader_type();
   store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
 
-void Solid::init_shader_type() {
-  shader_type = ShaderType::Solid;
-}
+//void Solid::init_shader_type() {
+//  shader_type = ShaderType::Solid;
+//}
 
 void Solid::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
@@ -97,19 +97,17 @@ glm::mat4 Solid::get_model_mat() const {
   return model_mat;
 }
 
-void Solid::set_uniforms(GLuint program) const {
+void Solid::set_uniforms(std::shared_ptr<Shader> shader) const {
   glm::mat4 model_mat = get_model_mat();
-  GLint loc = glGetUniformLocation(program, "_model_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
-
+  shader->set_uniform("_model_mat", model_mat);
+  
   glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
-  loc = glGetUniformLocation(program, "_normal_mat");
-  glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
+  shader->set_uniform("_normal_mat", normal_mat);
 }
 
-void Solid::draw(GLuint prog) const {
-  material.set_uniforms(prog);     
-  set_uniforms(prog);
+void Solid::draw(std::shared_ptr<Shader> shader) const {
+  material.set_uniforms(shader);
+  set_uniforms(shader);
 
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);

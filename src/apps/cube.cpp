@@ -1,5 +1,6 @@
 #include <graphics/canvas.h>
 #include <graphics/mesh.h>
+#include <graphics/solid.h>
 #include <graphics/camera.h>
 #include <graphics/light.h>
 #include <memory>
@@ -9,7 +10,8 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   auto canvas = make_shared<Canvas>(480,480);
-  auto shader = make_shared<Shader>(Shader::make_mesh_point_shader());
+  auto mesh_shader = Shader::make_mesh_point_shader();
+  auto solid_shader = Shader::make_solid_point_shader();
   std::vector<glm::vec3> vertices = {
     glm::vec3(-1,1,1), glm::vec3(1,1,1),      //front top left 0, top right 1
     glm::vec3(-1,-1,1), glm::vec3(1,-1,1),    //front low left 2, low right 3
@@ -30,7 +32,10 @@ int main(int argc, char* args[]) {
     glm::vec4(0,1,0,1), glm::vec4(0,1,0,1), //back top left 4, top right 5
     glm::vec4(0,1,0,1), glm::vec4(0,1,0,1), //back low left 6, low right 7
   };
+  
   Mesh mesh(vertices, colors, indices);
+  Solid solid(vertices, indices);
+  solid.scale = glm::vec3(0.3);
   PointLight light;
   Camera camera;
   camera.position.z = 10;
@@ -38,15 +43,21 @@ int main(int argc, char* args[]) {
 
   glEnable(GL_DEPTH_TEST);
   glClearColor(0, 0, 0, 1.0);
-
-  shader->use();
-
-  camera.set_uniforms(shader);
-  light.set_uniforms(shader);
   while(canvas->still_open()) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mesh.draw(shader);
     mesh.rotation.y += 1;
+    solid.position.x = -3 * sin(glfwGetTime() * 2);
+    solid.position.z = 3 * cos(glfwGetTime() * 2);
+    
+    mesh_shader->use();
+    camera.set_uniforms(mesh_shader);
+    light.set_uniforms(mesh_shader);
+    mesh.draw(mesh_shader);
+    
+    solid_shader->use();
+    camera.set_uniforms(solid_shader);
+    light.set_uniforms(solid_shader);
+    solid.draw(solid_shader);
     
     glfwPollEvents();
     canvas->swap_buffers();

@@ -6,12 +6,12 @@ set(graphics_srcs
   light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
   camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
   mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
+  material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
+  solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
   # ${CMAKE_SOURCE_DIR}/include/graphics/util.h
-  # solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
   # texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   # sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
   # scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
-  # material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
   # ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
   # shape.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shape.h
   # framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
