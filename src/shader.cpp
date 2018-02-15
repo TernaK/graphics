@@ -114,37 +114,19 @@ GLint Shader::operator[](std::string attribute_name) {
     throw runtime_error(attribute_name + " attribute not found in shader");
   return attributes[attribute_name];
 }
-//LightCameraShader::LightCameraShader(std::string v_path,
-//                                     std::string f_path)
-//: Shader(v_path, f_path) {
-//
-//}
-//
-//void LightCameraShader::set_uniforms(const Light& light, const Camera& camera) const {
-//  light.set_uniforms(shader_program);
-//  camera.set_uniforms(shader_program);
-//}
-//
-//SolidShader::SolidShader(std::string v_path,
-//               std::string f_path)
-//: LightCameraShader(v_path, f_path) {
-//
-//}
-//
-//void SolidShader::set_uniforms(const Material& material, const Light& light, const Camera& camera) const {
-//  LightCameraShader::set_uniforms(light, camera);
-//  material.set_uniforms(shader_program);
-//}
-//
-//Node3DShader::Node3DShader(std::string v_path,
-//                           std::string f_path)
-//: LightCameraShader(v_path, f_path) {
-//
-//}
-//
-//SpriteShader::SpriteShader(std::string v_path,
-//                           std::string f_path)
-//: Shader(v_path, f_path) {
-//
-//}
 
+Shader Shader::make_simple2d_shader() {
+  Shader shader(graphics::SHADERS_DIR + "simple2d_vshader.glsl",
+                graphics::SHADERS_DIR + "simple2d_fshader.glsl");
+  shader.add_attribute("_pos");
+  shader.add_attribute("_color");
+  return shader;
+}
+
+Shader Shader::make_simple3d_shader() {
+  Shader shader(graphics::SHADERS_DIR + "simple3d_vshader.glsl",
+                graphics::SHADERS_DIR + "simple3d_fshader.glsl");
+  shader.add_attribute("_light");
+  shader.add_attribute("_camera");
+  return shader;
+}

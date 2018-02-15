@@ -7,8 +7,7 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   auto canvas = make_shared<Canvas>(800,600);
-  Shader shader(graphics::SHADERS_DIR + "2d_vshader.glsl",
-                graphics::SHADERS_DIR + "2d_fshader.glsl");
+  Shader shader = Shader::make_simple2d_shader();
 
   std::vector<float> data = {
     0,0.5,0, 1,0,0,1,
