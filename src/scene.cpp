@@ -53,7 +53,7 @@ void Scene3D::draw_scene() {
   
   glfwPollEvents();
   glfwSwapBuffers(canvas->window);
-  Helper::check_gl_errors();
+  CanvasHelper::check_gl_errors();
 }
 
 void Scene3D::add_drawable(std::shared_ptr<Drawable> solid_node) {
@@ -65,6 +65,6 @@ void Scene3D::set_background(std::shared_ptr<Drawable> drawable) {
 }
 
 void Scene3D::clear() {
-  glClearColor(0.8,0.8,0.8,1);
+  glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
