@@ -41,6 +41,6 @@ namespace graphics {
     void set_uniform(std::string uniform, const glm::mat4& value);
 
     static Shader make_simple2d_shader();
-    static Shader make_simple3d_shader();
+    static Shader make_mesh_shader();
   };
 }

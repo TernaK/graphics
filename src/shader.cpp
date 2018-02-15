@@ -84,7 +84,7 @@ void Shader::use() const {
 }
 
 void Shader::unuse() const {
-  glUseProgram(0);
+//  glUseProgram(0);
 }
 
 GLint Shader::add_uniform(std::string uniform_name) {
@@ -133,11 +133,23 @@ Shader Shader::make_simple2d_shader() {
   return shader;
 }
 
-Shader Shader::make_simple3d_shader() {
-  Shader shader(graphics::SHADERS_DIR + "simple3d_vshader.glsl",
-                graphics::SHADERS_DIR + "simple3d_fshader.glsl");
-  shader.add_attribute("_light");
-  shader.add_attribute("_camera");
+Shader Shader::make_mesh_shader() {
+  Shader shader(graphics::SHADERS_DIR + "mesh_point_vshader.glsl",
+                graphics::SHADERS_DIR + "mesh_point_fshader.glsl");
+  shader.use();
+  shader.add_attribute("_pos");
+  shader.add_attribute("_color");
+  shader.add_attribute("_normal");
+  shader.add_uniform("_light.color");
+  shader.add_uniform("_light.ambient");
+  shader.add_uniform("_light.position");
+  shader.add_uniform("_light.attenuation");
+  shader.add_uniform("_proj_mat");
+  shader.add_uniform("_view_mat");
+  shader.add_uniform("_model_mat");
+  shader.add_uniform("_normal_mat");
+  shader.add_uniform("_cam_pos");
+  shader.unuse();
   return shader;
 }
 

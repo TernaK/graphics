@@ -5,8 +5,8 @@ set(graphics_srcs
   shader.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shader.h
   light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
   camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
+  mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
   # ${CMAKE_SOURCE_DIR}/include/graphics/util.h
-  # node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/node.h
   # solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
   # texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   # sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
