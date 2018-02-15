@@ -3,6 +3,8 @@
 using namespace std;
 using namespace graphics;
 
+const std::string Shader::SHADERS_DIR = std::string(GRAPHICS_SHADERS_DIRECTORY);
+
 Shader::Shader() {
 
 }
@@ -83,37 +85,54 @@ void Shader::use() const {
   glUseProgram(shader_program);
 }
 
-LightCameraShader::LightCameraShader(std::string v_path,
-                                     std::string f_path)
-: Shader(v_path, f_path) {
-
+void Shader::unuse() const {
+  glUseProgram(0);
 }
 
-void LightCameraShader::set_uniforms(const Light& light, const Camera& camera) const {
-  light.set_uniforms(shader_program);
-  camera.set_uniforms(shader_program);
+GLint Shader::add_uniform(std::string uniform_name) {
+  GLint location = glGetUniformLocation(shader_program, uniform_name.c_str());
+  if(location == -1)
+    throw runtime_error(uniform_name + " uniform not found in shader");
+  return location;
 }
 
-SolidShader::SolidShader(std::string v_path,
-               std::string f_path)
-: LightCameraShader(v_path, f_path) {
-
+GLint Shader::operator()(std::string uniform_name) {
+  if(uniforms.find(uniform_name) == uniforms.end())
+    throw runtime_error(uniform_name + " uniform not found in shader");
+  return uniforms[uniform_name];
 }
 
-void SolidShader::set_uniforms(const Material& material, const Light& light, const Camera& camera) const {
-  LightCameraShader::set_uniforms(light, camera);
-  material.set_uniforms(shader_program);
-}
-
-Node3DShader::Node3DShader(std::string v_path,
-                           std::string f_path)
-: LightCameraShader(v_path, f_path) {
-  
-}
-
-SpriteShader::SpriteShader(std::string v_path,
-                           std::string f_path)
-: Shader(v_path, f_path) {
-  
-}
+//LightCameraShader::LightCameraShader(std::string v_path,
+//                                     std::string f_path)
+//: Shader(v_path, f_path) {
+//
+//}
+//
+//void LightCameraShader::set_uniforms(const Light& light, const Camera& camera) const {
+//  light.set_uniforms(shader_program);
+//  camera.set_uniforms(shader_program);
+//}
+//
+//SolidShader::SolidShader(std::string v_path,
+//               std::string f_path)
+//: LightCameraShader(v_path, f_path) {
+//
+//}
+//
+//void SolidShader::set_uniforms(const Material& material, const Light& light, const Camera& camera) const {
+//  LightCameraShader::set_uniforms(light, camera);
+//  material.set_uniforms(shader_program);
+//}
+//
+//Node3DShader::Node3DShader(std::string v_path,
+//                           std::string f_path)
+//: LightCameraShader(v_path, f_path) {
+//
+//}
+//
+//SpriteShader::SpriteShader(std::string v_path,
+//                           std::string f_path)
+//: Shader(v_path, f_path) {
+//
+//}
 
