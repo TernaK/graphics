@@ -28,7 +28,6 @@ namespace graphics {
     GLint operator()(std::string uniform_name);
     GLint operator[](std::string attribute_name);
     void use() const;
-    void unuse() const;
     GLint add_uniform(std::string uniform_name);
     GLint add_attribute(std::string attribute_name);
     void set_uniform(std::string uniform, float value);
@@ -41,6 +40,6 @@ namespace graphics {
     void set_uniform(std::string uniform, const glm::mat4& value);
 
     static Shader make_simple2d_shader();
-    static Shader make_mesh_shader();
+    static Shader make_mesh_point_shader();
   };
 }

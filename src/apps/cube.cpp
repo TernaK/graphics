@@ -9,7 +9,7 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   auto canvas = make_shared<Canvas>(480,480);
-  auto shader = make_shared<Shader>(Shader::make_mesh_shader());
+  auto shader = make_shared<Shader>(Shader::make_mesh_point_shader());
   std::vector<glm::vec3> vertices = {
     glm::vec3(-1,1,1), glm::vec3(1,1,1),      //front top left 0, top right 1
     glm::vec3(-1,-1,1), glm::vec3(1,-1,1),    //front low left 2, low right 3

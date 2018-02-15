@@ -83,10 +83,6 @@ void Shader::use() const {
   glUseProgram(shader_program);
 }
 
-void Shader::unuse() const {
-//  glUseProgram(0);
-}
-
 GLint Shader::add_uniform(std::string uniform_name) {
   auto iter = uniforms.find(uniform_name);
   if(iter != uniforms.end()) {
@@ -128,12 +124,13 @@ GLint Shader::operator[](std::string attribute_name) {
 Shader Shader::make_simple2d_shader() {
   Shader shader(graphics::SHADERS_DIR + "simple2d_vshader.glsl",
                 graphics::SHADERS_DIR + "simple2d_fshader.glsl");
+  shader.use();
   shader.add_attribute("_pos");
   shader.add_attribute("_color");
   return shader;
 }
 
-Shader Shader::make_mesh_shader() {
+Shader Shader::make_mesh_point_shader() {
   Shader shader(graphics::SHADERS_DIR + "mesh_point_vshader.glsl",
                 graphics::SHADERS_DIR + "mesh_point_fshader.glsl");
   shader.use();
@@ -149,7 +146,6 @@ Shader Shader::make_mesh_shader() {
   shader.add_uniform("_model_mat");
   shader.add_uniform("_normal_mat");
   shader.add_uniform("_cam_pos");
-  shader.unuse();
   return shader;
 }
 
