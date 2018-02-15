@@ -140,3 +140,36 @@ Shader Shader::make_simple3d_shader() {
   shader.add_attribute("_camera");
   return shader;
 }
+
+void Shader::set_uniform(std::string uniform, float value) {
+  glUniform1f((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, bool value) {
+  glUniform1i((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec2& value) {
+  glUniform2fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec3& value) {
+  glUniform3fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec4& value) {
+  glUniform4fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat2& value) {
+  glUniformMatrix2fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat3& value) {
+  glUniformMatrix3fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat4& value) {
+  glUniformMatrix4fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
+}
+

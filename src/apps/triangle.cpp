@@ -7,7 +7,8 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   auto canvas = make_shared<Canvas>(800,600);
-  Shader shader = Shader::make_simple2d_shader();
+  Shader shader = Shader(SHADERS_DIR + "simple2d_vshader_time.glsl",
+                         SHADERS_DIR + "simple2d_fshader.glsl");
 
   std::vector<float> data = {
     0,0.5,0, 1,0,0,1,
@@ -17,6 +18,7 @@ int main(int argc, char* args[]) {
 
   shader.add_attribute("_color");
   shader.add_attribute("_pos");
+  shader.add_uniform("_time");
 
   GLuint vao, vbo;
   glGenVertexArrays(1, &vao);
@@ -35,8 +37,9 @@ int main(int argc, char* args[]) {
   shader.use();
   while(canvas->still_open()) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 
+    shader.set_uniform("_time", float(glfwGetTime()));
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glfwPollEvents();
     canvas->swap_buffers();
   }
