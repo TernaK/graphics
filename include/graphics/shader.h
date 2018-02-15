@@ -2,9 +2,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <graphics/camera.h>
-#include <graphics/light.h>
-#include <graphics/material.h>
 #include <iostream>
 #include <string>
 #include <fstream>

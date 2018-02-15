@@ -3,10 +3,10 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 set(graphics_srcs
   canvas.cpp ${CMAKE_SOURCE_DIR}/include/graphics/canvas.h
   shader.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shader.h
+  light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
+  camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
   # ${CMAKE_SOURCE_DIR}/include/graphics/util.h
   # node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/node.h
-  # camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
-  # light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
   # solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
   # texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   # sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
