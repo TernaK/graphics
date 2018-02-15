@@ -88,6 +88,11 @@ void Shader::unuse() const {
 }
 
 GLint Shader::add_uniform(std::string uniform_name) {
+  auto iter = uniforms.find(uniform_name);
+  if(iter != uniforms.end()) {
+    return iter->second;
+  }
+
   GLint location = glGetUniformLocation(shader_program, uniform_name.c_str());
   if(location == -1)
     throw runtime_error(uniform_name + " uniform not found in shader");
@@ -96,6 +101,11 @@ GLint Shader::add_uniform(std::string uniform_name) {
 }
 
 GLint Shader::add_attribute(std::string attribute_name) {
+  auto iter = attributes.find(attribute_name);
+  if(iter != attributes.end()) {
+    return iter->second;
+  }
+
   GLint location = glGetAttribLocation(shader_program, attribute_name.c_str());
   if(location == -1)
     throw runtime_error(attribute_name + " attribute not found in shader");
