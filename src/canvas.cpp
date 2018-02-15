@@ -30,7 +30,7 @@ Canvas::~Canvas() {
 }
 
 bool Canvas::still_open() {
-  return glfwWindowShouldClose(window);
+  return !glfwWindowShouldClose(window);
 }
 
 void Canvas::close_window() {
