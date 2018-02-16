@@ -1,11 +1,11 @@
 #pragma once
-#include <graphics/shader.h>
+#include <graphics/drawable.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <numeric>
 
 namespace graphics {
-  class Mesh {
+  class Mesh : public Drawable {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_colors;    //vertex buffer object for colors
@@ -39,9 +39,9 @@ namespace graphics {
 
     void bind_vertex_data();
     void release_vertex_data();
-//    void init_shader_type();
-    void set_uniforms(std::shared_ptr<Shader> shader) const;
-    void draw(std::shared_ptr<Shader> shader) const;
     glm::mat4 get_model_mat() const;
+    void set_uniforms(std::shared_ptr<Shader> shader) const;
+    ShaderType get_shader_type() const override;
+    void draw(std::shared_ptr<Shader> shader) const override;
   };
 }

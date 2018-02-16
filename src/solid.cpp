@@ -113,3 +113,7 @@ void Solid::draw(std::shared_ptr<Shader> shader) const {
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
 }
+
+ShaderType Solid::get_shader_type() const {
+  return ShaderType::Solid;
+}

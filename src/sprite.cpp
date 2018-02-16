@@ -60,14 +60,14 @@ void Sprite::release_vertex_data() {
   glDeleteVertexArrays(1, &vao);
 }
 
-//void Sprite::init_shader_type() {
-//  shader_type = ShaderType::Sprite;
-//}
-
 void Sprite::draw(std::shared_ptr<Shader> shader) const {
   texture->activate();
   texture->set_uniforms(shader);
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
+}
+
+ShaderType Sprite::get_shader_type() const {
+  return ShaderType::Sprite;
 }
