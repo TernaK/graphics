@@ -1,3 +1,4 @@
 ### graphics
 
-Another stab at modern OpenGL.
+A graphics library based on modern OpenGL.
+![3D scene](graphics.gif)

@@ -12,9 +12,8 @@ set(graphics_srcs
   texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
   ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
-  # ${CMAKE_SOURCE_DIR}/include/graphics/util.h
-  # scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
-  # framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
+  scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
+  framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})
