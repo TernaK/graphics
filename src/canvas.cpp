@@ -44,3 +44,7 @@ void Canvas::get_true_frame_size(int& width, int& height) {
 void Canvas::swap_buffers() {
   glfwSwapBuffers(window);
 }
+
+float Canvas::get_aspect_ratio() {
+  return float(width)/height;
+}

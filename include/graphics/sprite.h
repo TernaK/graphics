@@ -1,10 +1,8 @@
 #pragma once
-#include <graphics/drawable.h>
 #include <graphics/texture.h>
-#include <memory>
 
 namespace graphics {
-  class Sprite : public Drawable {
+  class Sprite {
   private:
     GLuint vbo;
     GLuint vao;
@@ -20,7 +18,7 @@ namespace graphics {
 
     void bind_vertex_data();
     void release_vertex_data();
-    void init_shader_type() override;
-    void draw(GLuint shader_prog) const override;
+//    void init_shader_type();
+    void draw(std::shared_ptr<Shader> shader) const;
   };
 }

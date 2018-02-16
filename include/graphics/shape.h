@@ -1,7 +1,5 @@
 #pragma once
 #include <graphics/solid.h>
-#include <memory>
-#include <exception>
 
 namespace graphics {
   struct SolidShape {

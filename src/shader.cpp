@@ -170,8 +170,22 @@ std::shared_ptr<Shader> Shader::make_solid_point_shader() {
   return shader;
 }
 
+std::shared_ptr<Shader> Shader::make_sprite_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "sprite_vshader.glsl",
+                                    graphics::SHADERS_DIR + "sprite_fshader.glsl");
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_tex_coord");
+  shader->add_uniform("_texture0");
+  return shader;
+}
+
 void Shader::set_uniform(std::string uniform, float value) {
   glUniform1f((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, int value) {
+  glUniform1i((*this)(uniform), value);
 }
 
 void Shader::set_uniform(std::string uniform, bool value) {

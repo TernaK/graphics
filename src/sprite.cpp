@@ -5,21 +5,21 @@ using namespace graphics;
 
 Sprite::Sprite(std::string image)
 : texture(make_shared<Texture>(image)) {
-  init_shader_type();
+//  init_shader_type();
   create_data();
   bind_vertex_data();
 }
 
 Sprite::Sprite(cv::Mat image)
 : texture(make_shared<Texture>(image)) {
-  init_shader_type();
+//  init_shader_type();
   create_data();
   bind_vertex_data();
 }
 
 Sprite::Sprite(std::shared_ptr<Texture> texture)
 : texture(texture) {
-  init_shader_type();
+//  init_shader_type();
   create_data();
   bind_vertex_data();
 }
@@ -60,13 +60,13 @@ void Sprite::release_vertex_data() {
   glDeleteVertexArrays(1, &vao);
 }
 
-void Sprite::init_shader_type() {
-  shader_type = ShaderType::Sprite;
-}
+//void Sprite::init_shader_type() {
+//  shader_type = ShaderType::Sprite;
+//}
 
-void Sprite::draw(GLuint shader_prog) const {
+void Sprite::draw(std::shared_ptr<Shader> shader) const {
   texture->activate();
-  texture->set_uniforms(shader_prog);
+  texture->set_uniforms(shader);
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);

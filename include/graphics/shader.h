@@ -32,6 +32,7 @@ namespace graphics {
     GLint add_uniform(std::string uniform_name);
     GLint add_attribute(std::string attribute_name);
     void set_uniform(std::string uniform, float value);
+    void set_uniform(std::string uniform, int value);
     void set_uniform(std::string uniform, bool value);
     void set_uniform(std::string uniform, const glm::vec2& value);
     void set_uniform(std::string uniform, const glm::vec3& value);
@@ -43,5 +44,6 @@ namespace graphics {
     static std::shared_ptr<Shader> make_simple2d_shader();
     static std::shared_ptr<Shader> make_mesh_point_shader();
     static std::shared_ptr<Shader> make_solid_point_shader();
+    static std::shared_ptr<Shader> make_sprite_shader();
   };
 }
