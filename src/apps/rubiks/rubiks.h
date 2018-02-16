@@ -2,7 +2,7 @@
 #include <opencv2/opencv.hpp>
 
 struct RubiksCube {
-  typedef std::vector<char> Plane;
+  typedef std::vector<uchar> Plane;
   enum struct Move {
     L, R, T, Bt, F, Bk, H, V
   };
