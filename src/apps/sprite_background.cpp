@@ -21,18 +21,18 @@ int main(int argc, char* args[]) {
 
   glEnable(GL_DEPTH_TEST);
   while(canvas->still_open()) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    canvas->clear();
     sprite_shader->use();
     sprite->draw(sprite_shader);
     
-    glClear(GL_DEPTH_BUFFER_BIT);
+    canvas->clear(false, true);
     solid_shader->use();
     solid->rotation.y += 1;
     camera.set_uniforms(solid_shader);
     light.set_uniforms(solid_shader);
     solid->draw(solid_shader);
     
-    glfwPollEvents();
+    canvas->poll_events();
     canvas->swap_buffers();
   }
 }

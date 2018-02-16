@@ -48,3 +48,12 @@ void Canvas::swap_buffers() {
 float Canvas::get_aspect_ratio() {
   return float(width)/height;
 }
+
+void Canvas::clear(bool color, bool depth) {
+  if(color || depth)
+    glClear((color ? GL_COLOR_BUFFER_BIT : 0) | (depth ? GL_DEPTH_BUFFER_BIT : 0));
+}
+
+void Canvas::poll_events() {
+  glfwPollEvents();
+}
