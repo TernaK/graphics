@@ -56,10 +56,9 @@ void Texture::activate(GLuint texture_unit) {
   glBindTexture(GL_TEXTURE_2D, texture_id);
 }
 
-void Texture::set_uniforms(GLuint shader_program, GLuint texture_unit) {
+void Texture::set_uniforms(std::shared_ptr<Shader> shader, GLuint texture_unit) {
   std::string texture_name = "_texture" + std::to_string(texture_unit);
-  GLint loc = glGetUniformLocation(shader_program, texture_name.c_str());
-  glUniform1i(loc, texture_unit);
+  shader->set_uniform(texture_name, (int)texture_unit);
 }
 
 void Texture::set_filpped() {

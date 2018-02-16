@@ -1,13 +1,11 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <graphics/shader.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <memory>
 
 namespace graphics {
   struct Camera {
-    glm::vec3 position = glm::vec3(0,0,5);
+    glm::vec3 position = glm::vec3(0,2,5);
     GLfloat fov = 70.0;
     GLfloat aspect_ratio = 1.0;
     GLfloat z_near = 0.1;
@@ -18,6 +16,6 @@ namespace graphics {
     Camera() = default;
     glm::mat4 get_proj_mat() const;
     glm::mat4 get_view_mat() const;
-    void set_uniforms(GLuint program) const;
+    void set_uniforms(std::shared_ptr<Shader> shader) const;
   };
 }

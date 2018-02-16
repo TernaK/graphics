@@ -83,37 +83,136 @@ void Shader::use() const {
   glUseProgram(shader_program);
 }
 
-LightCameraShader::LightCameraShader(std::string v_path,
-                                     std::string f_path)
-: Shader(v_path, f_path) {
+GLint Shader::add_uniform(std::string uniform_name) {
+  auto iter = uniforms.find(uniform_name);
+  if(iter != uniforms.end()) {
+    return iter->second;
+  }
 
+  GLint location = glGetUniformLocation(shader_program, uniform_name.c_str());
+  if(location == -1)
+    throw runtime_error(uniform_name + " uniform not found in shader");
+  uniforms[uniform_name] = location;
+  return location;
 }
 
-void LightCameraShader::set_uniforms(const Light& light, const Camera& camera) const {
-  light.set_uniforms(shader_program);
-  camera.set_uniforms(shader_program);
+GLint Shader::add_attribute(std::string attribute_name) {
+  auto iter = attributes.find(attribute_name);
+  if(iter != attributes.end()) {
+    return iter->second;
+  }
+
+  GLint location = glGetAttribLocation(shader_program, attribute_name.c_str());
+  if(location == -1)
+    throw runtime_error(attribute_name + " attribute not found in shader");
+  attributes[attribute_name] = location;
+  return location;
 }
 
-SolidShader::SolidShader(std::string v_path,
-               std::string f_path)
-: LightCameraShader(v_path, f_path) {
-
+GLint Shader::operator()(std::string uniform_name) {
+  if(uniforms.find(uniform_name) == uniforms.end())
+    throw runtime_error(uniform_name + " uniform not found in shader");
+  return uniforms[uniform_name];
 }
 
-void SolidShader::set_uniforms(const Material& material, const Light& light, const Camera& camera) const {
-  LightCameraShader::set_uniforms(light, camera);
-  material.set_uniforms(shader_program);
+GLint Shader::operator[](std::string attribute_name) {
+  if(attributes.find(attribute_name) == attributes.end())
+    throw runtime_error(attribute_name + " attribute not found in shader");
+  return attributes[attribute_name];
 }
 
-Node3DShader::Node3DShader(std::string v_path,
-                           std::string f_path)
-: LightCameraShader(v_path, f_path) {
-  
+std::shared_ptr<Shader> Shader::make_simple2d_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "simple2d_vshader.glsl",
+                                    graphics::SHADERS_DIR + "simple2d_fshader.glsl");
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_color");
+  return shader;
 }
 
-SpriteShader::SpriteShader(std::string v_path,
-                           std::string f_path)
-: Shader(v_path, f_path) {
-  
+std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "mesh_point_vshader.glsl",
+                                    graphics::SHADERS_DIR + "mesh_point_fshader.glsl");
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_color");
+  shader->add_attribute("_normal");
+  shader->add_uniform("_light.color");
+  shader->add_uniform("_light.ambient");
+  shader->add_uniform("_light.position");
+  shader->add_uniform("_light.attenuation");
+  shader->add_uniform("_proj_mat");
+  shader->add_uniform("_view_mat");
+  shader->add_uniform("_model_mat");
+  shader->add_uniform("_normal_mat");
+  shader->add_uniform("_cam_pos");
+  return shader;
+}
+
+std::shared_ptr<Shader> Shader::make_solid_point_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "solid_point_vshader.glsl",
+                                    graphics::SHADERS_DIR + "solid_point_fshader.glsl");
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_normal");
+  shader->add_uniform("_material.color");
+  shader->add_uniform("_material.alpha");
+  shader->add_uniform("_material.shininess");
+  shader->add_uniform("_light.color");
+  shader->add_uniform("_light.ambient");
+  shader->add_uniform("_light.position");
+  shader->add_uniform("_light.attenuation");
+  shader->add_uniform("_proj_mat");
+  shader->add_uniform("_view_mat");
+  shader->add_uniform("_model_mat");
+  shader->add_uniform("_normal_mat");
+  shader->add_uniform("_cam_pos");
+  return shader;
+}
+
+std::shared_ptr<Shader> Shader::make_sprite_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "sprite_vshader.glsl",
+                                    graphics::SHADERS_DIR + "sprite_fshader.glsl");
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_tex_coord");
+  shader->add_uniform("_texture0");
+  return shader;
+}
+
+void Shader::set_uniform(std::string uniform, float value) {
+  glUniform1f((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, int value) {
+  glUniform1i((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, bool value) {
+  glUniform1i((*this)(uniform), value);
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec2& value) {
+  glUniform2fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec3& value) {
+  glUniform3fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::vec4& value) {
+  glUniform4fv((*this)(uniform), 1, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat2& value) {
+  glUniformMatrix2fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat3& value) {
+  glUniformMatrix3fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::set_uniform(std::string uniform, const glm::mat4& value) {
+  glUniformMatrix4fv((*this)(uniform), 1, GL_FALSE, glm::value_ptr(value));
 }
 

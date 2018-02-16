@@ -1,7 +1,6 @@
 #pragma once
 #include <graphics/drawable.h>
 #include <graphics/texture.h>
-#include <memory>
 
 namespace graphics {
   class Sprite : public Drawable {
@@ -20,7 +19,7 @@ namespace graphics {
 
     void bind_vertex_data();
     void release_vertex_data();
-    void init_shader_type() override;
-    void draw(GLuint shader_prog) const override;
+    ShaderType get_shader_type() const override;
+    void draw(std::shared_ptr<Shader> shader) const override;
   };
 }

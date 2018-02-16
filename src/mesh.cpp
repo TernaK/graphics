@@ -1,21 +1,21 @@
-#include <graphics/node.h>
+#include <graphics/mesh.h>
 #include <iostream>
 #include <exception>
 using namespace graphics;
 using namespace std;
 
-Node::~Node() {
+Mesh::~Mesh() {
   release_vertex_data();
 }
 
-Node::Node() {
-  init_shader_type();
+Mesh::Mesh() {
+//  init_shader_type();
 }
 
-Node::Node(const std::vector<glm::vec3>& _vertices,
+Mesh::Mesh(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
-  init_shader_type();
+//  init_shader_type();
   if(vertices.size() != colors.size())
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
@@ -24,11 +24,11 @@ Node::Node(const std::vector<glm::vec3>& _vertices,
   bind_vertex_data();
 }
 
-void Node::init_shader_type() {
-  shader_type = ShaderType::Node3D;
-}
+//void Node::init_shader_type() {
+//  shader_type = ShaderType::Node3D;
+//}
 
-void Node::bind_vertex_data() {
+void Mesh::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   //positions
@@ -57,14 +57,14 @@ void Node::bind_vertex_data() {
   glBindVertexArray(0);
 }
 
-void Node::release_vertex_data() {
+void Mesh::release_vertex_data() {
   glDeleteBuffers(1, &vbo_vertices);
   glDeleteBuffers(1, &vbo_colors);
   glDeleteBuffers(1, &vbo_normals);
   glDeleteVertexArrays(1, &vao);
 }
 
-void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
+void Mesh::store_vertex_data(const std::vector<glm::vec3>& _vertices,
                              const std::vector<glm::vec4>& _colors,
                              const std::vector<GLint>& _indices) {
   //unpack vertex data
@@ -81,7 +81,7 @@ void Node::store_vertex_data(const std::vector<glm::vec3>& _vertices,
   }
 }
 
-void Node::compute_store_normals() {
+void Mesh::compute_store_normals() {
   for(int i = 0; i < vertices.size() / 9; i++) {
     auto iter = vertices.begin() + i*9;
     glm::vec3 v1(*iter++, *iter++, *iter++);
@@ -98,7 +98,7 @@ void Node::compute_store_normals() {
   }
 }
 
-glm::mat4 Node::get_model_mat() const {
+glm::mat4 Mesh::get_model_mat() const {
   glm::mat4 model_mat = glm::translate(glm::mat4(1.0), position);
   model_mat = glm::rotate(model_mat, glm::radians(rotation.x), glm::vec3(1,0,0));
   model_mat = glm::rotate(model_mat, glm::radians(rotation.y), glm::vec3(0,1,0));
@@ -107,24 +107,26 @@ glm::mat4 Node::get_model_mat() const {
   return model_mat;
 }
 
-void Node::set_uniforms(GLuint program) const {
+void Mesh::set_uniforms(std::shared_ptr<Shader> shader) const {
   glm::mat4 model_mat = get_model_mat();
-  GLint loc = glGetUniformLocation(program, "_model_mat");
-  glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+  shader->set_uniform("_model_mat", model_mat);
 
   //n2.l2 = (R.n1)' . R1.l1 == 0
   //n2.l2 = n1'.R' . R1.l1 --> if R'.R1 == I because R^ = R' (orthogonal, though scaled)
   //hence R' = I.R1^-1 --> R = I.(R^-1)' == (R^-1)'
   //therefore normal rotation R = (R^-1)', transpose of inverse
   glm::mat3 normal_mat = glm::transpose(glm::inverse(glm::mat3(model_mat)));
-  loc = glGetUniformLocation(program, "_normal_mat");
-  glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
+  shader->set_uniform("_normal_mat", normal_mat);
 }
 
-void Node::draw(GLuint prog) const {
-  set_uniforms(prog);
+void Mesh::draw(std::shared_ptr<Shader> shader) const {
+  set_uniforms(shader);
 
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
   glBindVertexArray(0);
+}
+
+ShaderType Mesh::get_shader_type() const {
+  return ShaderType::Mesh;
 }

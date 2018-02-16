@@ -1,15 +1,13 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <graphics/shader.h>
+#include <memory>
 
 namespace graphics {
   struct Light {
   public:
     glm::vec3 color = glm::vec3(1.0);
     glm::vec3 ambient = glm::vec3(0.3);
-    virtual void set_uniforms(GLuint program) const ;
+    virtual void set_uniforms(std::shared_ptr<Shader> shader) const;
 
   protected:
     Light() = default;
@@ -23,7 +21,7 @@ namespace graphics {
                glm::vec3 color = glm::vec3(1.0),
                glm::vec3 ambient = glm::vec3(0.3));
 
-    void set_uniforms(GLuint program) const ;
+    void set_uniforms(std::shared_ptr<Shader> shader) const override;
   };
 
   struct DirectionalLight : public Light {
@@ -33,6 +31,6 @@ namespace graphics {
                      glm::vec3 color = glm::vec3(1.0),
                      glm::vec3 ambient = glm::vec3(0.3));
 
-    void set_uniforms(GLuint program) const ;
+    void set_uniforms(std::shared_ptr<Shader> shader) const override;
   };
 }

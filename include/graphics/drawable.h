@@ -1,18 +1,15 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <graphics/shader.h>
 
 namespace graphics {
   enum struct ShaderType {
-    Node3D, Solid, Sprite
+    Mesh, Solid, Sprite
   };
-  
-  class Drawable {
-  public:
-    ShaderType shader_type = ShaderType::Solid;
+
+  struct Drawable {
     bool hidden = false;
-    
-    virtual void init_shader_type() = 0;
-    virtual void draw(GLuint shader_prog) const = 0;
+
+    virtual ShaderType get_shader_type() const = 0;
+    virtual void draw(std::shared_ptr<Shader> shader) const = 0;
   };
 }

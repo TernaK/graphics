@@ -1,19 +1,18 @@
 # graphics_lib library
 include_directories(${CMAKE_SOURCE_DIR}/include)
 set(graphics_srcs
-  ${CMAKE_SOURCE_DIR}/include/graphics/util.h
-  node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/node.h
+  canvas.cpp ${CMAKE_SOURCE_DIR}/include/graphics/canvas.h
   shader.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shader.h
-  camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
   light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h
+  camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
+  mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
+  material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
   solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
+  shape.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shape.h
   texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
-  scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
-  canvas.cpp ${CMAKE_SOURCE_DIR}/include/graphics/canvas.h
-  material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
   ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
-  shape.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shape.h
+  scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
   framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})

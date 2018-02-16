@@ -3,12 +3,9 @@
 using namespace std;
 using namespace graphics;
 
-void Light::set_uniforms(GLuint program) const {
-  GLint loc = glGetUniformLocation(program, "_light.color");
-  glUniform3fv(loc, 1, glm::value_ptr(color));
-
-  loc = glGetUniformLocation(program, "_light.ambient");
-  glUniform3fv(loc, 1, glm::value_ptr(ambient));
+void Light::set_uniforms(std::shared_ptr<Shader> shader) const {
+  shader->set_uniform("_light.color", color);
+  shader->set_uniform("_light.ambient", ambient);
 }
 
 PointLight::PointLight(glm::vec3 _positon,
@@ -19,14 +16,10 @@ PointLight::PointLight(glm::vec3 _positon,
   ambient = _ambient;
 }
 
-void PointLight::set_uniforms(GLuint program) const {
-  Light::set_uniforms(program);
-
-  GLint loc = glGetUniformLocation(program, "_light.position");
-  glUniform3fv(loc, 1, glm::value_ptr(position));
-
-  loc = glGetUniformLocation(program, "_light.attenuation");
-  glUniform3fv(loc, 1, glm::value_ptr(attenuation));
+void PointLight::set_uniforms(std::shared_ptr<Shader> shader) const {
+  Light::set_uniforms(shader);
+  shader->set_uniform("_light.position", position);
+  shader->set_uniform("_light.attenuation", attenuation);
 }
 
 DirectionalLight::DirectionalLight(glm::vec3 _direction,
@@ -37,10 +30,8 @@ DirectionalLight::DirectionalLight(glm::vec3 _direction,
   ambient = _ambient;
 }
 
-void DirectionalLight::set_uniforms(GLuint program) const {
-  Light::set_uniforms(program);
-
-  GLint loc = glGetUniformLocation(program, "_light.direction");
-  glUniform3fv(loc, 1, glm::value_ptr(direction));
+void DirectionalLight::set_uniforms(std::shared_ptr<Shader> shader) const {
+  Light::set_uniforms(shader);
+  shader->set_uniform("_light.direction", direction);
 }
 

@@ -75,5 +75,8 @@ namespace graphics {
     void close_window();
     void get_true_frame_size(int& width, int& height);
     void swap_buffers();
+    float get_aspect_ratio();
+    void clear(bool color = true, bool depth = true);
+    void poll_events();
   };
 }

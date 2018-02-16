@@ -1,8 +1,6 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <graphics/shader.h>
+#include <memory>
 
 namespace graphics {
   struct Material {
@@ -12,6 +10,6 @@ namespace graphics {
 
     Material() = default;
     Material(glm::vec3 color, float shininess = 32, float alpha = 1.0);
-    void set_uniforms(GLuint program) const;
+    void set_uniforms(std::shared_ptr<Shader> shader) const;
   };
 }

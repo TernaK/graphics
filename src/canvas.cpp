@@ -30,7 +30,7 @@ Canvas::~Canvas() {
 }
 
 bool Canvas::still_open() {
-  return glfwWindowShouldClose(window);
+  return !glfwWindowShouldClose(window);
 }
 
 void Canvas::close_window() {
@@ -43,4 +43,17 @@ void Canvas::get_true_frame_size(int& width, int& height) {
 
 void Canvas::swap_buffers() {
   glfwSwapBuffers(window);
+}
+
+float Canvas::get_aspect_ratio() {
+  return float(width)/height;
+}
+
+void Canvas::clear(bool color, bool depth) {
+  if(color || depth)
+    glClear((color ? GL_COLOR_BUFFER_BIT : 0) | (depth ? GL_DEPTH_BUFFER_BIT : 0));
+}
+
+void Canvas::poll_events() {
+  glfwPollEvents();
 }

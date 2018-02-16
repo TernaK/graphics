@@ -1,16 +1,11 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <graphics/drawable.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <numeric>
-#include <memory>
-#include <graphics/drawable.h>
 
 namespace graphics {
-  class Node : public Drawable {
+  class Mesh : public Drawable {
     GLuint vao;           //vertex array object
     GLuint vbo_vertices;  //vertex buffer object for vertices
     GLuint vbo_colors;    //vertex buffer object for colors
@@ -18,6 +13,7 @@ namespace graphics {
     std::vector<GLfloat> vertices;
     std::vector<GLfloat> colors;
     std::vector<GLfloat> normals;
+//    ShaderType shader_type;
 
     ///Convert glm arrays to primitive type arrays and store
     ///@param vertices every three vertices should represent a
@@ -35,17 +31,17 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    Node();
-    Node(const std::vector<glm::vec3>& vertices,
+    Mesh();
+    Mesh(const std::vector<glm::vec3>& vertices,
          const std::vector<glm::vec4>& colors,
          std::vector<GLint> indices = {});
-    ~Node();
+    ~Mesh();
 
-    void init_shader_type() override;
-    void set_uniforms(GLuint program) const;
     void bind_vertex_data();
     void release_vertex_data();
     glm::mat4 get_model_mat() const;
-    void draw(GLuint prog) const override;
+    void set_uniforms(std::shared_ptr<Shader> shader) const;
+    ShaderType get_shader_type() const override;
+    void draw(std::shared_ptr<Shader> shader) const override;
   };
 }
