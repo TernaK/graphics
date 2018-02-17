@@ -11,6 +11,7 @@ namespace graphics {
     GLuint fbo;
     GLuint rbo_color;
     GLuint rbo_depth;
+    std::vector<GLenum> draw_buffers;
 
     void create_renderbuffers();
     void create_textures();

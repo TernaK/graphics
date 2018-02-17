@@ -10,6 +10,11 @@ Framebuffer::Framebuffer(std::shared_ptr<Canvas> _canvas,
   if((use_color || use_depth) == false)
     throw runtime_error("Framebuffer must use the color or(and) depth buffers");
 
+  if(use_color)
+    draw_buffers.push_back(GL_COLOR_ATTACHMENT0);
+  if(use_depth)
+    draw_buffers.push_back(GL_DEPTH_ATTACHMENT);
+
   create_textures();
   create_renderbuffers();
   create_framebuffer();
@@ -72,6 +77,7 @@ void Framebuffer::create_renderbuffers() {
 void Framebuffer::create_framebuffer() {
   glGenFramebuffers(1, &fbo);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  glDrawBuffers(draw_buffers.size(), draw_buffers.data());
   if(use_color)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture->get_texture_id(), 0);
   else
