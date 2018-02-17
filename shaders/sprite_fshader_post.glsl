@@ -5,10 +5,13 @@ in vec2 _frag_tex_coord;
 out vec4 _frag_color_out;
 
 uniform sampler2D _texture0;
+uniform float _time;
+uniform float _width;
+uniform float _height;
 
 void main() {
-  vec4 px = texture(_texture0, _frag_tex_coord);
-  vec4 px1 = texture(_texture0, _frag_tex_coord + vec2(0.004));
-  vec4 color = clamp(px - 10 * abs(px - px1), 0, 1.0) / 2;
-  _frag_color_out = color;
+  float x = _time + _width * _frag_tex_coord.x;
+  float y = _time + _height * _frag_tex_coord.y;
+  vec4 px = texture(_texture0, _frag_tex_coord + 0.02 * vec2(sin(x),cos(y)));
+  _frag_color_out = px;
 }
