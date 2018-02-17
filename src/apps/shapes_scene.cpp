@@ -27,9 +27,10 @@ int main(int argc, char* args[]) {
     mars->position.y = 3 * cos(2*M_PI*glfwGetTime() * 0.6);
     mars->position.z = 3 * sin(2*M_PI*glfwGetTime() * 0.6);
     mars->position.x = 1 * sin(2*M_PI*glfwGetTime() * 0.6);
-    earth->material.color.r = abs(0.4 * sin(2*M_PI*glfwGetTime() * 0.1));
+    earth->material.color.b = abs(sin(2*M_PI*glfwGetTime() * 0.1));
+    earth->material.color.r = 1 - earth->material.color.b;
     moon->material.color.g = abs(sin(2*M_PI*glfwGetTime() * 0.2));
-    moon->material.color.b = 1 - moon->material.color.b;
+    moon->material.color.b = 1 - moon->material.color.g;
     scene.draw_scene();
   }
 }

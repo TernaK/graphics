@@ -90,6 +90,7 @@ void Framebuffer::create_framebuffer() {
 
 void Framebuffer::begin_render() {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  glReadBuffer(GL_COLOR_ATTACHMENT0);
 }
 
 void Framebuffer::end_render() {
@@ -100,12 +101,6 @@ cv::Mat Framebuffer::read_to_mat() {
   int width, height;
   canvas->get_true_frame_size(width, height);
   cv::Mat image(height, width, CV_8UC3);
-  ///https://stackoverflow.com/questions/9097756/converting-data-from-glreadpixels-to-opencvmat/9098883
-  //use fast 4-byte alignment (default anyway) if possible
-  glPixelStorei(GL_PACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
-  //set length of one complete row in destination data (doesn't need to equal img.cols)
-  glPixelStorei(GL_PACK_ROW_LENGTH, image.step/image.elemSize());
-  glReadBuffer(GL_COLOR_ATTACHMENT0);
   glReadPixels(0, 0, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
   cv::flip(image, image, 0);
   return image;
