@@ -11,7 +11,7 @@ int main(int argc, char* args[]) {
   auto solid_shader = Shader::make_solid_point_shader();
   auto sprite_shader = Shader::make_sprite_shader();
   
-  auto texture = make_shared<graphics::Texture>("/Users/Terna/Downloads/1387868_720.jpg");
+  auto texture = make_shared<graphics::Texture>(graphics::TEXTURES_DIR + "/triangles.jpg");
   auto sprite = make_shared<graphics::Sprite>(texture);
   auto solid = SolidShape::make_cube();
   
