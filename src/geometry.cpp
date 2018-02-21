@@ -3,25 +3,25 @@
 using namespace std;
 using namespace graphics;
 
-// Geometry::Triangle
+// Facet
 //--------------------------------------------------------------------------------
-Geometry::Triangle::Triangle(glm::vec3 one, glm::vec3 two, glm::vec3 three) {
+Facet::Facet(glm::vec3 one, glm::vec3 two, glm::vec3 three) {
   vertices[0] = one;
   vertices[1] = two;
   vertices[2] = three;
 }
 
-glm::vec3 Geometry::Triangle::operator[](int idx) {
+glm::vec3 Facet::operator[](int idx) {
   return vertices[idx];
 }
 
-glm::vec3 Geometry::Triangle::get_normal() {
+glm::vec3 Facet::get_normal() {
   return glm::normalize(glm::cross(vertices[2] - vertices[1], vertices[0] - vertices[1]));
 }
 
 // Geometry
 //--------------------------------------------------------------------------------
-Geometry::Geometry(const std::vector<Triangle>& _triangles)
+Geometry::Geometry(const std::vector<Facet>& _triangles)
 : triangles(_triangles) {
   
 }
@@ -43,13 +43,13 @@ void Geometry::get_vertices_and_normals(std::vector<float>& vertices,
   }
 }
 std::vector<std::vector<glm::vec3>>
-Geometry::create_grid(int z_len, int x_len, std::function<glm::vec3(float,float)> mesh_func) {
+Geometry::create_grid(int z_len, int x_len, std::function<glm::vec3(float,float)> grid_func) {
   vector<vector<glm::vec3>> grid = vector<vector<glm::vec3>>(z_len, vector<glm::vec3>(x_len));
   for(int z = 0; z < z_len; z++) {
     for(int x = 0; x < x_len; x++) {
       float z_val = (float(z) / (z_len-1)) * 1.0 + -0.5;
       float x_val = (float(x) / (x_len-1)) * 1.0 + -0.5;
-      grid[z][x] = mesh_func(z_val,x_val);
+      grid[z][x] = grid_func(z_val,x_val);
     }
   }
   return grid;
@@ -61,7 +61,7 @@ Geometry Geometry::create_terrain(int z_len, int x_len) {
   };
 
   auto grid = create_grid(z_len, x_len, terrain_func);
-  vector<Triangle> temp;
+  vector<Facet> temp;
   for(int z = 0; z < grid.size() - 1; z++) {
     for(int x = 0; x < grid.front().size() - 1; x++) {
       temp.emplace_back(grid[z][x], grid[z+1][x], grid[z+1][x+1]);
