@@ -33,9 +33,9 @@ GLuint Texture::get_texture_id() {
 void Texture::bind_texture_data() {
   cv::Mat temp;
   if(image.channels() == 1)
-    cv::cvtColor(image, temp, CV_GRAY2BGR);
-  else
-    temp = image;
+    cv::cvtColor(image, temp, CV_GRAY2BGRA);
+  else if(image.channels() == 3)
+    cv::cvtColor(image, temp, CV_BGR2BGRA);
 
   glGenTextures(1, &texture_id);
   glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -43,7 +43,7 @@ void Texture::bind_texture_data() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, temp.cols, temp.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, temp.data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, temp.cols, temp.rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, temp.data);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 

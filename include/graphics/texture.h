@@ -3,6 +3,8 @@
 #include <opencv2/opencv.hpp>
 
 namespace graphics {
+  const std::string TEXTURES_DIR = std::string(GRAPHICS_TEXTURES_DIRECTORY);
+
   class Texture {
     GLuint texture_id;
     bool flipped = false; //check this to know how to render
