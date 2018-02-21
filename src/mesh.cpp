@@ -9,13 +9,11 @@ Mesh::~Mesh() {
 }
 
 Mesh::Mesh() {
-//  init_shader_type();
 }
 
 Mesh::Mesh(const std::vector<glm::vec3>& _vertices,
            const std::vector<glm::vec4>& _colors,
            std::vector<int> _indices) {
-//  init_shader_type();
   if(vertices.size() != colors.size())
     throw std::runtime_error("vertices and colors vectors must have the same size");
   if(!_indices.empty())
@@ -24,9 +22,16 @@ Mesh::Mesh(const std::vector<glm::vec3>& _vertices,
   bind_vertex_data();
 }
 
-//void Node::init_shader_type() {
-//  shader_type = ShaderType::Node3D;
-//}
+Mesh::Mesh(Geometry& geometry, const std::vector<glm::vec4>& _colors) {
+  geometry.get_vertices_and_normals(vertices, normals);
+  for(int i = 0; i < _colors.size(); i++) {
+    colors.push_back(_colors[i].r);
+    colors.push_back(_colors[i].g);
+    colors.push_back(_colors[i].b);
+    colors.push_back(_colors[i].a);
+  }
+  bind_vertex_data();
+}
 
 void Mesh::bind_vertex_data() {
   glGenVertexArrays(1, &vao);

@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/drawable.h>
 #include <graphics/material.h>
+#include <graphics/geometry.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <numeric>
@@ -32,6 +33,7 @@ namespace graphics {
     Solid(const std::vector<glm::vec3>& vertices,
           std::vector<GLint> indices = {},
           Material material = Material());
+    Solid(Geometry& geometry, Material material = Material());
     ~Solid();
 
     

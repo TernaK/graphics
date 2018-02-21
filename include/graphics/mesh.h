@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/drawable.h>
+#include <graphics/geometry.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <numeric>
@@ -13,7 +14,6 @@ namespace graphics {
     std::vector<GLfloat> vertices;
     std::vector<GLfloat> colors;
     std::vector<GLfloat> normals;
-//    ShaderType shader_type;
 
     ///Convert glm arrays to primitive type arrays and store
     ///@param vertices every three vertices should represent a
@@ -35,6 +35,7 @@ namespace graphics {
     Mesh(const std::vector<glm::vec3>& vertices,
          const std::vector<glm::vec4>& colors,
          std::vector<GLint> indices = {});
+    Mesh(Geometry& geometry, const std::vector<glm::vec4>& colors);
     ~Mesh();
 
     void bind_vertex_data();

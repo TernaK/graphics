@@ -9,21 +9,22 @@ Solid::~Solid() {
 }
 
 Solid::Solid() {
-//  init_shader_type();
 }
 
 Solid::Solid(const std::vector<glm::vec3>& _vertices,
              std::vector<int> _indices,
-             Material material) {
-//  init_shader_type();
+             Material _material)
+: material(_material) {
   store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
 
-//void Solid::init_shader_type() {
-//  shader_type = ShaderType::Solid;
-//}
+Solid::Solid(Geometry& _geometry, Material _material)
+: material(_material) {
+  _geometry.get_vertices_and_normals(vertices, normals);
+  bind_vertex_data();
+}
 
 void Solid::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
