@@ -57,7 +57,7 @@ Geometry::create_grid(int z_len, int x_len, std::function<glm::vec3(float,float)
 
 Geometry Geometry::create_terrain(int z_len, int x_len) {
   auto terrain_func = [](float z, float x) -> glm::vec3 {
-    return glm::vec3(x, 0.5 + 0.03 * (sin(2.0*M_PI*x/0.5) + sin(2.0*M_PI*z/0.5)), z);
+    return glm::vec3(x, 0.5 + 0.1 * (fmod(rand(), 100.0)/100.0),z);//glm::vec3(x, 0.5 + 0.03 * (sin(2.0*M_PI*x/0.5) + sin(2.0*M_PI*z/0.5)), z);
   };
 
   auto grid = create_grid(z_len, x_len, terrain_func);
