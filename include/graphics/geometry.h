@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <opencv2/opencv.hpp>
 #include <vector>
 #include <functional>
 #include <iostream>
