@@ -79,6 +79,18 @@ void Geometry::compute_smooth_normals() {
 
 }
 
+const Geometry& Geometry::operator+=(const Geometry& r) {
+  int offset = indices.size();
+  for(int i = 0; i < r.facets.size(); i++)
+    facets.emplace_back( r.facets[i].a + offset, r.facets[i].b + offset, r.facets[i].c + offset);
+  for(int i = 0; i < r.indices.size(); i++)
+    indices.emplace_back(r.indices[i] + offset);
+  positions.insert(positions.end(), r.positions.begin(), r.positions.end());
+  normals.insert(normals.end(), r.normals.begin(), r.normals.end());
+  tex_coords.insert(tex_coords.end(), r.tex_coords.begin(), r.tex_coords.end());
+  return *this;
+}
+
 
 //void Geometry::get_vertices_and_normals(std::vector<float>& vertices,
 //                                        std::vector<float>& normals) {

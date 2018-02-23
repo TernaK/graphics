@@ -26,13 +26,30 @@ int main(int argc, char* args[]) {
     scene.draw_scene();
   }
 
-
 //  std::vector<glm::vec3> positions = {
-//    glm::vec3(0,0.5,0),
+//    glm::vec3(0,0.5,0) ,
 //    glm::vec3(-0.5,-0.5,0),
 //    glm::vec3(0.5,-0.5,0)
 //  };
-  
+//
+//  std::vector<glm::vec3> positions1 = {
+//    positions[0] - glm::vec3(0,0,1),
+//    positions[1] - glm::vec3(0,0,1),
+//    positions[2] - glm::vec3(0,0,1)
+//  };
+//
 //  Geometry geometry({Facet(0,1,2)}, positions);
+//  Geometry geometry1({Facet(0,1,2)}, positions1);
+//  geometry += geometry1;
 //  auto obj = make_shared<Object3D>(geometry);
+//
+//  obj->scale *= 4;
+//  scene.add_drawable(obj);
+//  while(canvas->still_open()) {
+//    scene.clear();
+//    obj->rotation.y += 0.3;
+//
+//    canvas->poll_events();
+//    scene.draw_scene();
+//  }
 }

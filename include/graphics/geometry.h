@@ -35,6 +35,8 @@ namespace graphics {
              std::vector<GLuint> indices = {},
              bool smooth = false);
 
+    const Geometry& operator+=(const Geometry& r);
+
     void compute_smooth_normals();
 
     void compute_flat_normals();
