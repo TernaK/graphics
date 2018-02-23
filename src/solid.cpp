@@ -9,51 +9,50 @@ Solid::~Solid() {
 }
 
 Solid::Solid() {
-//  init_shader_type();
 }
 
 Solid::Solid(const std::vector<glm::vec3>& _vertices,
              std::vector<int> _indices,
-             Material material) {
-//  init_shader_type();
+             Material _material)
+: material(_material) {
   store_vertex_data(_vertices, _indices);
   compute_store_normals();
   bind_vertex_data();
 }
 
-//void Solid::init_shader_type() {
-//  shader_type = ShaderType::Solid;
-//}
+Solid::Solid(Geometry& _geometry, Material _material)
+: geometry(_geometry), material(_material) {
+//  _geometry.get_vertices_and_normals(vertices, normals);
+  store_vertex_data();
+  bind_vertex_data();
+}
 
 void Solid::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   //positions
-  glGenBuffers(1, &vbo_vertices);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-  glBufferData(GL_ARRAY_BUFFER,
-               vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+  positions_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(vertices.data(), vertices.size(), GL_STATIC_DRAW);
+  positions_vbo.bind();
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
+  positions_vbo.unbind();
   //normals
-  glGenBuffers(1, &vbo_normals);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_normals);
-  glBufferData(GL_ARRAY_BUFFER,
-               normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+  normals_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(normals.data(), normals.size(), GL_STATIC_DRAW);
+  normals_vbo.bind();
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(1);
+  normals_vbo.unbind();
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
 
 void Solid::release_vertex_data() {
-  glDeleteBuffers(1, &vbo_vertices);
-  glDeleteBuffers(1, &vbo_normals);
+  normals_vbo.release();
+  positions_vbo.release();
 }
 
 void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
-                                     const std::vector<GLint>& _indices) {
+                              const std::vector<GLint>& _indices) {
   if(_indices.empty()) {
     for(int i = 0; i < _vertices.size(); i++) {
       vertices.push_back(_vertices[i].x);
@@ -68,6 +67,19 @@ void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
       vertices.push_back(_vertices[idx].y);
       vertices.push_back(_vertices[idx].z);
     }
+  }
+}
+
+void Solid::store_vertex_data() {
+  //unpack vertex data
+  for(int i = 0; i < geometry.indices.size(); i++) {
+    int idx = geometry.indices[i];
+    vertices.push_back(geometry.positions[idx].x);
+    vertices.push_back(geometry.positions[idx].y);
+    vertices.push_back(geometry.positions[idx].z);
+    normals.push_back(geometry.normals[idx].x);
+    normals.push_back(geometry.normals[idx].y);
+    normals.push_back(geometry.normals[idx].z);
   }
 }
 

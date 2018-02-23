@@ -8,23 +8,11 @@
 #include <numeric>
 
 namespace graphics {
-  class Solid : public Drawable {
-    GLuint vao;           //vertex array object
+  class Object3D : public Drawable {
+    GLuint vao;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> positions_vbo;
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> normals;
-
-    ///Convert glm arrays to primitive type arrays and store
-    ///@param vertices every three vertices should represent a
-    /// triangle in clockwise order
-    void store_vertex_data(const std::vector<glm::vec3>& vertices,
-                           const std::vector<GLint>& indices);
-
-    void store_vertex_data();
-
-    ///Use the adjacent traingle sides to compute the normals and store
-    void compute_store_normals();
+    BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER> indices_ebo;
 
   public:
     Geometry geometry;
@@ -33,12 +21,12 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    Solid();
-    Solid(const std::vector<glm::vec3>& vertices,
-          std::vector<GLint> indices = {},
+    Object3D();
+    Object3D(Geometry& geometry, Material material = Material());
+    Object3D(const std::vector<glm::vec3>& vertices,
+          std::vector<GLuint> indices = {},
           Material material = Material());
-    Solid(Geometry& geometry, Material material = Material());
-    ~Solid();
+    ~Object3D();
 
     
     void set_uniforms(std::shared_ptr<Shader> shader) const;
