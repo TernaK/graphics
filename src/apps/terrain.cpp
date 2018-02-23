@@ -1,6 +1,6 @@
 #include <graphics/scene.h>
-#include <graphics/solid.h>
-#include <graphics/vbo.h>
+#include <graphics/object3d.h>
+#include <graphics/buffer_object.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 using namespace std;
@@ -12,8 +12,8 @@ int main(int argc, char* args[]) {
   scene.camera->position = glm::vec3(5,10,5);
   ((PointLight*)scene.light.get())->position = glm::vec3(5,5,0);
 
-  Geometry terrain_geometry = Geometry::create_terrain(10, 10);
-  shared_ptr<Solid> terrain = make_shared<Solid>(terrain_geometry);
+  Geometry terrain_geometry = Geometry::create_terrain(50, 50);
+  shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
   terrain->scale = glm::vec3(5);
 
   scene.add_drawable(terrain);
@@ -25,4 +25,14 @@ int main(int argc, char* args[]) {
     canvas->poll_events();
     scene.draw_scene();
   }
+
+
+//  std::vector<glm::vec3> positions = {
+//    glm::vec3(0,0.5,0),
+//    glm::vec3(-0.5,-0.5,0),
+//    glm::vec3(0.5,-0.5,0)
+//  };
+  
+//  Geometry geometry({Facet(0,1,2)}, positions);
+//  auto obj = make_shared<Object3D>(geometry);
 }

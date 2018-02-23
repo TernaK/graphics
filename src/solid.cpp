@@ -31,13 +31,13 @@ void Solid::bind_vertex_data() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   //positions
-  positions_vbo = VBO<GLfloat, GL_ARRAY_BUFFER>(vertices.data(), vertices.size(), GL_STATIC_DRAW);
+  positions_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(vertices.data(), vertices.size(), GL_STATIC_DRAW);
   positions_vbo.bind();
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
   positions_vbo.unbind();
   //normals
-  normals_vbo = VBO<GLfloat, GL_ARRAY_BUFFER>(normals.data(), normals.size(), GL_STATIC_DRAW);
+  normals_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(normals.data(), normals.size(), GL_STATIC_DRAW);
   normals_vbo.bind();
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(1);
@@ -71,28 +71,16 @@ void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
 }
 
 void Solid::store_vertex_data() {
-//  if(_indices.empty()) {
-//    for(int i = 0; i < _vertices.size(); i++) {
-//      vertices.push_back(geometry.[i].x);
-//      vertices.push_back(_vertices[i].y);
-//      vertices.push_back(_vertices[i].z);
-//      normals.push_back(_normals[i].x);
-//      normals.push_back(_normals[i].y);
-//      normals.push_back(_normals[i].z);
-//    }
-//  } else  {
-    //unpack vertex data
-  auto indices = geometry.indices();
-    for(int i = 0; i < indices.size(); i++) {
-      int idx = indices[i];
-      vertices.push_back(geometry.positions[idx].x);
-      vertices.push_back(geometry.positions[idx].y);
-      vertices.push_back(geometry.positions[idx].z);
-      normals.push_back(geometry.normals[idx].x);
-      normals.push_back(geometry.normals[idx].y);
-      normals.push_back(geometry.normals[idx].z);
-    }
-//  }
+  //unpack vertex data
+  for(int i = 0; i < geometry.indices.size(); i++) {
+    int idx = geometry.indices[i];
+    vertices.push_back(geometry.positions[idx].x);
+    vertices.push_back(geometry.positions[idx].y);
+    vertices.push_back(geometry.positions[idx].z);
+    normals.push_back(geometry.normals[idx].x);
+    normals.push_back(geometry.normals[idx].y);
+    normals.push_back(geometry.normals[idx].z);
+  }
 }
 
 void Solid::compute_store_normals() {

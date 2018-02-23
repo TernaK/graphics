@@ -15,7 +15,8 @@ set(graphics_srcs
   scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
   framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
   geometry.cpp ${CMAKE_SOURCE_DIR}/include/graphics/geometry.h
-  ${CMAKE_SOURCE_DIR}/include/graphics/vbo.h
+  ${CMAKE_SOURCE_DIR}/include/graphics/buffer_object.h
+  object3d.cpp ${CMAKE_SOURCE_DIR}/include/graphics/object3d.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})

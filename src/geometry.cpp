@@ -5,15 +5,15 @@ using namespace graphics;
 
 // Facet
 //--------------------------------------------------------------------------------
-Facet::Facet(int a, int b, int c)
+Facet::Facet(GLuint a, GLuint b, GLuint c)
 : a(a), b(b), c(c) {
-  indices[0] = a;
-  indices[1] = b;
-  indices[2] = c;
+  indices[0] = &a;
+  indices[1] = &b;
+  indices[2] = &c;
 }
 
-int Facet::operator[](int idx) {
-  return indices[idx];
+GLuint Facet::operator[](int idx) {
+  return *(indices[idx]);
 }
 
 // Geometry
@@ -25,6 +25,7 @@ Geometry::Geometry(std::vector<Facet> _facets,
                    std::vector<glm::vec3> _tex_coords) :
 facets(std::move(_facets)), positions(std::move(_positions)),
 normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
+  create_indices_from_facets();
   if(_normals.empty()) {
     if(smooth) {
       compute_smooth_normals();
@@ -34,18 +35,43 @@ normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
   }
 }
 
+Geometry::Geometry(const std::vector<glm::vec3>& _positions,
+                   std::vector<GLuint> _indices,
+                   bool smooth):
+positions(std::move(_positions)), indices(_indices) {
+  if(_indices.empty()) {
+    for(int i = 0; i < positions.size()/3; i++)
+      facets.emplace_back(i*3, i*3 + 1, i*3 + 2);
+    create_indices_from_facets();
+  } else {
+    for(int i = 0; i < indices.size()/3; i++)
+      facets.emplace_back(indices[i*3], indices[i*3 + 1], indices[i*3 + 2]);
+  }
+
+  if(smooth) {
+    compute_smooth_normals();
+  } else {
+    compute_flat_normals();
+  }
+}
+
 void Geometry::compute_flat_normals() {
-  vector<int> is_set = vector<int>(facets.size() * 3);
+  vector<bool> is_set = vector<bool>(facets.size() * 3, false);
   normals = vector<glm::vec3>(positions.size());
   for(const auto& facet: facets) {
     glm::vec3 pa = positions[facet.a];
     glm::vec3 pb = positions[facet.b];
     glm::vec3 pc = positions[facet.c];
     glm::vec3 normal = glm::normalize(glm::cross(pc - pb, pa - pb));
-    normals[facet.a] = normal;
-    normals[facet.b] = normal;
-    normals[facet.c] = normal;
-
+    if(!is_set[facet.a])
+      normals[facet.a] = normal;
+    if(!is_set[facet.b])
+      normals[facet.b] = normal;
+    if(!is_set[facet.c])
+      normals[facet.c] = normal;
+    is_set[facet.a] = true;
+    is_set[facet.b] = true;
+    is_set[facet.c] = true;
   }
 }
 
@@ -123,7 +149,6 @@ Geometry Geometry::create_terrain(int z_len, int x_len) {
       float z_val = (float(z) / (z_len-1)) * 1.0 + -0.5;
       float x_val = (float(x) / (x_len-1)) * 1.0 + -0.5;
       _positions.push_back(glm::vec3(x_val,noise.at<float>(z,x),z_val));
-      //grid[z][x] = glm::vec3(x_val,noise.at<float>(z,x),z_val);
     }
   }
 
@@ -142,19 +167,17 @@ Geometry Geometry::create_terrain(int z_len, int x_len) {
       b = find_idx(z+1,x+1, x_len);
       c = find_idx(z,x+1, x_len);
       _facets.push_back(Facet(a, b, c));
-//      temp.emplace_back(grid[z][x], grid[z+1][x], grid[z+1][x+1]);
-//      temp.emplace_back(grid[z][x], grid[z+1][x+1], grid[z][x+1]);
     }
   }
   return Geometry(_facets, _positions);
 }
 
-std::vector<int> Geometry::indices() {
-  vector<int> _indices;
+void Geometry::create_indices_from_facets() {
+//  vector<int> _indices;
+  indices.clear();
   for(int i = 0; i < facets.size(); i++) {
-    _indices.push_back(facets[i].a);
-    _indices.push_back(facets[i].b);
-    _indices.push_back(facets[i].c);
+    indices.push_back(facets[i].a);
+    indices.push_back(facets[i].b);
+    indices.push_back(facets[i].c);
   }
-  return _indices;
 }

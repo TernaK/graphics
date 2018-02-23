@@ -1,4 +1,5 @@
 #pragma once
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
@@ -7,12 +8,12 @@
 
 namespace graphics {
   struct Facet {
-    int indices[3];
-    int a, b, c;
+    GLuint* indices[3];
+    GLuint a, b, c;
     
-    Facet(int a, int b, int c);
+    Facet(GLuint a, GLuint b, GLuint c);
 
-    int operator[](int idx);
+    GLuint operator[](int idx);
   };
   
   struct Geometry {
@@ -20,6 +21,7 @@ namespace graphics {
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
+    std::vector<GLuint> indices;
 
     Geometry() = default;
 
@@ -29,11 +31,15 @@ namespace graphics {
              std::vector<glm::vec3> normals = {},
              std::vector<glm::vec3> tex_coords = {});
 
+    Geometry(const std::vector<glm::vec3>& positions,
+             std::vector<GLuint> indices = {},
+             bool smooth = false);
+
     void compute_smooth_normals();
 
     void compute_flat_normals();
 
-    std::vector<int> indices();
+    void create_indices_from_facets();
 
     static Geometry create_terrain(int z_len, int x_len);
   };
