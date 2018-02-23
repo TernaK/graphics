@@ -27,22 +27,25 @@ namespace graphics {
 
     Geometry(std::vector<Facet> facets,
              const std::vector<glm::vec3>& positions,
-             bool smooth = false,
+             bool smooth = true,
              std::vector<glm::vec3> normals = {},
              std::vector<glm::vec3> tex_coords = {});
 
     Geometry(const std::vector<glm::vec3>& positions,
              std::vector<GLuint> indices = {},
-             bool smooth = false);
+             bool smooth = true);
 
     const Geometry& operator+=(const Geometry& r);
 
     void compute_smooth_normals();
 
-    void compute_flat_normals();
-
     void create_indices_from_facets();
 
-    static Geometry create_terrain(int z_len, int x_len);
+    glm::vec3 get_facet_normal(const Facet& facet);
+    
+    static std::shared_ptr<Geometry> create_terrain(int z_len, int x_len);
+    static std::shared_ptr<Geometry> create_box(GLfloat x = 0.5,
+                                                GLfloat y = 0.5,
+                                                GLfloat z = 0.5);
   };
 }
