@@ -5,43 +5,69 @@ using namespace graphics;
 
 // Facet
 //--------------------------------------------------------------------------------
-Facet::Facet(glm::vec3 one, glm::vec3 two, glm::vec3 three) {
-  vertices[0] = one;
-  vertices[1] = two;
-  vertices[2] = three;
+Facet::Facet(int a, int b, int c)
+: a(a), b(b), c(c) {
+  indices[0] = a;
+  indices[1] = b;
+  indices[2] = c;
 }
 
-glm::vec3 Facet::operator[](int idx) {
-  return vertices[idx];
-}
-
-glm::vec3 Facet::get_normal() {
-  return glm::normalize(glm::cross(vertices[2] - vertices[1], vertices[0] - vertices[1]));
+int Facet::operator[](int idx) {
+  return indices[idx];
 }
 
 // Geometry
 //--------------------------------------------------------------------------------
-Geometry::Geometry(const std::vector<Facet>& _triangles)
-: triangles(_triangles) {
-  
-}
-
-void Geometry::get_vertices_and_normals(std::vector<float>& vertices,
-                                        std::vector<float>& normals) {
-  vertices.clear();
-  normals.clear();
-  for(auto& triangle: triangles) {
-    auto normal = triangle.get_normal();
-    for(int v = 0; v < 3; v++) {
-      vertices.push_back(triangle[v].x);
-      vertices.push_back(triangle[v].y);
-      vertices.push_back(triangle[v].z);
-      normals.push_back(normal.x);
-      normals.push_back(normal.y);
-      normals.push_back(normal.z);
+Geometry::Geometry(std::vector<Facet> _facets,
+                   const std::vector<glm::vec3>& _positions,
+                   bool smooth,
+                   std::vector<glm::vec3> _normals,
+                   std::vector<glm::vec3> _tex_coords) :
+facets(std::move(_facets)), positions(std::move(_positions)),
+normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
+  if(_normals.empty()) {
+    if(smooth) {
+      compute_smooth_normals();
+    } else {
+      compute_flat_normals();
     }
   }
 }
+
+void Geometry::compute_flat_normals() {
+  normals = vector<glm::vec3>(positions.size());
+  for(const auto& facet: facets) {
+    glm::vec3 pa = positions[facet.a];
+    glm::vec3 pb = positions[facet.b];
+    glm::vec3 pc = positions[facet.c];
+    glm::vec3 normal = glm::normalize(glm::cross(pc - pb, pa - pb));
+    normals[facet.a] = normal;
+    normals[facet.b] = normal;
+    normals[facet.c] = normal;
+  }
+}
+
+void Geometry::compute_smooth_normals() {
+
+}
+
+
+//void Geometry::get_vertices_and_normals(std::vector<float>& vertices,
+//                                        std::vector<float>& normals) {
+//  vertices.clear();
+//  normals.clear();
+//  for(auto& triangle: triangles) {
+//    auto normal = triangle.get_normal();
+//    for(int v = 0; v < 3; v++) {
+//      vertices.push_back(triangle[v].x);
+//      vertices.push_back(triangle[v].y);
+//      vertices.push_back(triangle[v].z);
+//      normals.push_back(normal.x);
+//      normals.push_back(normal.y);
+//      normals.push_back(normal.z);
+//    }
+//  }
+//}
 
 cv::Mat make_random(cv::Size size) {
   cv::Mat mat = cv::Mat(size, CV_32F);
@@ -98,10 +124,17 @@ Geometry Geometry::create_terrain(int z_len, int x_len) {
   }
 
   vector<Facet> temp;
+  vector<glm::vec3> positions;
+  auto find_idx = [](int z, int x, int Z, int X) {
+    return  
+  };
   for(int z = 0; z < grid.size() - 1; z++) {
     for(int x = 0; x < grid.front().size() - 1; x++) {
-      temp.emplace_back(grid[z][x], grid[z+1][x], grid[z+1][x+1]);
-      temp.emplace_back(grid[z][x], grid[z+1][x+1], grid[z][x+1]);
+      //triangle 1
+      int a,b,c;
+      a =
+//      temp.emplace_back(grid[z][x], grid[z+1][x], grid[z+1][x+1]);
+//      temp.emplace_back(grid[z][x], grid[z+1][x+1], grid[z][x+1]);
     }
   }
   return Geometry(temp);

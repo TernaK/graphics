@@ -6,37 +6,33 @@
 #include <iostream>
 
 namespace graphics {
-  /// Hold 3 vertices of a triangle facet (counter clockwise vertex order)
   struct Facet {
-    glm::vec3 vertices[3];
+    int indices[3];
+    int a, b, c;
     
-    Facet(glm::vec3 one, glm::vec3 two, glm::vec3 three);
-    
-    /// Get a facet vertex at an index
-    glm::vec3 operator[](int idx);
-    
-    /// Get a normal for the facet
-    glm::vec3 get_normal();
+    Facet(int a, int b, int c);
+
+    int operator[](int idx);
   };
   
   struct Geometry {
-  private:
-    std::vector<Facet> triangles;
-    
-    /// Create 2D grid in the z-x plane (coordinates are [z,x] format)
-    static std::vector<std::vector<glm::vec3>>
-    create_grid(int z_len, int x_len, std::function<glm::vec3(float,float)> grid_func);
-    
-  public:
+    std::vector<Facet> facets;
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> tex_coords;
+
     Geometry() = default;
-    
-    /// Hold a vector of Facets (counter clockwise vertex order)
-    Geometry(const std::vector<Facet>& facet);
-    
-    /// Get raw float arrays for vertices and normals
-    void get_vertices_and_normals(std::vector<float>& vertices,
-                                  std::vector<float>& normals);
-    
+
+    Geometry(std::vector<Facet> facets,
+             const std::vector<glm::vec3>& positions,
+             bool smooth = false,
+             std::vector<glm::vec3> normals = {},
+             std::vector<glm::vec3> tex_coords = {});
+
+    void compute_smooth_normals();
+
+    void compute_flat_normals();
+
     static Geometry create_terrain(int z_len, int x_len);
   };
 }
