@@ -21,7 +21,7 @@ target_link_libraries(shapes_scene ${libs_list})
 add_executable(post_fx post_fx.cpp)
 target_link_libraries(post_fx ${libs_list})
 
-add_executable(terrain terrain.cpp)
-target_link_libraries(terrain ${libs_list})
+add_executable(terrain_geometry terrain_geometry.cpp)
+target_link_libraries(terrain_geometry ${libs_list})
 
 add_subdirectory(rubiks)

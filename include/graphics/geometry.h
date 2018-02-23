@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <exception>
 
 namespace graphics {
   struct Facet {
@@ -47,5 +48,11 @@ namespace graphics {
     static std::shared_ptr<Geometry> create_box(GLfloat x = 0.5,
                                                 GLfloat y = 0.5,
                                                 GLfloat z = 0.5);
+    static std::shared_ptr<Geometry> create_flat_sphere(GLfloat radius = 0.5,
+                                                        int stacks = 10,
+                                                        int sections = 10);
+    static std::shared_ptr<Geometry> create_smooth_sphere(GLfloat radius = 0.5,
+                                                        int stacks = 10,
+                                                        int sections = 10);
   };
 }
