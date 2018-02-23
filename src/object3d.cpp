@@ -74,14 +74,16 @@ void Object3D::set_uniforms(std::shared_ptr<Shader> shader) const {
 }
 
 void Object3D::draw(std::shared_ptr<Shader> shader) const {
-  material.set_uniforms(shader);
-  set_uniforms(shader);
+  if(indices_ebo.buffer_object != 0) {
+    material.set_uniforms(shader);
+    set_uniforms(shader);
 
-  glBindVertexArray(vao);
-  indices_ebo.bind();
-  glDrawElements(GL_TRIANGLES, geometry.indices.size(), GL_UNSIGNED_INT, 0);
-  indices_ebo.unbind();
-  glBindVertexArray(0);
+    glBindVertexArray(vao);
+    indices_ebo.bind();
+    glDrawElements(GL_TRIANGLES, geometry.indices.size(), GL_UNSIGNED_INT, 0);
+    indices_ebo.unbind();
+    glBindVertexArray(0);
+  }
 }
 
 ShaderType Object3D::get_shader_type() const {

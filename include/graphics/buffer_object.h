@@ -5,7 +5,7 @@
 namespace graphics {
   template<typename T, GLenum target>
   struct BufferObject {
-    GLuint buffer_object = -1;
+    GLuint buffer_object = 0;
 
     BufferObject() = default;
 
@@ -26,7 +26,7 @@ namespace graphics {
 
     void release() {
       glDeleteBuffers(1, &buffer_object);
-      buffer_object = -1;
+      buffer_object = 0;
     }
   };
 }
