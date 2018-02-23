@@ -35,7 +35,7 @@ namespace graphics {
     Mesh(const std::vector<glm::vec3>& vertices,
          const std::vector<glm::vec4>& colors,
          std::vector<GLint> indices = {});
-    Mesh(Geometry& geometry, const std::vector<glm::vec4>& colors);
+//    Mesh(Geometry& geometry, const std::vector<glm::vec4>& colors);
     ~Mesh();
 
     void bind_vertex_data();

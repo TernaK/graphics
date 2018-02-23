@@ -21,8 +21,9 @@ Solid::Solid(const std::vector<glm::vec3>& _vertices,
 }
 
 Solid::Solid(Geometry& _geometry, Material _material)
-: material(_material) {
-  _geometry.get_vertices_and_normals(vertices, normals);
+: geometry(_geometry), material(_material) {
+//  _geometry.get_vertices_and_normals(vertices, normals);
+  store_vertex_data();
   bind_vertex_data();
 }
 
@@ -69,30 +70,29 @@ void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
   }
 }
 
-void Solid::store_vertex_data(const std::vector<glm::vec3>& _vertices,
-                              const std::vector<glm::vec3>& _normals,
-                              const std::vector<GLint>& _indices) {
-  if(_indices.empty()) {
-    for(int i = 0; i < _vertices.size(); i++) {
-      vertices.push_back(_vertices[i].x);
-      vertices.push_back(_vertices[i].y);
-      vertices.push_back(_vertices[i].z);
-      normals.push_back(_normals[i].x);
-      normals.push_back(_normals[i].y);
-      normals.push_back(_normals[i].z);
-    }
-  } else  {
+void Solid::store_vertex_data() {
+//  if(_indices.empty()) {
+//    for(int i = 0; i < _vertices.size(); i++) {
+//      vertices.push_back(geometry.[i].x);
+//      vertices.push_back(_vertices[i].y);
+//      vertices.push_back(_vertices[i].z);
+//      normals.push_back(_normals[i].x);
+//      normals.push_back(_normals[i].y);
+//      normals.push_back(_normals[i].z);
+//    }
+//  } else  {
     //unpack vertex data
-    for(int i = 0; i < _indices.size(); i++) {
-      int idx = _indices[i];
-      vertices.push_back(_vertices[idx].x);
-      vertices.push_back(_vertices[idx].y);
-      vertices.push_back(_vertices[idx].z);
-      normals.push_back(_normals[idx].x);
-      normals.push_back(_normals[idx].y);
-      normals.push_back(_normals[idx].z);
+  auto indices = geometry.indices();
+    for(int i = 0; i < indices.size(); i++) {
+      int idx = indices[i];
+      vertices.push_back(geometry.positions[idx].x);
+      vertices.push_back(geometry.positions[idx].y);
+      vertices.push_back(geometry.positions[idx].z);
+      normals.push_back(geometry.normals[idx].x);
+      normals.push_back(geometry.normals[idx].y);
+      normals.push_back(geometry.normals[idx].z);
     }
-  }
+//  }
 }
 
 void Solid::compute_store_normals() {

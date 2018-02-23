@@ -33,6 +33,8 @@ namespace graphics {
 
     void compute_flat_normals();
 
+    std::vector<int> indices();
+
     static Geometry create_terrain(int z_len, int x_len);
   };
 }

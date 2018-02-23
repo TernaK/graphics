@@ -35,6 +35,7 @@ normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
 }
 
 void Geometry::compute_flat_normals() {
+  vector<int> is_set = vector<int>(facets.size() * 3);
   normals = vector<glm::vec3>(positions.size());
   for(const auto& facet: facets) {
     glm::vec3 pa = positions[facet.a];
@@ -44,6 +45,7 @@ void Geometry::compute_flat_normals() {
     normals[facet.a] = normal;
     normals[facet.b] = normal;
     normals[facet.c] = normal;
+
   }
 }
 
@@ -107,7 +109,7 @@ cv::Mat make_value_noise(cv::Size size, cv::Mat seed) {
 }
 
 Geometry Geometry::create_terrain(int z_len, int x_len) {
-  vector<vector<glm::vec3>> grid = vector<vector<glm::vec3>>(z_len, vector<glm::vec3>(x_len));
+//  vector<vector<glm::vec3>> grid = vector<vector<glm::vec3>>(z_len, vector<glm::vec3>(x_len));
   cv::Mat terrain = cv::Mat(z_len, x_len, CV_32F);
   cv::Mat seed0 = make_random({3,3});
   cv::Mat seed1 = make_random({20,20});
@@ -115,27 +117,44 @@ Geometry Geometry::create_terrain(int z_len, int x_len) {
   cv::Mat noise1 = make_value_noise(cv::Size(x_len,z_len), seed1);
   cv::Mat noise = noise0 + 0.03 * noise1;
 
+  vector<glm::vec3> _positions;
   for(int z = 0; z < z_len; z++) {
     for(int x = 0; x < x_len; x++) {
       float z_val = (float(z) / (z_len-1)) * 1.0 + -0.5;
       float x_val = (float(x) / (x_len-1)) * 1.0 + -0.5;
-      grid[z][x] = glm::vec3(x_val,noise.at<float>(z,x),z_val);
+      _positions.push_back(glm::vec3(x_val,noise.at<float>(z,x),z_val));
+      //grid[z][x] = glm::vec3(x_val,noise.at<float>(z,x),z_val);
     }
   }
 
-  vector<Facet> temp;
-  vector<glm::vec3> positions;
-  auto find_idx = [](int z, int x, int Z, int X) {
-    return  
-  };
-  for(int z = 0; z < grid.size() - 1; z++) {
-    for(int x = 0; x < grid.front().size() - 1; x++) {
-      //triangle 1
+  vector<Facet> _facets;
+  auto find_idx = [](int z, int x, int X) -> int { return  X * z + x; };
+  for(int z = 0; z < z_len - 1; z++) {
+    for(int x = 0; x < x_len - 1; x++) {
       int a,b,c;
-      a =
+      //triangle 1
+      a = find_idx(z,x, x_len);
+      b = find_idx(z+1,x, x_len);
+      c = find_idx(z+1,x+1, x_len);
+      _facets.push_back(Facet(a, b, c));
+      //triangle 2
+      a = find_idx(z,x, x_len);
+      b = find_idx(z+1,x+1, x_len);
+      c = find_idx(z,x+1, x_len);
+      _facets.push_back(Facet(a, b, c));
 //      temp.emplace_back(grid[z][x], grid[z+1][x], grid[z+1][x+1]);
 //      temp.emplace_back(grid[z][x], grid[z+1][x+1], grid[z][x+1]);
     }
   }
-  return Geometry(temp);
+  return Geometry(_facets, _positions);
+}
+
+std::vector<int> Geometry::indices() {
+  vector<int> _indices;
+  for(int i = 0; i < facets.size(); i++) {
+    _indices.push_back(facets[i].a);
+    _indices.push_back(facets[i].b);
+    _indices.push_back(facets[i].c);
+  }
+  return _indices;
 }

@@ -22,16 +22,16 @@ Mesh::Mesh(const std::vector<glm::vec3>& _vertices,
   bind_vertex_data();
 }
 
-Mesh::Mesh(Geometry& geometry, const std::vector<glm::vec4>& _colors) {
-  geometry.get_vertices_and_normals(vertices, normals);
-  for(int i = 0; i < _colors.size(); i++) {
-    colors.push_back(_colors[i].r);
-    colors.push_back(_colors[i].g);
-    colors.push_back(_colors[i].b);
-    colors.push_back(_colors[i].a);
-  }
-  bind_vertex_data();
-}
+//Mesh::Mesh(Geometry& geometry, const std::vector<glm::vec4>& _colors) {
+//  geometry.get_vertices_and_normals(vertices, normals);
+//  for(int i = 0; i < _colors.size(); i++) {
+//    colors.push_back(_colors[i].r);
+//    colors.push_back(_colors[i].g);
+//    colors.push_back(_colors[i].b);
+//    colors.push_back(_colors[i].a);
+//  }
+//  bind_vertex_data();
+//}
 
 void Mesh::bind_vertex_data() {
   glGenVertexArrays(1, &vao);

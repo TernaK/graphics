@@ -21,14 +21,13 @@ namespace graphics {
     void store_vertex_data(const std::vector<glm::vec3>& vertices,
                            const std::vector<GLint>& indices);
 
-    void store_vertex_data(const std::vector<glm::vec3>& vertices,
-                           const std::vector<glm::vec3>& normals,
-                           const std::vector<GLint>& indices);
+    void store_vertex_data();
 
     ///Use the adjacent traingle sides to compute the normals and store
     void compute_store_normals();
 
   public:
+    Geometry geometry;
     Material material;
     glm::vec3 rotation = glm::vec3(0,0,0);
     glm::vec3 position = glm::vec3(0,0,0); //degrees
