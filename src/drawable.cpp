@@ -19,6 +19,8 @@ std::vector<std::shared_ptr<Drawable>> Drawable::get_children_with_name(std::str
            [&name, &matches](const shared_ptr<Drawable>& x) {
              if(x->name == name)
                matches.push_back(x);
+             auto child_matches = x->get_children_with_name(name);
+             matches.insert(matches.end(), child_matches.begin(), child_matches.end());
            });
   return matches;
 }
