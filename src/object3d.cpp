@@ -41,19 +41,21 @@ void Object3D::draw(std::shared_ptr<Shader> shader,
                     const glm::mat4& p_model,
                     const glm::mat3& p_model_n,
                     bool draw_children) const {
-  if(!geometry || hidden) return; //for rootnode
+  if(hidden) return;
 
   glm::mat4 model = p_model * get_model_mat();
   glm::mat3 model_n = p_model_n * glm::transpose(glm::inverse(glm::mat3(model)));
-
-  material.set_uniforms(shader);
-  set_uniforms(shader, model, model_n);
-  geometry->draw();
 
   if(draw_children) {
     for_each(children.begin(), children.end(), [&](const shared_ptr<Drawable>& x) {
       x->draw(shader, model, model_n);
     });
+  }
+
+  if(geometry) {
+    material.set_uniforms(shader);
+    set_uniforms(shader, model, model_n);
+    geometry->draw();
   }
 }
 

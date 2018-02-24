@@ -12,7 +12,7 @@ namespace graphics {
     void setup_light_camera(std::shared_ptr<Shader> shader);
     
   public:
-    std::shared_ptr<Drawable> root_node;
+    std::shared_ptr<Drawable> root;
     std::shared_ptr<Canvas> canvas;
     std::shared_ptr<Light> light = std::make_shared<PointLight>();
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
