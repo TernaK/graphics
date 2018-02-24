@@ -117,6 +117,7 @@ void Mesh::bind_vertex_data() {
 }
 
 void Mesh::draw() {
+  if(vao == 0) return;
   glBindVertexArray(vao);
   indices_ebo.bind();
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

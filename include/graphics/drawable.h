@@ -3,7 +3,7 @@
 
 namespace graphics {
   enum struct ShaderType {
-    Mesh, Solid, Sprite
+    Object3D, Mesh, Sprite
   };
 
   struct Drawable {

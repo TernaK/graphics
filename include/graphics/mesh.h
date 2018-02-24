@@ -24,7 +24,7 @@ namespace graphics {
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
 
-    GLuint vao;
+    GLuint vao = 0;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> positions_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> texcoords_vbo;

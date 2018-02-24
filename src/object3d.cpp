@@ -50,5 +50,5 @@ void Object3D::draw(std::shared_ptr<Shader> shader) const {
 }
 
 ShaderType Object3D::get_shader_type() const {
-  return ShaderType::Solid;
+  return ShaderType::Object3D;
 }

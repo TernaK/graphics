@@ -12,10 +12,10 @@ Scene3D::Scene3D(std::shared_ptr<Canvas> _canvas)
 std::shared_ptr<Shader> Scene3D::prepare_shader(std::shared_ptr<Drawable> drawable) {
   switch(drawable->get_shader_type()) {
     default:
-    case ShaderType::Solid:
-      solid_shader->use();
-      setup_light_camera(solid_shader);
-      return solid_shader;
+    case ShaderType::Object3D:
+      object3d_shader->use();
+      setup_light_camera(object3d_shader);
+      return object3d_shader;
 
     case ShaderType::Mesh:
       mesh_shader->use();
