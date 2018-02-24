@@ -43,7 +43,7 @@ void Object3D::set_uniforms(std::shared_ptr<Shader> shader,
 void Object3D::draw(std::shared_ptr<Shader> shader,
                     const glm::mat4& p_model,
                     const glm::mat3& p_model_n) const {
-  if(!geometry) return; //for rootnode
+  if(!geometry || hidden) return; //for rootnode
   material.set_uniforms(shader);
   set_uniforms(shader, p_model, p_model_n);
   geometry->draw();
@@ -51,24 +51,4 @@ void Object3D::draw(std::shared_ptr<Shader> shader,
 
 ShaderType Object3D::get_shader_type() const {
   return ShaderType::Object3D;
-}
-
-void Object3D::add_child(std::shared_ptr<Object3D> child) {
-  children.push_back(child);
-}
-
-void Object3D::remove_child(std::shared_ptr<Object3D> child) {
-  children.remove_if([&child](const shared_ptr<Object3D>& x) -> bool {
-    return child == x;
-  });
-}
-
-std::vector<std::shared_ptr<Object3D>> Object3D::get_children_with_name(std::string name) {
-  vector<shared_ptr<Object3D>> matches;
-  for_each(children.begin(), children.end(),
-           [&name, &matches](const shared_ptr<Object3D>& x) {
-             if(x->name == name)
-               matches.push_back(x);
-           });
-  return matches;
 }
