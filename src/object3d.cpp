@@ -8,10 +8,6 @@ Object3D::~Object3D() {
 
 }
 
-Object3D::Object3D() {
-
-}
-
 Object3D::Object3D(std::shared_ptr<Geometry> _geometry, Material _material)
 : geometry(_geometry), material(_material) {
   
@@ -43,9 +39,9 @@ void Object3D::set_uniforms(std::shared_ptr<Shader> shader) const {
 }
 
 void Object3D::draw(std::shared_ptr<Shader> shader) const {
+  if(!geometry) return; //for rootnode
   material.set_uniforms(shader);
   set_uniforms(shader);
-
   geometry->draw();
 }
 

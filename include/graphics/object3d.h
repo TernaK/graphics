@@ -16,7 +16,7 @@ namespace graphics {
     glm::vec3 position = glm::vec3(0,0,0); //degrees
     glm::vec3 scale = glm::vec3(1,1,1);
     
-    Object3D();
+    Object3D() = default;
 
     Object3D(std::shared_ptr<Geometry> geometry, Material material = Material());
 
