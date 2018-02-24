@@ -48,8 +48,8 @@ void Scene3D::draw_scene() {
     }
   }
 
-  glfwPollEvents();
-  glfwSwapBuffers(canvas->window);
+  canvas->poll_events();
+  canvas->swap_buffers();
   CanvasHelper::check_gl_errors();
 }
 

@@ -9,6 +9,9 @@ namespace graphics {
 
     BufferObject() = default;
 
+    ~BufferObject() {
+    }
+
     BufferObject(T* data_ptr, int length, GLenum usage) {
       glGenBuffers(1, &buffer_object);
       glBindBuffer(target, buffer_object);
@@ -25,6 +28,7 @@ namespace graphics {
     }
 
     void release() {
+      if(buffer_object == 0) return;
       glDeleteBuffers(1, &buffer_object);
       buffer_object = 0;
     }
