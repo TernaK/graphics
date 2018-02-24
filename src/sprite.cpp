@@ -61,9 +61,9 @@ void Sprite::release_vertex_data() {
 }
 
 void Sprite::draw(std::shared_ptr<Shader> shader,
+                  bool draw_children,
                   const glm::mat4& p_model,
-                  const glm::mat3& p_model_n,
-                  bool draw_children) const {
+                  const glm::mat3& p_model_n) const {
   texture->activate();
   texture->set_uniforms(shader);
   glBindVertexArray(vao);

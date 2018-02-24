@@ -38,9 +38,9 @@ void Object3D::set_uniforms(std::shared_ptr<Shader> shader,
 }
 
 void Object3D::draw(std::shared_ptr<Shader> shader,
+                    bool draw_children,
                     const glm::mat4& p_model,
-                    const glm::mat3& p_model_n,
-                    bool draw_children) const {
+                    const glm::mat3& p_model_n) const {
   if(hidden) return;
 
   glm::mat4 model = p_model * get_model_mat();
@@ -48,7 +48,7 @@ void Object3D::draw(std::shared_ptr<Shader> shader,
 
   if(draw_children) {
     for_each(children.begin(), children.end(), [&](const shared_ptr<Drawable>& x) {
-      x->draw(shader, model, model_n);
+      x->draw(shader, true, model, model_n);
     });
   }
 
