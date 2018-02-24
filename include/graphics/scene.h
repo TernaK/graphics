@@ -18,7 +18,7 @@ namespace graphics {
     std::vector<std::shared_ptr<Drawable>> drawables;
     std::shared_ptr<Drawable> background;
     
-    std::shared_ptr<Shader> solid_shader = Shader::make_solid_point_shader();
+    std::shared_ptr<Shader> object3d_shader = Shader::make_object3d_point_shader();
     std::shared_ptr<Shader> mesh_shader = Shader::make_mesh_point_shader();
     std::shared_ptr<Shader> sprite_shader = Shader::make_sprite_shader();
 

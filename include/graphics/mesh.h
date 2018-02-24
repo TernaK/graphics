@@ -1,48 +1,57 @@
 #pragma once
-#include <graphics/drawable.h>
-#include <graphics/geometry.h>
-#include <glm/gtc/matrix_transform.hpp>
+#include <graphics/buffer_object.h>
+#include <glm/glm.hpp>
+#include <opencv2/opencv.hpp>
 #include <vector>
-#include <numeric>
+#include <functional>
+#include <iostream>
+#include <exception>
 
 namespace graphics {
-  class Mesh : public Drawable {
-    GLuint vao;           //vertex array object
-    GLuint vbo_vertices;  //vertex buffer object for vertices
-    GLuint vbo_colors;    //vertex buffer object for colors
-    GLuint vbo_normals;    //vertex buffer object for colors
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> colors;
-    std::vector<GLfloat> normals;
-
-    ///Convert glm arrays to primitive type arrays and store
-    ///@param vertices every three vertices should represent a
-    /// triangle in clockwise order
-    ///@param colors must be supplied as vertex colors
-    void store_vertex_data(const std::vector<glm::vec3>& vertices,
-                           const std::vector<glm::vec4>& colors,
-                           const std::vector<GLint>& indices);
-
-    ///Use the adjacent traingle sides to compute the normals and store
-    void compute_store_normals();
-
-  public:
-    glm::vec3 rotation = glm::vec3(0,0,0);
-    glm::vec3 position = glm::vec3(0,0,0); //degrees
-    glm::vec3 scale = glm::vec3(1,1,1);
+  struct Facet {
+    GLuint* indices[3];
+    GLuint a, b, c;
     
-    Mesh();
-    Mesh(const std::vector<glm::vec3>& vertices,
-         const std::vector<glm::vec4>& colors,
-         std::vector<GLint> indices = {});
-//    Mesh(Geometry& geometry, const std::vector<glm::vec4>& colors);
+    Facet(GLuint a, GLuint b, GLuint c);
+
+    GLuint operator[](int idx);
+  };
+  
+  struct Mesh {
+    std::vector<Facet> facets;
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> tex_coords;
+    std::vector<GLuint> indices;
+
+    GLuint vao = 0;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> positions_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> texcoords_vbo;
+    BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER> indices_ebo;
+
+    Mesh() = default;
+
+    Mesh(std::vector<Facet> facets,
+             const std::vector<glm::vec3>& positions,
+             bool smooth = true,
+             std::vector<glm::vec3> normals = {},
+             std::vector<glm::vec3> tex_coords = {});
+
+    Mesh(const std::vector<glm::vec3>& positions,
+             std::vector<GLuint> indices = {},
+             bool smooth = true);
+
     ~Mesh();
 
     void bind_vertex_data();
-    void release_vertex_data();
-    glm::mat4 get_model_mat() const;
-    void set_uniforms(std::shared_ptr<Shader> shader) const;
-    ShaderType get_shader_type() const override;
-    void draw(std::shared_ptr<Shader> shader) const override;
+
+    void compute_smooth_normals();
+
+    void create_indices_from_facets();
+
+    glm::vec3 get_facet_normal(const Facet& facet);
+
+    void draw();
   };
 }

@@ -7,8 +7,6 @@ set(graphics_srcs
   camera.cpp ${CMAKE_SOURCE_DIR}/include/graphics/camera.h
   mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
   material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
-  solid.cpp ${CMAKE_SOURCE_DIR}/include/graphics/solid.h
-  shape.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shape.h
   texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
   ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
@@ -17,6 +15,7 @@ set(graphics_srcs
   geometry.cpp ${CMAKE_SOURCE_DIR}/include/graphics/geometry.h
   ${CMAKE_SOURCE_DIR}/include/graphics/buffer_object.h
   object3d.cpp ${CMAKE_SOURCE_DIR}/include/graphics/object3d.h
+  mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})

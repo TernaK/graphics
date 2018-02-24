@@ -149,9 +149,9 @@ std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
   return shader;
 }
 
-std::shared_ptr<Shader> Shader::make_solid_point_shader() {
-  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "solid_point_vshader.glsl",
-                                    graphics::SHADERS_DIR + "solid_point_fshader.glsl");
+std::shared_ptr<Shader> Shader::make_object3d_point_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "object3d_point_vshader.glsl",
+                                    graphics::SHADERS_DIR + "object3d_point_fshader.glsl");
   shader->use();
   shader->add_attribute("_pos");
   shader->add_attribute("_normal");
