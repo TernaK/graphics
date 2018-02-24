@@ -31,22 +31,30 @@ glm::mat4 Object3D::get_model_mat() const {
 }
 
 void Object3D::set_uniforms(std::shared_ptr<Shader> shader,
-                            const glm::mat4& p_model,
-                            const glm::mat3& p_model_n) const {
-  glm::mat4 model_mat = p_model * get_model_mat();
-  shader->set_uniform("_model_mat", model_mat);
-  
-  glm::mat3 normal_mat = p_model_n * glm::transpose(glm::inverse(glm::mat3(model_mat)));
-  shader->set_uniform("_normal_mat", normal_mat);
+                            const glm::mat4& model,
+                            const glm::mat3& model_n) const {
+  shader->set_uniform("_model_mat", model);
+  shader->set_uniform("_normal_mat", model_n);
 }
 
 void Object3D::draw(std::shared_ptr<Shader> shader,
                     const glm::mat4& p_model,
-                    const glm::mat3& p_model_n) const {
+                    const glm::mat3& p_model_n,
+                    bool draw_children) const {
   if(!geometry || hidden) return; //for rootnode
+
+  glm::mat4 model = p_model * get_model_mat();
+  glm::mat3 model_n = p_model_n * glm::transpose(glm::inverse(glm::mat3(model)));
+
   material.set_uniforms(shader);
-  set_uniforms(shader, p_model, p_model_n);
+  set_uniforms(shader, model, model_n);
   geometry->draw();
+
+  if(draw_children) {
+    for_each(children.begin(), children.end(), [&](const shared_ptr<Drawable>& x) {
+      x->draw(shader, model, model_n);
+    });
+  }
 }
 
 ShaderType Object3D::get_shader_type() const {

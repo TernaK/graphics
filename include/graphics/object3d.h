@@ -27,8 +27,8 @@ namespace graphics {
     ~Object3D();
 
     void set_uniforms(std::shared_ptr<Shader> shader,
-                      const glm::mat4& p_model,
-                      const glm::mat3& p_model_n) const;
+                      const glm::mat4& model,
+                      const glm::mat3& model_n) const;
 
     glm::mat4 get_model_mat() const;
 
@@ -36,6 +36,7 @@ namespace graphics {
 
     void draw(std::shared_ptr<Shader> shader,
               const glm::mat4& p_model = glm::mat4(1.0),
-              const glm::mat3& p_model_n = glm::mat4(1.0)) const override;
+              const glm::mat3& p_model_n = glm::mat4(1.0),
+              bool draw_children = true) const override;
   };
 }

@@ -12,9 +12,9 @@ namespace graphics {
 
     void draw();
 
-    static std::shared_ptr<Geometry> create_box(GLfloat x = 0.5,
-                                                GLfloat y = 0.5,
-                                                GLfloat z = 0.5);
+    static std::shared_ptr<Geometry> create_box(GLfloat x = 1,
+                                                GLfloat y = 1,
+                                                GLfloat z = 1);
     
     static std::shared_ptr<Geometry> create_flat_sphere(GLfloat radius = 0.5,
                                                         int stacks = 10,

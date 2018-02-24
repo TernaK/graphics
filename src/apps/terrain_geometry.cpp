@@ -14,7 +14,7 @@ int main(int argc, char* args[]) {
 
   auto box_geometry = Geometry::create_box();
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
-  box->scale = glm::vec3(3);
+  box->scale = glm::vec3(2);
   box->position.x = 0;
   box->position.z = 3;
   box->material.color = glm::vec3(0.6, 0.1, 0.1);
@@ -27,10 +27,10 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
-  auto flat_sphere_geometry = Geometry::create_flat_sphere(1, 20, 20);
+  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
   shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
   flat_sphere->position.x = 1;
-  flat_sphere->position.z = -2;
+  flat_sphere->position.z = 1;
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 
   auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
@@ -40,14 +40,15 @@ int main(int argc, char* args[]) {
   smooth_sphere->material.color = glm::vec3(0.6, 0.6, 0.2);
   smooth_sphere->material.shininess = 1;
 
+  box->add_child(flat_sphere);
+
   scene.add_drawable(box);
-  scene.add_drawable(flat_sphere);
   scene.add_drawable(smooth_sphere);
   scene.add_drawable(terrain);
 
   while(canvas->still_open()) {
-    canvas->clear();
     scene.clear();
+
     ((PointLight*)scene.light.get())->position.x = 10 * sin(2.0*M_PI*glfwGetTime()/3);
     ((PointLight*)scene.light.get())->position.z = 10 * cos(2.0*M_PI*glfwGetTime()/3);
     box->rotation.y -= 0.3;

@@ -22,6 +22,7 @@ namespace graphics {
     ShaderType get_shader_type() const override;
     void draw(std::shared_ptr<Shader> shader,
               const glm::mat4& p_model = glm::mat4(1.0),
-              const glm::mat3& p_model_n = glm::mat4(1.0)) const override;
+              const glm::mat3& p_model_n = glm::mat4(1.0),
+              bool draw_children = true) const override;
   };
 }
