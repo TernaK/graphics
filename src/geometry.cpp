@@ -12,8 +12,15 @@ Geometry::Geometry(const std::vector<std::shared_ptr<Mesh>>& _meshes)
 }
 
 void Geometry::draw() {
+  GLint old_state;
+  glGetIntegerv(GL_POLYGON_MODE, &old_state);
+  if(wire_frame)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
   for(auto mesh: meshes)
     mesh->draw();
+
+  glPolygonMode(GL_FRONT_AND_BACK, old_state);
 }
 
 std::shared_ptr<Geometry> Geometry::create_box(GLfloat x, GLfloat y, GLfloat z) {

@@ -5,6 +5,7 @@
 namespace graphics {
   struct Geometry {
     std::vector<std::shared_ptr<Mesh>> meshes;
+    bool wire_frame = false;
 
     Geometry() = default;
 

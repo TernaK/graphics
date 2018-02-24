@@ -41,6 +41,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->material.shininess = 1;
 
   box->add_child(flat_sphere);
+  terrain->geometry->wire_frame = true;
 
   scene.add_drawable(box);
   scene.add_drawable(smooth_sphere);
