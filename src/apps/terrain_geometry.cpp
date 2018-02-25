@@ -1,5 +1,6 @@
 #include <graphics/scene.h>
 #include <graphics/object3d.h>
+#include <graphics/scene_renderer.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 using namespace std;

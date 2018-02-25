@@ -20,6 +20,7 @@ namespace graphics {
     GLuint shader_program;
     std::map<std::string, GLint> uniforms;
     std::map<std::string, GLint> attributes;
+    std::string name;
 
     Shader();
     Shader(std::string vshader_path, std::string fshader_path);

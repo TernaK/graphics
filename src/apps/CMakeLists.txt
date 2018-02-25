@@ -21,4 +21,7 @@ target_link_libraries(triangle ${libs_list})
 add_executable(terrain_geometry terrain_geometry.cpp)
 target_link_libraries(terrain_geometry ${libs_list})
 
+add_executable(rendered_scene rendered_scene.cpp)
+target_link_libraries(rendered_scene ${libs_list})
+
 # add_subdirectory(rubiks)
