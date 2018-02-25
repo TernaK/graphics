@@ -9,72 +9,65 @@ using namespace graphics;
 int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>();
   shared_ptr<Scene> scene = make_shared<Scene>(canvas);
+
+  scene->camera->position = glm::vec3(0,5,10);
+
+  auto box_geometry = Geometry::create_box(2,2,2);
+  shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
+  box->name = "box";
+  box->position.x = 0;
+  box->position.z = 3;
+  box->material.color = glm::vec3(0.6, 0.1, 0.1);
+
+  auto terrain_geometry = Geometry::create_terrain(50, 50);
+  shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
+  terrain->name = "terrain";
+  terrain->scale = glm::vec3(2.5);
+  terrain->position.x = -2;
+  terrain->position.z = 2;
+  terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
+  terrain->material.shininess = 64;
+
+  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
+  shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
+  flat_sphere->name = "flat_sphere";
+  flat_sphere->position = glm::vec3(0, 2, 1);
+  flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
+
+  auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
+  shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
+  smooth_sphere->name = "smooth_sphere";
+  smooth_sphere->position = glm::vec3(3,0,0);
+  smooth_sphere->material.color = glm::vec3(0.1, 0.2, 0.6);
+  smooth_sphere->material.shininess = 256;
+
+  box->add_child(flat_sphere);
+  terrain->geometry->wire_frame = true;
+
+  auto light_node = make_shared<Object3D>();
+  light_node->requires_camera = false;
+  light_node->requires_shader = false;
+  auto light = make_shared<PointLight>();
+  light_node->light = light;
+
+  scene->add_node(light_node);
+  scene->add_node(box);
+  scene->add_node(terrain);
+  scene->add_node(smooth_sphere);
+
   SceneRenderer renderer;
 
-  auto light = make_shared<PointLight>();
-  auto box_geometry = Geometry::create_box();
-  shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
-  box->light = light;
+  while(canvas->still_open()) {
+    canvas->clear();
 
-  scene->add_node(box);
-  auto groups = renderer.traverse_scene(scene);
+    scene->root->rotation.y -= 0.3;
+    flat_sphere->rotation.x += 0.3;
+    terrain->rotation.y += 0.3;
+    box->rotation.y += 2;
 
-  CanvasHelper::check_gl_errors();
-//  PointLight light;
-//  Camera camera;
-//  camera.aspect_ratio = canvas->get_aspect_ratio();
-//  camera.position = glm::vec3(0,5,10);
-//  light.position.y = 10;
-//  light.ambient = glm::vec3(0.8);
-//
-//  auto box_geometry = Geometry::create_box();
-//  shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
-//  box->scale = glm::vec3(2);
-//  box->position.x = 0;
-//  box->position.z = 3;
-//  box->material.color = glm::vec3(0.6, 0.1, 0.1);
-//
-//  auto terrain_geometry = Geometry::create_terrain(50, 50);
-//  shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
-//  terrain->scale = glm::vec3(2.5);
-//  terrain->position.x = -2;
-//  terrain->position.z = 2;
-//  terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
-//  terrain->material.shininess = 64;
-//
-//  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
-//  shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
-//  flat_sphere->position.x = 1;
-//  flat_sphere->position.z = 1;
-//  flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
-//
-//  auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
-//  shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
-//  smooth_sphere->position.x = 3;
-//  smooth_sphere->position.z = 2;
-//  smooth_sphere->material.color = glm::vec3(0.6, 0.6, 0.2);
-//  smooth_sphere->material.shininess = 1;
-//
-//  box->add_child(flat_sphere);
-//  terrain->geometry->wire_frame = true;
-//
-//  auto shader = Shader::make_object3d_point_shader();
-//
-//  while(canvas->still_open()) {
-//    canvas->clear();
-//
-//    shader->use();
-//    box->rotation.y -= 0.3;
-//    flat_sphere->rotation.x += 0.3;
-//    terrain->rotation.y += 0.3;
-//
-//    light.set_uniforms(shader);
-//    camera.set_uniforms(shader);
-//    box->draw(shader);
-//    terrain->draw(shader);
-//    smooth_sphere->draw(shader);
-//
-//    canvas->poll_events();
-//    canvas->swap_buffers();
-//  }
+    renderer.render_scene(scene);
+
+    canvas->poll_events();
+    canvas->swap_buffers();
+  }
 }

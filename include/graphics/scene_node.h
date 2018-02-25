@@ -32,6 +32,8 @@ namespace graphics {
     std::string name = "node";
     std::list<std::shared_ptr<SceneNode>> children;
 
+    SceneNode() = default;
+    
     SceneNode(std::shared_ptr<Geometry> geometry);
 
     virtual void set_uniforms(std::shared_ptr<Shader> shader, transform_t transform);
