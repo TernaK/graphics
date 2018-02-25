@@ -3,37 +3,29 @@
 using namespace std;
 using namespace graphics;
 
+std::string create_uniform_name(int idx, string attribute) {
+  return "_lights[" + to_string(idx) + "]." + attribute;
+}
+
+Light::Light(LightType type) : type(type) {
+
+}
+
 void Light::set_uniforms(std::shared_ptr<Shader> shader, int idx) const {
-  auto norm_strength = strength / (strength.x + strength.y + strength.z);
-  shader->set_uniform("_light.color", color);
-  shader->set_uniform("_light.ambient", ambient);
-  shader->set_uniform("_light.strength", norm_strength);
-}
+  shader->add_uniform(create_uniform_name(idx, "type"));
+  shader->add_uniform(create_uniform_name(idx, "color"));
+  shader->add_uniform(create_uniform_name(idx, "ambient"));
+  shader->set_uniform(create_uniform_name(idx, "type"), (int)type);
+  shader->set_uniform(create_uniform_name(idx, "color"), color);
+  shader->set_uniform(create_uniform_name(idx, "ambient"), ambient);
 
-PointLight::PointLight(glm::vec3 _positon,
-                       glm::vec3 _color,
-                       glm::vec3 _ambient)
-: Light(), position(_positon) {
-  color = _color;
-  ambient = _ambient;
+  if(type == LightType::point) {
+    shader->add_uniform(create_uniform_name(idx, "position"));
+    shader->add_uniform(create_uniform_name(idx, "attenuation"));
+    shader->set_uniform(create_uniform_name(idx, "position"), position);
+    shader->set_uniform(create_uniform_name(idx, "attenuation"), attenuation);
+  } else if (type == LightType::directional) {
+    shader->add_uniform(create_uniform_name(idx, "direction"));
+    shader->set_uniform(create_uniform_name(idx, "direction"), direction);
+  }
 }
-
-void PointLight::set_uniforms(std::shared_ptr<Shader> shader, int idx) const {
-  Light::set_uniforms(shader);
-  shader->set_uniform("_light.position", position);
-  shader->set_uniform("_light.attenuation", attenuation);
-}
-
-DirectionalLight::DirectionalLight(glm::vec3 _direction,
-                                   glm::vec3 _color,
-                                   glm::vec3 _ambient)
-: Light(), direction(_direction) {
-  color = _color;
-  ambient = _ambient;
-}
-
-void DirectionalLight::set_uniforms(std::shared_ptr<Shader> shader, int idx) const {
-  Light::set_uniforms(shader);
-  shader->set_uniform("_light.direction", direction);
-}
-

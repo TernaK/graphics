@@ -52,10 +52,16 @@ void SceneRenderer::render_scene(std::shared_ptr<Scene> scene) {
   for(auto& group: groups) {
     auto& shader = group.first;
     shader->use();
+
     if(group.second.camera)
       group.second.camera->set_uniforms(shader);
-    if(!group.second.lights.empty())
-      group.second.lights.begin().operator*()->set_uniforms(shader);
+
+    if(!group.second.lights.empty()) {
+      shader->set_uniform("_num_lights", (int)group.second.lights.size());
+      for(int i = 0; i < group.second.lights.size(); i++)
+        group.second.lights.begin().operator*()->set_uniforms(shader, i);
+    }
+
     for(auto& node_trans: group.second.nodes_trans)
       node_trans.node->draw_node(shader, node_trans.trans.model);
   }

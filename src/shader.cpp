@@ -161,11 +161,8 @@ std::shared_ptr<Shader> Shader::make_object3d_point_shader() {
   shader->add_uniform("_material.color");
   shader->add_uniform("_material.alpha");
   shader->add_uniform("_material.shininess");
-  shader->add_uniform("_light.color");
-  shader->add_uniform("_light.ambient");
-  shader->add_uniform("_light.position");
-  shader->add_uniform("_light.attenuation");
-  shader->add_uniform("_light.strength");
+  shader->add_uniform("_material.strength");
+  shader->add_uniform("_num_lights");
   shader->add_uniform("_proj_mat");
   shader->add_uniform("_view_mat");
   shader->add_uniform("_model_mat");

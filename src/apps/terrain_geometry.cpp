@@ -8,7 +8,7 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>();
-  PointLight light;
+  Light light;
   Camera camera;
   camera.aspect_ratio = canvas->get_aspect_ratio();
   camera.position = glm::vec3(0,5,10);

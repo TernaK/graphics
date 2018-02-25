@@ -18,6 +18,7 @@ int main(int argc, char* args[]) {
   box->position.x = 0;
   box->position.z = 3;
   box->material.color = glm::vec3(0.6, 0.1, 0.1);
+  box->material.shininess = 32;
 
   auto terrain_geometry = Geometry::create_terrain(50, 50);
   shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
@@ -40,6 +41,8 @@ int main(int argc, char* args[]) {
   smooth_sphere->position = glm::vec3(3,0,0);
   smooth_sphere->material.color = glm::vec3(0.1, 0.2, 0.6);
   smooth_sphere->material.shininess = 256;
+  smooth_sphere->material.strength.y = 0.9;
+  smooth_sphere->material.shininess = 2;
 
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;
@@ -47,7 +50,7 @@ int main(int argc, char* args[]) {
   auto light_node = make_shared<Object3D>();
   light_node->requires_camera = false;
   light_node->requires_shader = false;
-  auto light = make_shared<PointLight>();
+  auto light = make_shared<Light>(LightType::directional);
   light_node->light = light;
 
   scene->add_node(light_node);

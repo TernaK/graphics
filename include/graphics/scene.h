@@ -17,7 +17,7 @@ namespace graphics {
   public:
     std::shared_ptr<Drawable> root;
     std::shared_ptr<Canvas> canvas;
-    std::shared_ptr<Light> light = std::make_shared<PointLight>();
+    std::shared_ptr<Light> light = std::make_shared<Light>();
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     std::vector<std::shared_ptr<Drawable>> drawables;
     std::shared_ptr<Drawable> background;
