@@ -7,10 +7,12 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>();
-  Scene3D scene(canvas);
-  scene.camera->position = glm::vec3(0,5,10);
-  ((PointLight*)scene.light.get())->position.y = 10;
-  ((PointLight*)scene.light.get())->ambient = glm::vec3(0.8);
+  PointLight light;
+  Camera camera;
+  camera.aspect_ratio = canvas->get_aspect_ratio();
+  camera.position = glm::vec3(0,5,10);
+  light.position.y = 10;
+  light.ambient = glm::vec3(0.8);
 
   auto box_geometry = Geometry::create_box();
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
@@ -43,19 +45,23 @@ int main(int argc, char* args[]) {
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;
 
-  scene.add_drawable(box);
-  scene.add_drawable(smooth_sphere);
-  scene.add_drawable(terrain);
+  auto shader = Shader::make_object3d_point_shader();
 
   while(canvas->still_open()) {
-    scene.clear();
+    canvas->clear();
 
-    ((PointLight*)scene.light.get())->position.x = 10 * sin(2.0*M_PI*glfwGetTime()/3);
-    ((PointLight*)scene.light.get())->position.z = 10 * cos(2.0*M_PI*glfwGetTime()/3);
+    shader->use();
     box->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
     terrain->rotation.y += 0.3;
 
-    scene.draw_scene();
+    light.set_uniforms(shader);
+    camera.set_uniforms(shader);
+    box->draw(shader);
+    terrain->draw(shader);
+    smooth_sphere->draw(shader);
+
+    canvas->poll_events();
+    canvas->swap_buffers();
   }
 }

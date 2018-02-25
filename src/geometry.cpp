@@ -11,6 +11,11 @@ Geometry::Geometry(const std::vector<std::shared_ptr<Mesh>>& _meshes)
 
 }
 
+Geometry::Geometry(const std::vector<glm::vec3>& _positions,
+                   const std::vector<GLuint>& _indices) {
+  meshes = { make_shared<Mesh>(_positions, _indices) };
+}
+
 void Geometry::draw() {
   GLint old_state;
   glGetIntegerv(GL_POLYGON_MODE, &old_state);

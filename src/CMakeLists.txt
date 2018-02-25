@@ -10,12 +10,14 @@ set(graphics_srcs
   texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
   drawable.cpp ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
-  scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
+  # scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
   framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
   geometry.cpp ${CMAKE_SOURCE_DIR}/include/graphics/geometry.h
   ${CMAKE_SOURCE_DIR}/include/graphics/buffer_object.h
   object3d.cpp ${CMAKE_SOURCE_DIR}/include/graphics/object3d.h
   mesh.cpp ${CMAKE_SOURCE_DIR}/include/graphics/mesh.h
+  scene_node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_node.h
+  scene_renderer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_renderer.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})

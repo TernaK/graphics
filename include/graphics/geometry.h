@@ -11,6 +11,9 @@ namespace graphics {
 
     Geometry(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
+    Geometry(const std::vector<glm::vec3>& positions,
+             const std::vector<GLuint>& indices);
+
     void draw();
 
     static std::shared_ptr<Geometry> create_box(GLfloat x = 1,
