@@ -22,7 +22,7 @@ int main(int argc, char* args[]) {
   auto terrain_geometry = Geometry::create_terrain(50, 50);
   shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
   terrain->name = "terrain";
-  terrain->scale = glm::vec3(2.5);
+  terrain->scale = glm::vec3(4);
   terrain->position.x = -2;
   terrain->position.z = 2;
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
@@ -62,7 +62,7 @@ int main(int argc, char* args[]) {
 
     scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
-    terrain->rotation.y += 0.3;
+    terrain->rotation.y += 1;
     box->rotation.y += 2;
 
     renderer.render_scene(scene);

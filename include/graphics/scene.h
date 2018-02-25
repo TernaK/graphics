@@ -8,6 +8,8 @@
 #include <vector>
 
 namespace graphics {
+  // Scene3D
+  //__________________________________________________
   class Scene3D {
     std::shared_ptr<Shader> prepare_shader(std::shared_ptr<Drawable> drawable);
     void setup_light_camera(std::shared_ptr<Shader> shader);
@@ -37,6 +39,8 @@ namespace graphics {
     void clear();
   };
 
+  // Scene
+  //__________________________________________________
   struct Scene {
     std::shared_ptr<SceneNode> root;
     std::shared_ptr<Canvas> canvas;

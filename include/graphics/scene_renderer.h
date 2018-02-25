@@ -24,6 +24,7 @@ namespace graphics {
 
     std::map<std::shared_ptr<Shader>, shader_group_t>
     traverse_scene(std::shared_ptr<Scene> scene);
+    
     void traverse_node(std::shared_ptr<SceneNode> node,
                        transform_t parent_transform,
                        std::map<std::shared_ptr<Shader>,shader_group_t>& groups);

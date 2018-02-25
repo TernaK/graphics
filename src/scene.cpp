@@ -3,6 +3,8 @@
 using namespace std;
 using namespace graphics;
 
+// Scene3D
+//__________________________________________________
 Scene3D::Scene3D(std::shared_ptr<Canvas> _canvas)
 : canvas(_canvas) {
   camera->aspect_ratio = canvas->get_aspect_ratio();
@@ -66,7 +68,8 @@ void Scene3D::clear() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-
+// Scene
+//__________________________________________________
 Scene::Scene(std::shared_ptr<Canvas> _canvas)
 : canvas(_canvas) {
   camera->aspect_ratio = canvas->get_aspect_ratio();

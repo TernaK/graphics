@@ -6,8 +6,9 @@ namespace graphics {
   struct Light {
   public:
     glm::vec3 color = glm::vec3(1.0);
-    glm::vec3 ambient = glm::vec3(0.3);
-    virtual void set_uniforms(std::shared_ptr<Shader> shader) const;
+    glm::vec3 ambient = glm::vec3(1.0);
+    glm::vec3 strength = glm::vec3(1.0,1.0,0.3); //ambient, diffuse, specular
+    virtual void set_uniforms(std::shared_ptr<Shader> shader, int idx = 0) const;
 
   protected:
     Light() = default;
@@ -19,9 +20,9 @@ namespace graphics {
 
     PointLight(glm::vec3 positon = glm::vec3(2,10,20),
                glm::vec3 color = glm::vec3(1.0),
-               glm::vec3 ambient = glm::vec3(0.3));
+               glm::vec3 ambient = glm::vec3(1.0));
 
-    void set_uniforms(std::shared_ptr<Shader> shader) const override;
+    void set_uniforms(std::shared_ptr<Shader> shader, int idx = 0) const override;
   };
 
   struct DirectionalLight : public Light {
@@ -31,6 +32,6 @@ namespace graphics {
                      glm::vec3 color = glm::vec3(1.0),
                      glm::vec3 ambient = glm::vec3(0.3));
 
-    void set_uniforms(std::shared_ptr<Shader> shader) const override;
+    void set_uniforms(std::shared_ptr<Shader> shader, int idx = 0) const override;
   };
 }
