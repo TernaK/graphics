@@ -124,6 +124,7 @@ GLint Shader::operator[](std::string attribute_name) {
 std::shared_ptr<Shader> Shader::make_simple2d_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "simple2d_vshader.glsl",
                                     graphics::SHADERS_DIR + "simple2d_fshader.glsl");
+  shader->name = "simple2d";
   shader->use();
   shader->add_attribute("_pos");
   shader->add_attribute("_color");
@@ -133,6 +134,7 @@ std::shared_ptr<Shader> Shader::make_simple2d_shader() {
 std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "mesh_point_vshader.glsl",
                                     graphics::SHADERS_DIR + "mesh_point_fshader.glsl");
+  shader->name = "mesh_point";
   shader->use();
   shader->add_attribute("_pos");
   shader->add_attribute("_color");
@@ -150,18 +152,17 @@ std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
 }
 
 std::shared_ptr<Shader> Shader::make_object3d_point_shader() {
-  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "object3d_point_vshader.glsl",
-                                    graphics::SHADERS_DIR + "object3d_point_fshader.glsl");
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "object3d_vshader.glsl",
+                                    graphics::SHADERS_DIR + "object3d_fshader.glsl");
+  shader->name = "object3d";
   shader->use();
   shader->add_attribute("_pos");
   shader->add_attribute("_normal");
   shader->add_uniform("_material.color");
   shader->add_uniform("_material.alpha");
   shader->add_uniform("_material.shininess");
-  shader->add_uniform("_light.color");
-  shader->add_uniform("_light.ambient");
-  shader->add_uniform("_light.position");
-  shader->add_uniform("_light.attenuation");
+  shader->add_uniform("_material.strength");
+  shader->add_uniform("_num_lights");
   shader->add_uniform("_proj_mat");
   shader->add_uniform("_view_mat");
   shader->add_uniform("_model_mat");
@@ -173,6 +174,7 @@ std::shared_ptr<Shader> Shader::make_object3d_point_shader() {
 std::shared_ptr<Shader> Shader::make_sprite_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "sprite_vshader.glsl",
                                     graphics::SHADERS_DIR + "sprite_fshader.glsl");
+  shader->name = "sprite";
   shader->use();
   shader->add_attribute("_pos");
   shader->add_attribute("_tex_coord");

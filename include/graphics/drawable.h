@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/shader.h>
+#include <list>
 
 namespace graphics {
   enum struct ShaderType {
@@ -8,8 +9,20 @@ namespace graphics {
 
   struct Drawable {
     bool hidden = false;
+    std::string name = "object";
+    std::list<std::shared_ptr<Drawable>> children;
 
     virtual ShaderType get_shader_type() const = 0;
-    virtual void draw(std::shared_ptr<Shader> shader) const = 0;
+
+    virtual void draw(std::shared_ptr<Shader> shader,
+                      bool draw_children = true,
+                      const glm::mat4& p_model = glm::mat4(1.0),
+                      const glm::mat3& p_model_n = glm::mat4(1.0)) const = 0;
+
+    void add_child(std::shared_ptr<Drawable> child);
+
+    void remove_child(std::shared_ptr<Drawable> child);
+
+    std::vector<std::shared_ptr<Drawable>> get_children_with_name(std::string name);
   };
 }
