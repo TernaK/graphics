@@ -61,7 +61,7 @@ int main(int argc, char* args[]) {
   SceneRenderer renderer;
 
   while(canvas->still_open()) {
-    canvas->clear();
+    scene->clear();
 
     scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
