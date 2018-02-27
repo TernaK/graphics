@@ -146,41 +146,39 @@ Primitive::Primitive(PrimitiveType type, params_t params)
 }
 
 void Primitive::make_box() {
-  //  GLfloat x = 0.5, y = 0.5, z  = 0.5;
-  //
-  //  auto ftl = glm::vec3(-x,y,z);   //front top left
-  //  auto ftr = glm::vec3(x,y,z);    //front top right
-  //  auto fll = glm::vec3(-x,-y,z);  //front low left
-  //  auto flr = glm::vec3(x,-y,z);   //front low right
-  //  auto btl = glm::vec3(x,y,-z);   //back top left
-  //  auto btr = glm::vec3(-x,y,-z);  //back top right
-  //  auto bll = glm::vec3(x,-y,-z);  //back low left
-  //  auto blr = glm::vec3(-x,-y,-z);  //back low right
-  //
-  //  vector<vector<glm::vec3>> face_positions = {
-  //    { ftl, ftr, fll, flr }, //front
-  //    { btl, btr, bll, blr }, //back
-  //    { btr, ftl, blr, fll }, //left
-  //    { ftr, btl, flr, bll }, //right
-  //    { btr, btl, ftl, ftr }, //top
-  //    { fll, flr, blr, bll }  //bottom
-  //  };
-  //
-  //  std::vector<GLuint> indices = {0,2,1, 1,2,3};
-  //  vector<shared_ptr<Mesh>> meshes;
-  //  for(auto& positons: face_positions) {
-  //    auto mesh = make_shared<Mesh>(positons, indices);
-  //    meshes.push_back(mesh);
-  //  }
-  //
-  //  return meshes;
+  GLfloat h = 0.5;
+
+  auto ftl = glm::vec3(-h,h,h);   //front top left
+  auto ftr = glm::vec3(h,h,h);    //front top right
+  auto fll = glm::vec3(-h,-h,h);  //front low left
+  auto flr = glm::vec3(h,-h,h);   //front low right
+  auto btl = glm::vec3(h,h,-h);   //back top left
+  auto btr = glm::vec3(-h,h,-h);  //back top right
+  auto bll = glm::vec3(h,-h,-h);  //back low left
+  auto blr = glm::vec3(-h,-h,-h);  //back low right
+
+  positions = {
+     ftl, ftr, fll, flr, //front
+     btl, btr, bll, blr, //back
+     btr, ftl, blr, fll, //left
+     ftr, btl, flr, bll, //right
+     btr, btl, ftl, ftr, //top
+     fll, flr, blr, bll  //bottom
+  };
+
+  indices = {0,2,1, 1,2,3};
+  for(int i = 1 ; i < positions.size() / 4; i++)
+    for(int j = 0; j < 6; j++)
+      indices.push_back(indices[j] + i*4);
+
+  init_from_positions();
 }
 
 void Primitive::make_flat_sphere(int st, int sc) {
   GLfloat r = 1.0;
   if(st < 2 || sc < 3)
     throw runtime_error("cannot have < 2 stacks or < 3 slices");
-  
+
   vector<vector<glm::vec3>> temp(st + 1, {});
   //top section
   temp.front().emplace_back(0,r,0);

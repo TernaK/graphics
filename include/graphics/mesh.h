@@ -71,8 +71,7 @@ namespace graphics {
     } params;
 
     void make_primitive();
-
-    //TODO: make these return single meshes
+    
     void make_box();
 
     void make_flat_sphere(int stacks = 10, int sections = 10);

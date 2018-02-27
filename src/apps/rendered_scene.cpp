@@ -12,7 +12,7 @@ int main(int argc, char* args[]) {
 
   scene->camera->position = glm::vec3(0,5,10);
 
-  auto box_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::box));
+  auto box_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::box);
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
   box->name = "box";
   box->position.x = 0;
@@ -29,13 +29,13 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
-  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::flat_sphere));
+  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::flat_sphere);
   shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
   flat_sphere->name = "flat_sphere";
   flat_sphere->position = glm::vec3(0, 2, 1);
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 
-  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::smooth_sphere));
+  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::smooth_sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
   smooth_sphere->name = "smooth_sphere";
   smooth_sphere->position = glm::vec3(3,0,0);

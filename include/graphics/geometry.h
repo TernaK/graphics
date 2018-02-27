@@ -20,7 +20,8 @@ namespace graphics {
   };
 
   struct PrimitiveGeometry : public Geometry {
-    PrimitiveGeometry(const std::vector<std::shared_ptr<Primitive>>& meshes);
     PrimitiveGeometry(PrimitiveType type = PrimitiveType::smooth_sphere);
+
+    PrimitiveGeometry(const std::vector<std::shared_ptr<Primitive>>& meshes);
   };
 }
