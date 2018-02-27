@@ -151,7 +151,7 @@ std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
   return shader;
 }
 
-std::shared_ptr<Shader> Shader::make_object3d_point_shader() {
+std::shared_ptr<Shader> Shader::make_object3d_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "object3d_vshader.glsl",
                                     graphics::SHADERS_DIR + "object3d_fshader.glsl");
   shader->name = "object3d";

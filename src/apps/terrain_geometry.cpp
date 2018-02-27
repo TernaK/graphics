@@ -46,7 +46,7 @@ int main(int argc, char* args[]) {
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;
 
-  auto shader = Shader::make_object3d_point_shader();
+  auto shader = Shader::make_object3d_shader();
 
   while(canvas->still_open()) {
     canvas->clear();
