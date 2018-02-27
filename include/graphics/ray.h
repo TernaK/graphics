@@ -16,12 +16,6 @@ namespace graphics {
     float l;
   };
 
-
-//  struct PrimitiveGeometry : public Geometry {
-//    PrimitiveGeometry(const std::vector<std::shared_ptr<Mesh>>& meshes);
-//    //    bool ray_hit_test(ray_t& ray, hit_t& hit, glm::mat4& p_model);
-//  };
-
   struct PrimitiveSceneNode : public SceneNode {
     PrimitiveSceneNode(std::shared_ptr<PrimitiveGeometry> geometry);
 //    std::vector<hit_t> get_ray_hits(ray_t& ray, glm::mat4 p_model = MAT4EYE);

@@ -311,3 +311,6 @@ void Primitive::make_primitive() {
     make_flat_sphere(params.stacks, params.slices);
 }
 
+PrimitiveType Primitive::get_type() {
+  return type;
+}

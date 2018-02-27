@@ -82,6 +82,8 @@ namespace graphics {
     Primitive(PrimitiveType type = PrimitiveType::smooth_sphere);
 
     Primitive(PrimitiveType type, params_t params);
+
+    PrimitiveType get_type();
   };
 
 }
