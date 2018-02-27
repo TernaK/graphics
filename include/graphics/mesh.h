@@ -60,7 +60,7 @@ namespace graphics {
   };
 
   enum struct PrimitiveType {
-    box, smooth_sphere, flat_sphere
+    plane, box, smooth_sphere, flat_sphere
   };
 
   class Primitive : public Mesh {
@@ -71,6 +71,8 @@ namespace graphics {
     } params;
 
     void make_primitive();
+
+    void make_plane();
     
     void make_box();
 

@@ -145,6 +145,19 @@ Primitive::Primitive(PrimitiveType type, params_t params)
   make_primitive();
 }
 
+void Primitive::make_plane() {
+  GLfloat h = 0.5;
+
+  auto fl = glm::vec3(-h,0,h);   //front left
+  auto fr = glm::vec3(h,0,h);    //front right
+  auto bl = glm::vec3(h,0,-h);  //back left
+  auto br = glm::vec3(-h,0,-h);   //back right
+
+  positions = { br, bl, fl, fr };
+  indices = {0,2,1, 1,2,3};
+  init_from_positions();
+}
+
 void Primitive::make_box() {
   GLfloat h = 0.5;
 
@@ -158,12 +171,12 @@ void Primitive::make_box() {
   auto blr = glm::vec3(-h,-h,-h);  //back low right
 
   positions = {
-     ftl, ftr, fll, flr, //front
-     btl, btr, bll, blr, //back
-     btr, ftl, blr, fll, //left
-     ftr, btl, flr, bll, //right
-     btr, btl, ftl, ftr, //top
-     fll, flr, blr, bll  //bottom
+    ftl, ftr, fll, flr, //front
+    btl, btr, bll, blr, //back
+    btr, ftl, blr, fll, //left
+    ftr, btl, flr, bll, //right
+    btr, btl, ftl, ftr, //top
+    fll, flr, blr, bll  //bottom
   };
 
   indices = {0,2,1, 1,2,3};
@@ -173,6 +186,7 @@ void Primitive::make_box() {
 
   init_from_positions();
 }
+
 
 void Primitive::make_flat_sphere(int st, int sc) {
   GLfloat r = 1.0;
@@ -302,13 +316,14 @@ void Primitive::make_smooth_sphere(int st, int sc) {
 }
 
 void Primitive::make_primitive() {
-  std::vector<shared_ptr<Mesh>> temp;
   if(type == PrimitiveType::box)
     make_box();
   else if(type == PrimitiveType::smooth_sphere)
     make_smooth_sphere(params.stacks, params.slices);
   else if(type == PrimitiveType::flat_sphere)
     make_flat_sphere(params.stacks, params.slices);
+  else if(type == PrimitiveType::plane)
+    make_plane();
 }
 
 PrimitiveType Primitive::get_type() {

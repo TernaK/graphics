@@ -35,6 +35,12 @@ int main(int argc, char* args[]) {
   flat_sphere->position = glm::vec3(0, 2, 1);
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 
+  auto plane_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::plane);
+  shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
+  plane->scale = glm::vec3(10);
+  plane->position = glm::vec3(0,-2,0);
+  plane->material.color = glm::vec4(0.3);
+
   auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::smooth_sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
   smooth_sphere->name = "smooth_sphere";
@@ -57,13 +63,14 @@ int main(int argc, char* args[]) {
   scene->add_node(box);
   scene->add_node(terrain);
   scene->add_node(smooth_sphere);
+  scene->add_node(plane);
 
   SceneRenderer renderer;
 
   while(canvas->still_open()) {
     scene->clear();
 
-    scene->root->rotation.y -= 0.3;
+//    scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
     terrain->rotation.y += 1;
     box->rotation.y += 2;
