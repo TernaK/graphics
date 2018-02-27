@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/buffer_object.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <functional>
@@ -8,6 +9,25 @@
 #include <exception>
 
 namespace graphics {
+  const glm::mat4 MAT4EYE = glm::mat4(1.0);
+  const glm::mat3 MAT3EYE = glm::mat3(1.0);
+  const glm::vec3 VEC3EYE = glm::vec3(1.0);
+  const glm::vec4 VEC4EYE = glm::vec4(1.0);
+  constexpr float RAYEPSILON = 0.001;
+  
+  struct transform_t {
+    glm::mat4 model = MAT4EYE;
+    glm::mat3 normal = MAT4EYE;
+  };
+  
+  struct Transformable {
+    glm::vec3 rotation = glm::vec3(0,0,0);
+    glm::vec3 position = glm::vec3(0,0,0); //degrees
+    glm::vec3 scale = glm::vec3(1,1,1);
+    
+    transform_t get_transform(glm::mat4 p_model = MAT4EYE);
+  };
+  
   struct Facet {
     GLuint* indices[3];
     GLuint a, b, c;
@@ -62,8 +82,24 @@ namespace graphics {
   enum struct PrimitiveType {
     plane, box, smooth_sphere, flat_sphere
   };
+  
+  struct primitive_hit_t {
+    glm::vec3 p;
+    glm::vec3 n;
+    int f_index;
+  };
 
-  class Primitive : public Mesh {
+  struct ray_t {
+    glm::vec3 d;
+    glm::vec3 p;
+    float l;
+  };
+  
+  struct RayTestable {
+    virtual bool ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) = 0;
+  };
+
+  class Primitive : public Mesh, public RayTestable {
     PrimitiveType type = PrimitiveType::box;
     struct params_t {
       int stacks = 20;
@@ -86,6 +122,8 @@ namespace graphics {
     Primitive(PrimitiveType type, params_t params);
 
     PrimitiveType get_type();
+    
+    bool ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) override;
   };
 
 }

@@ -3,6 +3,21 @@
 using namespace std;
 using namespace graphics;
 
+// Transform
+//--------------------------------------------------
+transform_t Transformable::get_transform(glm::mat4 p_model) {
+  transform_t transform;
+  transform.model = glm::translate(glm::mat4(1.0), position);
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.x), glm::vec3(1,0,0));
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.y), glm::vec3(0,1,0));
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.z), glm::vec3(0,0,1));
+  transform.model = glm::scale(transform.model, scale);
+  transform.model = p_model * transform.model;
+  transform.normal = glm::transpose(glm::inverse(glm::mat3(transform.model)));
+  return transform;
+}
+
+
 // Facet
 //--------------------------------------------------------------------------------
 Facet::Facet(GLuint a, GLuint b, GLuint c)
@@ -329,3 +344,22 @@ void Primitive::make_primitive() {
 PrimitiveType Primitive::get_type() {
   return type;
 }
+
+bool Primitive::ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) {
+  glm::mat3 model_inverse = glm::transpose(transform.normal);
+  glm::vec3 p = model_inverse * ray.p;
+  glm::vec3 d = model_inverse * ray.d;
+  if(type == PrimitiveType::plane) {
+    if(fabs(p.z) > RAYEPSILON)
+      return false;
+    float t = -p.z/d.z;
+    hit.p = ray.p + t * ray.d;
+    glm::vec3 n = transform.normal * glm::vec3(0,1,0);
+    hit.n = glm::normalize(n);
+  } else if(type == PrimitiveType::smooth_sphere) {
+  } else if(type == PrimitiveType::flat_sphere) {
+  } else if(type == PrimitiveType::box) {
+  }
+  return false;
+}
+

@@ -3,19 +3,6 @@
 #include <graphics/octree.h>
 
 namespace graphics {
-  struct hit_t {
-    glm::vec3 p;
-    glm::vec3 n;
-    int mesh_idx;
-    int index;
-  };
-
-  struct ray_t {
-    glm::vec3 d;
-    glm::vec3 o;
-    float l;
-  };
-
   struct PrimitiveSceneNode : public SceneNode {
     PrimitiveSceneNode(std::shared_ptr<PrimitiveGeometry> geometry);
 //    std::vector<hit_t> get_ray_hits(ray_t& ray, glm::mat4 p_model = MAT4EYE);

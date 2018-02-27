@@ -5,24 +5,6 @@
 #include <list>
 
 namespace graphics {
-  const glm::mat4 MAT4EYE = glm::mat4(1.0);
-  const glm::mat3 MAT3EYE = glm::mat3(1.0);
-  const glm::vec3 VEC3EYE = glm::vec3(1.0);
-  const glm::vec4 VEC4EYE = glm::vec4(1.0);
-  
-  struct transform_t {
-    glm::mat4 model = MAT4EYE;
-    glm::mat3 normal = MAT4EYE;
-  };
-
-  struct Transformable {
-    glm::vec3 rotation = glm::vec3(0,0,0);
-    glm::vec3 position = glm::vec3(0,0,0); //degrees
-    glm::vec3 scale = glm::vec3(1,1,1);
-
-    transform_t get_transform(glm::mat4 p_model = MAT4EYE);
-  };
-
   struct SceneNode : Transformable {
     std::shared_ptr<Geometry> geometry;
     std::shared_ptr<Light> light;

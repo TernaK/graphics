@@ -2,21 +2,6 @@
 
 using namespace std;
 using namespace graphics;
-
-// Transform
-//--------------------------------------------------
-transform_t Transformable::get_transform(glm::mat4 p_model) {
-  transform_t transform;
-  transform.model = glm::translate(glm::mat4(1.0), position);
-  transform.model = glm::rotate(transform.model, glm::radians(rotation.x), glm::vec3(1,0,0));
-  transform.model = glm::rotate(transform.model, glm::radians(rotation.y), glm::vec3(0,1,0));
-  transform.model = glm::rotate(transform.model, glm::radians(rotation.z), glm::vec3(0,0,1));
-  transform.model = glm::scale(transform.model, scale);
-  transform.model = p_model * transform.model;
-  transform.normal = glm::transpose(glm::inverse(glm::mat3(transform.model)));
-  return transform;
-}
-
 // SceneNode
 //--------------------------------------------------
 SceneNode::SceneNode(std::shared_ptr<Geometry> _geometry)
