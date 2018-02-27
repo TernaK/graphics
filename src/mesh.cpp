@@ -162,7 +162,7 @@ Primitive::Primitive(PrimitiveType type, params_t params)
 }
 
 void Primitive::make_plane() {
-  GLfloat h = 0.5;
+  GLfloat h = 1.0;
 
   auto fl = glm::vec3(-h,0,h);   //front left
   auto fr = glm::vec3(h,0,h);    //front right
@@ -348,19 +348,16 @@ PrimitiveType Primitive::get_type() {
 
 bool Primitive::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
   glm::vec3 p = glm::vec3(transform.model_inv * glm::vec4(ray.p, 1.0));
-  glm::vec3 d = glm::normalize(glm::vec3(transform.model_inv * glm::vec4(ray.d, 1.0)));
+  glm::vec3 d = glm::normalize(glm::vec3(transform.normal_inv * glm::vec4(ray.d, 1.0)));
   if(type == PrimitiveType::plane) {
     float t = -glm::dot(glm::vec3(0,1,0), p) / glm::dot(glm::vec3(0,1,0), d);
     hit.p = ray.p + t * ray.d;
-    glm::vec3 prim_xcept = p + t * d;//glm::vec3(transform.model_inv * glm::vec4(hit.p, 1.0));
-//    printf("x: %f y: %f z: %f\n", prim_xcept.x, prim_xcept.y, prim_xcept.z);
-    auto test = glm::lessThan(glm::abs(prim_xcept), glm::vec3(0.5,RAYEPSILON,0.5));
+    glm::vec3 prim_xcept = p + t * d;
+    auto test = glm::lessThan(glm::abs(prim_xcept), glm::vec3(1,RAYEPSILON,1));
     if(glm::all(test)) {
       glm::vec3 n = transform.normal_inv * glm::vec3(0,1,0);
       hit.n = glm::normalize(n);
       return true;
-    } else {
-      return false;
     }
   } else if(type == PrimitiveType::smooth_sphere) {
   } else if(type == PrimitiveType::flat_sphere) {
