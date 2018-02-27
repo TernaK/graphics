@@ -33,16 +33,20 @@ namespace graphics {
     Mesh() = default;
 
     Mesh(std::vector<Facet> facets,
-             const std::vector<glm::vec3>& positions,
-             bool smooth = true,
-             std::vector<glm::vec3> normals = {},
-             std::vector<glm::vec3> tex_coords = {});
+         const std::vector<glm::vec3>& positions,
+         bool smooth = true,
+         std::vector<glm::vec3> normals = {},
+         std::vector<glm::vec3> tex_coords = {});
 
     Mesh(const std::vector<glm::vec3>& positions,
-             std::vector<GLuint> indices = {},
-             bool smooth = true);
+         std::vector<GLuint> indices = {},
+         bool smooth = true);
 
     ~Mesh();
+
+    void init_from_facets();
+
+    void init_from_positions();
 
     void bind_vertex_data();
 
@@ -54,4 +58,31 @@ namespace graphics {
 
     void draw();
   };
+
+  enum struct PrimitiveType {
+    box, smooth_sphere, flat_sphere
+  };
+
+  class Primitive : public Mesh {
+    PrimitiveType type = PrimitiveType::box;
+    struct params_t {
+      int stacks = 20;
+      int slices = 20;
+    } params;
+
+    void make_primitive();
+
+    //TODO: make these return single meshes
+    void make_box();
+
+    void make_flat_sphere(int stacks = 10, int sections = 10);
+
+    void make_smooth_sphere(int stacks = 10, int sections = 10);
+
+  public:
+    Primitive(PrimitiveType type = PrimitiveType::smooth_sphere);
+
+    Primitive(PrimitiveType type, params_t params);
+  };
+
 }

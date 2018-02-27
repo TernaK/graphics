@@ -25,11 +25,14 @@ Mesh::Mesh(std::vector<Facet> _facets,
            std::vector<glm::vec3> _tex_coords) :
 facets(std::move(_facets)), positions(std::move(_positions)),
 normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
-  create_indices_from_facets();
-  if(_normals.empty()) {
-    compute_smooth_normals();
-  }
-  bind_vertex_data();
+  init_from_facets();
+}
+
+Mesh::Mesh(const std::vector<glm::vec3>& _positions,
+                   std::vector<GLuint> _indices,
+                   bool smooth):
+positions(std::move(_positions)), indices(std::move(_indices)) {
+  init_from_positions();
 }
 
 Mesh::~Mesh() {
@@ -39,10 +42,15 @@ Mesh::~Mesh() {
   indices_ebo.release();
 }
 
-Mesh::Mesh(const std::vector<glm::vec3>& _positions,
-                   std::vector<GLuint> _indices,
-                   bool smooth):
-positions(std::move(_positions)), indices(std::move(_indices)) {
+void Mesh::init_from_facets() {
+  create_indices_from_facets();
+  if(normals.empty()) {
+    compute_smooth_normals();
+  }
+  bind_vertex_data();
+}
+
+void Mesh::init_from_positions() {
   if(indices.empty()) {
     for(int i = 0; i < positions.size()/3; i++)
       facets.emplace_back(i*3, i*3 + 1, i*3 + 2);
@@ -124,3 +132,184 @@ void Mesh::draw() {
   indices_ebo.unbind();
   glBindVertexArray(0);
 }
+
+// Primitive
+//--------------------------------------------------------------------------------
+Primitive::Primitive(PrimitiveType type)
+: type(type) {
+  make_primitive();
+}
+
+Primitive::Primitive(PrimitiveType type, params_t params)
+: type(type), params(params) {
+  make_primitive();
+}
+
+void Primitive::make_box() {
+  //  GLfloat x = 0.5, y = 0.5, z  = 0.5;
+  //
+  //  auto ftl = glm::vec3(-x,y,z);   //front top left
+  //  auto ftr = glm::vec3(x,y,z);    //front top right
+  //  auto fll = glm::vec3(-x,-y,z);  //front low left
+  //  auto flr = glm::vec3(x,-y,z);   //front low right
+  //  auto btl = glm::vec3(x,y,-z);   //back top left
+  //  auto btr = glm::vec3(-x,y,-z);  //back top right
+  //  auto bll = glm::vec3(x,-y,-z);  //back low left
+  //  auto blr = glm::vec3(-x,-y,-z);  //back low right
+  //
+  //  vector<vector<glm::vec3>> face_positions = {
+  //    { ftl, ftr, fll, flr }, //front
+  //    { btl, btr, bll, blr }, //back
+  //    { btr, ftl, blr, fll }, //left
+  //    { ftr, btl, flr, bll }, //right
+  //    { btr, btl, ftl, ftr }, //top
+  //    { fll, flr, blr, bll }  //bottom
+  //  };
+  //
+  //  std::vector<GLuint> indices = {0,2,1, 1,2,3};
+  //  vector<shared_ptr<Mesh>> meshes;
+  //  for(auto& positons: face_positions) {
+  //    auto mesh = make_shared<Mesh>(positons, indices);
+  //    meshes.push_back(mesh);
+  //  }
+  //
+  //  return meshes;
+}
+
+void Primitive::make_flat_sphere(int st, int sc) {
+  GLfloat r = 1.0;
+  if(st < 2 || sc < 3)
+    throw runtime_error("cannot have < 2 stacks or < 3 slices");
+  
+  vector<vector<glm::vec3>> temp(st + 1, {});
+  //top section
+  temp.front().emplace_back(0,r,0);
+  //mid sections
+  float per_st_angle = 180.0 / st;
+  float per_sc_angle = 360.0 / sc;
+  for(int i = 1; i < st; i++) {
+    float st_angle = 90.0 - (per_st_angle * i);
+    float sc_r = r * cos(glm::radians(st_angle));
+    float y = r * sin(glm::radians(st_angle));
+    for(int j = 0; j < sc; j++) {
+      float sc_angle = per_sc_angle * j;
+      float x = sc_r * sin(glm::radians(sc_angle));
+      float z = sc_r * cos(glm::radians(sc_angle));
+
+      temp[i].emplace_back(x,y,z);
+    }
+  }
+  //low section
+  temp.back().emplace_back(0,-r,0);
+
+  //assign vertices and indices
+  //top
+  for(int j = 0; j < temp[1].size(); j++) {
+    positions.push_back(temp[0][0]);
+    positions.push_back(temp[1][j]);
+    positions.push_back(temp[1][(j + 1) % temp[1].size()]);
+  }
+
+  //mid
+  for(int i = 1; i < temp.size() - 2; i++) {
+    for(int j = 0; j < temp[i].size(); j++) {
+      positions.push_back(temp[i][j]);
+      positions.push_back(temp[i + 1][j]);
+      positions.push_back(temp[i + 1][(j + 1) % temp[i].size()]);
+
+      positions.push_back(temp[i][j]);
+      positions.push_back(temp[i + 1][(j + 1) % temp[i].size()]);
+      positions.push_back(temp[i][(j + 1) % temp[i].size()]);
+    }
+  }
+
+  //bottom
+  int pen_idx = temp.size() - 2;
+  for(int j = 0; j < temp[pen_idx].size(); j++) {
+    positions.push_back(temp[pen_idx][j]);
+    positions.push_back(temp.back()[0]);
+    positions.push_back(temp[pen_idx][(j + 1) % temp[pen_idx].size()]);
+  }
+
+  init_from_positions();
+}
+
+void Primitive::make_smooth_sphere(int st, int sc) {
+  GLfloat r = 1.0;
+  if(st < 2 || sc < 3)
+    throw runtime_error("cannot have < 2 stacks or < 3 slices");
+  //  std::vector<glm::vec3> positions;
+  //  std::vector<GLint> indices;
+
+  vector<vector<int>> grid_indices(st + 1, {}); //position indices of grid points
+  int accum = 0;
+
+  //top section
+  grid_indices.front().push_back(accum++);
+  positions.emplace_back(0,r,0);
+  //mid sections
+  float per_st_angle = 180.0 / st;
+  float per_sc_angle = 360.0 / sc;
+  for(int i = 1; i < st; i++) {
+    float st_angle = 90.0 - (per_st_angle * i);
+    float sc_r = r * cos(glm::radians(st_angle));
+    float y = r * sin(glm::radians(st_angle));
+    for(int j = 0; j < sc; j++) {
+      float sc_angle = per_sc_angle * j;
+      float x = sc_r * sin(glm::radians(sc_angle));
+      float z = sc_r * cos(glm::radians(sc_angle));
+
+      positions.emplace_back(x,y,z);
+      grid_indices[i].push_back(accum++);
+    }
+  }
+  //low section
+  grid_indices.back().push_back(accum++);
+  positions.emplace_back(0,-r,0);
+
+  //assign vertices and indices
+  //top
+  for(int j = 0; j < grid_indices[1].size(); j++) {
+    int a = grid_indices[0][0];
+    int b = grid_indices[1][j];
+    int c = grid_indices[1][(j + 1) % grid_indices[1].size()];
+    facets.emplace_back(a,b,c);
+  }
+
+  //mid
+  for(int i = 1; i < grid_indices.size() - 2; i++) {
+    for(int j = 0; j < grid_indices[i].size(); j++) {
+      int a = grid_indices[i][j];
+      int b = grid_indices[i + 1][j];
+      int c = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
+      facets.emplace_back(a,b,c);
+
+      int d = grid_indices[i][j];
+      int e = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
+      int f = grid_indices[i][(j + 1) % grid_indices[i].size()];
+      facets.emplace_back(d,e,f);
+    }
+  }
+
+  //bottom
+  int pen_idx = grid_indices.size() - 2;
+  for(int j = 0; j < grid_indices[pen_idx].size(); j++) {
+    int a = grid_indices[pen_idx][j];
+    int b = grid_indices.back()[0];
+    int c = grid_indices[pen_idx][(j + 1) % grid_indices[pen_idx].size()];
+    facets.emplace_back(a,b,c);
+  }
+
+  init_from_facets();
+}
+
+void Primitive::make_primitive() {
+  std::vector<shared_ptr<Mesh>> temp;
+  if(type == PrimitiveType::box)
+    make_box();
+  else if(type == PrimitiveType::smooth_sphere)
+    make_smooth_sphere(params.stacks, params.slices);
+  else if(type == PrimitiveType::flat_sphere)
+    make_flat_sphere(params.stacks, params.slices);
+}
+

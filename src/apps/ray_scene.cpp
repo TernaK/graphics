@@ -10,12 +10,13 @@ using namespace graphics;
 int main(int argc, char* args[]) {
   auto tree = Octree<int>(2);
   cout << tree.get_level();
+  
 //  shared_ptr<Canvas> canvas = make_shared<Canvas>();
 //  shared_ptr<Scene> scene = make_shared<Scene>(canvas);
 //
 //  scene->camera->position = glm::vec3(0,5,10);
 //
-//  auto box_geometry = Geometry::create_box(2,2,2);
+//  auto box_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::box));
 //  shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
 //  box->name = "box";
 //  box->position.x = 0;
@@ -32,13 +33,13 @@ int main(int argc, char* args[]) {
 //  terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
 //  terrain->material.shininess = 64;
 //
-//  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
+//  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::flat_sphere));
 //  shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
 //  flat_sphere->name = "flat_sphere";
 //  flat_sphere->position = glm::vec3(0, 2, 1);
 //  flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 //
-//  auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
+//  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(Primitive(PrimitiveType::smooth_sphere));
 //  shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
 //  smooth_sphere->name = "smooth_sphere";
 //  smooth_sphere->position = glm::vec3(3,0,0);
