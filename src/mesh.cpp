@@ -13,10 +13,11 @@ transform_t Transformable::get_transform(glm::mat4 p_model) {
   transform.model = glm::rotate(transform.model, glm::radians(rotation.z), glm::vec3(0,0,1));
   transform.model = glm::scale(transform.model, scale);
   transform.model = p_model * transform.model;
+  transform.model_inv = glm::inverse(transform.model);
   transform.normal = glm::transpose(glm::inverse(glm::mat3(transform.model)));
+  transform.normal_inv = glm::transpose(transform.normal);
   return transform;
 }
-
 
 // Facet
 //--------------------------------------------------------------------------------
@@ -345,17 +346,22 @@ PrimitiveType Primitive::get_type() {
   return type;
 }
 
-bool Primitive::ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) {
-  glm::mat3 model_inverse = glm::transpose(transform.normal);
-  glm::vec3 p = model_inverse * ray.p;
-  glm::vec3 d = model_inverse * ray.d;
+bool Primitive::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+  glm::vec3 p = glm::vec3(transform.model_inv * glm::vec4(ray.p, 1.0));
+  glm::vec3 d = glm::normalize(glm::vec3(transform.model_inv * glm::vec4(ray.d, 1.0)));
   if(type == PrimitiveType::plane) {
-    if(fabs(p.z) > RAYEPSILON)
-      return false;
-    float t = -p.z/d.z;
+    float t = -glm::dot(glm::vec3(0,1,0), p) / glm::dot(glm::vec3(0,1,0), d);
     hit.p = ray.p + t * ray.d;
-    glm::vec3 n = transform.normal * glm::vec3(0,1,0);
-    hit.n = glm::normalize(n);
+    glm::vec3 prim_xcept = p + t * d;//glm::vec3(transform.model_inv * glm::vec4(hit.p, 1.0));
+//    printf("x: %f y: %f z: %f\n", prim_xcept.x, prim_xcept.y, prim_xcept.z);
+    auto test = glm::lessThan(glm::abs(prim_xcept), glm::vec3(0.5,RAYEPSILON,0.5));
+    if(glm::all(test)) {
+      glm::vec3 n = transform.normal_inv * glm::vec3(0,1,0);
+      hit.n = glm::normalize(n);
+      return true;
+    } else {
+      return false;
+    }
   } else if(type == PrimitiveType::smooth_sphere) {
   } else if(type == PrimitiveType::flat_sphere) {
   } else if(type == PrimitiveType::box) {

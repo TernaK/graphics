@@ -17,11 +17,14 @@ int main(int argc, char* args[]) {
   auto mesh = make_shared<Primitive>(PrimitiveType::plane);
   
   ray_t ray;
-  ray.d = glm::vec3(0,-1,0);
+  ray.d = glm::normalize(glm::vec3(0,-1,0));
   ray.p = glm::vec3(0,1,0);
   
-  primitive_hit_t hit;
-  transform_t transform;
+  hit_t hit;
+  Transformable transformable;
+  transformable.position.y = 0.2;
+  transformable.rotation.x = 45;
+  transform_t transform = transformable.get_transform();
   if(mesh->ray_hit_test(ray, hit, transform))
     cout << "hit p: " << glm::to_string(hit.p) << " n: " << glm::to_string(hit.n) << endl;
 }

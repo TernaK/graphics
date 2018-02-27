@@ -12,12 +12,15 @@ namespace graphics {
   const glm::mat4 MAT4EYE = glm::mat4(1.0);
   const glm::mat3 MAT3EYE = glm::mat3(1.0);
   const glm::vec3 VEC3EYE = glm::vec3(1.0);
+  const glm::vec3 VEC3ZERO = glm::vec3(0.0);
   const glm::vec4 VEC4EYE = glm::vec4(1.0);
   constexpr float RAYEPSILON = 0.001;
   
   struct transform_t {
     glm::mat4 model = MAT4EYE;
     glm::mat3 normal = MAT4EYE;
+    glm::mat4 model_inv = MAT4EYE;
+    glm::mat3 normal_inv = MAT4EYE;
   };
   
   struct Transformable {
@@ -83,23 +86,22 @@ namespace graphics {
     plane, box, smooth_sphere, flat_sphere
   };
   
-  struct primitive_hit_t {
+  struct hit_t {
     glm::vec3 p;
     glm::vec3 n;
-    int f_index;
   };
-
+  
   struct ray_t {
     glm::vec3 d;
     glm::vec3 p;
     float l;
   };
   
-  struct RayTestable {
-    virtual bool ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) = 0;
+  struct HitTestable {
+    virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) = 0;
   };
-
-  class Primitive : public Mesh, public RayTestable {
+  
+  class Primitive : public Mesh, public HitTestable {
     PrimitiveType type = PrimitiveType::box;
     struct params_t {
       int stacks = 20;
@@ -123,7 +125,7 @@ namespace graphics {
 
     PrimitiveType get_type();
     
-    bool ray_hit_test(ray_t& ray, primitive_hit_t& hit, transform_t& transform) override;
+    bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) override;
   };
 
 }
