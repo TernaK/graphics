@@ -1,5 +1,6 @@
 #pragma once
-#include <graphics/geometry.h>
+#include <graphics/scene_renderer.h>
+#include <graphics/octree.h>
 
 namespace graphics {
   struct hit_t {
@@ -9,8 +10,20 @@ namespace graphics {
     int index;
   };
 
-  struct PrimitiveGeometry : public Geometry {
-    bool hit_test(glm::vec3 xyz, int idx);
+  struct ray_t {
+    glm::vec3 d;
+    glm::vec3 o;
+    float l;
   };
 
+  struct PrimitiveGeometry : public Geometry {
+    bool hit_test(ray_t ray, hit_t& hit);
+  };
+
+  class RaySceneRenderer : SceneRenderer {
+  public:
+    cv::Size size;
+    RaySceneRenderer();
+    void render_scene(std::shared_ptr<Scene> scene);
+  };
 }
