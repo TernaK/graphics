@@ -17,13 +17,35 @@ namespace graphics {
   };
 
   struct PrimitiveGeometry : public Geometry {
-    bool hit_test(ray_t ray, hit_t& hit);
+    bool ray_hit_test(ray_t& ray, hit_t& hit);
+  };
+
+  struct PrimitiveSceneNode : public SceneNode {
+    PrimitiveSceneNode(std::shared_ptr<PrimitiveGeometry> geometry);
+    std::vector<hit_t> get_ray_hits(ray_t& ray);
   };
 
   class RaySceneRenderer : SceneRenderer {
+    struct traversed_node_t {
+      std::shared_ptr<PrimitiveSceneNode> node;
+      glm::mat4 parent_model;
+      int index;
+    };
+
+    struct scene_prim_t {
+      int node_idx;
+      int mes_idx;
+    };
+
+    void add_to_octree(const traversed_node_t& node, Octree<scene_prim_t>& tree);
+    
+    Octree<scene_prim_t> build_octree(std::shared_ptr<Scene> scene);
+
+    std::vector<traversed_node_t> traverse_scene(std::shared_ptr<Scene> scene);
+    
   public:
     cv::Size size;
     RaySceneRenderer();
-    void render_scene(std::shared_ptr<Scene> scene);
+    void render_scene(std::shared_ptr<Scene> scene) override;
   };
 }
