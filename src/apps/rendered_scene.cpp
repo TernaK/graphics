@@ -12,7 +12,7 @@ int main(int argc, char* args[]) {
 
   scene->camera->position = glm::vec3(0,5,10);
 
-  auto box_geometry = Geometry::create_box(2,2,2);
+  auto box_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::box);
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
   box->name = "box";
   box->position.x = 0;
@@ -29,13 +29,19 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
-  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
+  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::flat_sphere);
   shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
   flat_sphere->name = "flat_sphere";
   flat_sphere->position = glm::vec3(0, 2, 1);
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 
-  auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
+  auto plane_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::plane);
+  shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
+  plane->scale = glm::vec3(10);
+  plane->position = glm::vec3(0,-2,0);
+  plane->material.color = glm::vec4(0.3);
+
+  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::smooth_sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
   smooth_sphere->name = "smooth_sphere";
   smooth_sphere->position = glm::vec3(3,0,0);
@@ -57,13 +63,14 @@ int main(int argc, char* args[]) {
   scene->add_node(box);
   scene->add_node(terrain);
   scene->add_node(smooth_sphere);
+  scene->add_node(plane);
 
   SceneRenderer renderer;
 
   while(canvas->still_open()) {
     scene->clear();
 
-    scene->root->rotation.y -= 0.3;
+//    scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
     terrain->rotation.y += 1;
     box->rotation.y += 2;

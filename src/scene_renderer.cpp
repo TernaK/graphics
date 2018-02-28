@@ -4,7 +4,7 @@ using namespace std;
 using namespace graphics;
 
 SceneRenderer::SceneRenderer() {
-  std::shared_ptr<Shader> object3d_shader = Shader::make_object3d_point_shader();
+  std::shared_ptr<Shader> object3d_shader = Shader::make_object3d_shader();
   shaders[object3d_shader->name] = object3d_shader;
   std::shared_ptr<Shader> mesh_shader = Shader::make_mesh_point_shader();
   shaders[mesh_shader->name] = object3d_shader;

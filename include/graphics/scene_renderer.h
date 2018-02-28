@@ -17,18 +17,19 @@ namespace graphics {
   };
 
   class SceneRenderer {
-    std::map<std::string, std::shared_ptr<Shader>> shaders;
+  private:
+    std::map<std::shared_ptr<Shader>, shader_group_t>
+    traverse_scene(std::shared_ptr<Scene> scene);
+
+    void traverse_node(std::shared_ptr<SceneNode> node,
+                       transform_t parent_transform,
+                       std::map<std::shared_ptr<Shader>,shader_group_t>& groups);
 
   public:
     SceneRenderer();
 
-    std::map<std::shared_ptr<Shader>, shader_group_t>
-    traverse_scene(std::shared_ptr<Scene> scene);
+    std::map<std::string, std::shared_ptr<Shader>> shaders;
     
-    void traverse_node(std::shared_ptr<SceneNode> node,
-                       transform_t parent_transform,
-                       std::map<std::shared_ptr<Shader>,shader_group_t>& groups);
-    
-    void render_scene(std::shared_ptr<Scene> scene);
+    virtual void render_scene(std::shared_ptr<Scene> scene);
   };
 }

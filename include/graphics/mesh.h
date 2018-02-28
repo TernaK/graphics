@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/buffer_object.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <functional>
@@ -8,6 +9,13 @@
 #include <exception>
 
 namespace graphics {
+  const glm::mat4 MAT4EYE = glm::mat4(1.0);
+  const glm::mat3 MAT3EYE = glm::mat3(1.0);
+  const glm::vec3 VEC3EYE = glm::vec3(1.0);
+  const glm::vec3 VEC3ZERO = glm::vec3(0.0);
+  const glm::vec4 VEC4EYE = glm::vec4(1.0);
+  constexpr float RAYEPSILON = 0.001;
+  
   struct Facet {
     GLuint* indices[3];
     GLuint a, b, c;
@@ -33,16 +41,20 @@ namespace graphics {
     Mesh() = default;
 
     Mesh(std::vector<Facet> facets,
-             const std::vector<glm::vec3>& positions,
-             bool smooth = true,
-             std::vector<glm::vec3> normals = {},
-             std::vector<glm::vec3> tex_coords = {});
+         const std::vector<glm::vec3>& positions,
+         bool smooth = true,
+         std::vector<glm::vec3> normals = {},
+         std::vector<glm::vec3> tex_coords = {});
 
     Mesh(const std::vector<glm::vec3>& positions,
-             std::vector<GLuint> indices = {},
-             bool smooth = true);
+         std::vector<GLuint> indices = {},
+         bool smooth = true);
 
     ~Mesh();
+
+    void init_from_facets();
+
+    void init_from_positions();
 
     void bind_vertex_data();
 

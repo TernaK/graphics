@@ -25,11 +25,14 @@ Mesh::Mesh(std::vector<Facet> _facets,
            std::vector<glm::vec3> _tex_coords) :
 facets(std::move(_facets)), positions(std::move(_positions)),
 normals(std::move(_normals)), tex_coords(std::move(_tex_coords)) {
-  create_indices_from_facets();
-  if(_normals.empty()) {
-    compute_smooth_normals();
-  }
-  bind_vertex_data();
+  init_from_facets();
+}
+
+Mesh::Mesh(const std::vector<glm::vec3>& _positions,
+                   std::vector<GLuint> _indices,
+                   bool smooth):
+positions(std::move(_positions)), indices(std::move(_indices)) {
+  init_from_positions();
 }
 
 Mesh::~Mesh() {
@@ -39,10 +42,15 @@ Mesh::~Mesh() {
   indices_ebo.release();
 }
 
-Mesh::Mesh(const std::vector<glm::vec3>& _positions,
-                   std::vector<GLuint> _indices,
-                   bool smooth):
-positions(std::move(_positions)), indices(std::move(_indices)) {
+void Mesh::init_from_facets() {
+  create_indices_from_facets();
+  if(normals.empty()) {
+    compute_smooth_normals();
+  }
+  bind_vertex_data();
+}
+
+void Mesh::init_from_positions() {
   if(indices.empty()) {
     for(int i = 0; i < positions.size()/3; i++)
       facets.emplace_back(i*3, i*3 + 1, i*3 + 2);

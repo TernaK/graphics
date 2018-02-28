@@ -15,7 +15,7 @@ int main(int argc, char* args[]) {
   light.position.y = 10;
   light.ambient = glm::vec3(0.8);
 
-  auto box_geometry = Geometry::create_box();
+  auto box_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::box);
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
   box->scale = glm::vec3(2);
   box->position.x = 0;
@@ -30,13 +30,13 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
-  auto flat_sphere_geometry = Geometry::create_flat_sphere(0.2, 20, 20);
+  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::flat_sphere);
   shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
   flat_sphere->position.x = 1;
   flat_sphere->position.z = 1;
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
 
-  auto smooth_sphere_geometry = Geometry::create_smooth_sphere(1, 20, 20);
+  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::smooth_sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
   smooth_sphere->position.x = 3;
   smooth_sphere->position.z = 2;
@@ -46,18 +46,20 @@ int main(int argc, char* args[]) {
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;
 
-  auto shader = Shader::make_object3d_point_shader();
+  auto shader = Shader::make_object3d_shader();
 
   while(canvas->still_open()) {
     canvas->clear();
 
     shader->use();
+
+    light.set_uniforms(shader);
+    camera.set_uniforms(shader);
+
     box->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
     terrain->rotation.y += 0.3;
 
-    light.set_uniforms(shader);
-    camera.set_uniforms(shader);
     box->draw(shader);
     terrain->draw(shader);
     smooth_sphere->draw(shader);

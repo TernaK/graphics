@@ -18,6 +18,9 @@ set(graphics_srcs
   scene_node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_node.h
   scene_renderer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_renderer.h
   scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
+  ray.cpp ${CMAKE_SOURCE_DIR}/include/graphics/ray.h
+  ${CMAKE_SOURCE_DIR}/include/graphics/octree.h
+  primitive.cpp ${CMAKE_SOURCE_DIR}/include/graphics/primitive.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})
