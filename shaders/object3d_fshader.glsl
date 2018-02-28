@@ -51,7 +51,7 @@ void add_light_contribution(int idx,
   float attenuation = (_lights[idx].type == DIRECTLIGHT) ? 1 : 1.0 / (_lights[idx].attenuation.x +
                                                                       _lights[idx].attenuation.z * distance * distance);
 
-  ambient += attenuation * _material.strength.x * _lights[idx].ambient;
+  ambient += _material.strength.x * _lights[idx].ambient;
 
   vec3 l = (_lights[idx].type == DIRECTLIGHT) ? normalize(-_lights[idx].direction) : normalize(_lights[idx].position - _frag_pos);
   float cos_t = clamp(dot(_frag_normal, l), 0, 1);
