@@ -14,14 +14,15 @@ int main(int argc, char* args[]) {
 //  auto tree = Octree<int>(2);
 //  cout << tree.get_level();
   
-  auto mesh = make_shared<Primitive>(PrimitiveType::smooth_sphere);
+  auto mesh = make_shared<Primitive>(PrimitiveType::box);
   
   ray_t ray;
-  ray.d = glm::normalize(glm::vec3(0,0,-1));
-  ray.p = glm::vec3(0,0.8660,-5);
+  ray.p = glm::vec3(0,4,0);
+  ray.d = glm::normalize(glm::vec3(0,-1,0));
   
   hit_t hit;
   Transformable transformable;
+  transformable.position = glm::vec3(0,1,0);
   transform_t transform = transformable.get_transform();
   if(mesh->ray_hit_test(ray, hit, transform))
     cout << "hit p: " << glm::to_string(hit.p) << " n: " << glm::to_string(hit.n) << endl;
