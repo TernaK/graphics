@@ -225,14 +225,30 @@ bool Primitive::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
     hit.p = ray.p + t * ray.d;
     glm::vec3 prim_xcept = p + t * d;
     auto test = glm::lessThan(glm::abs(prim_xcept), glm::vec3(1,RAYEPSILON,1));
-    if(glm::all(test)) {
+    if(t > 0 && glm::all(test)) {
       glm::vec3 n = transform.normal_inv * glm::vec3(0,1,0);
       hit.n = glm::normalize(n);
       return true;
     }
-  } else if(type == PrimitiveType::smooth_sphere) {
-  } else if(type == PrimitiveType::flat_sphere) {
+  } else if(type == PrimitiveType::smooth_sphere || type == PrimitiveType::flat_sphere) {
+    float a = d.x*d.x + d.y*d.y + d.z*d.z;
+    float b = 2 * glm::dot(p, d);
+    float c = p.x*p.x + p.y*p.y + p.z*p.z - 1;
+    float det = b*b - 4*a*c;
+    if(det > 0) {
+      float t1 = (-b + sqrt(det)) / (2*a);
+      float t2 = (-b - sqrt(det)) / (2*a);
+      float t = t1 < t2 ? t1 : t2;
+      glm::vec3 prim_xcept = p + t * d;
+      if(t > 0 && fabs(glm::length(prim_xcept) - 1) < RAYEPSILON) {
+        hit.p = ray.p + t * ray.d;
+        glm::vec3 n = transform.normal_inv * prim_xcept;
+        hit.n = glm::normalize(n);
+        return true;
+      }
+    }
   } else if(type == PrimitiveType::box) {
+
   }
   return false;
 }
