@@ -26,7 +26,7 @@ Primitive::Primitive(PrimitiveType type)
   make_primitive();
 }
 
-Primitive::Primitive(PrimitiveType type, params_t params)
+Primitive::Primitive(PrimitiveType type, primitive_params_t params)
 : type(type), params(params) {
   make_primitive();
 }
@@ -294,7 +294,6 @@ bool Primitive::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
       hit = hits[min_idx];
       return true;
     }
-    return false;
   }
   return false;
 }

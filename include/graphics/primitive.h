@@ -36,13 +36,19 @@ namespace graphics {
   struct HitTestable {
     virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) = 0;
   };
+
+  struct primitive_params_t {
+    int stacks = 20;
+    int slices = 20;
+    primitive_params_t(int stacks = 20, int slices = 20)
+    : stacks(stacks), slices(slices) {
+      
+    };
+  };
   
   class Primitive : public Mesh, public HitTestable {
     PrimitiveType type = PrimitiveType::box;
-    struct params_t {
-      int stacks = 20;
-      int slices = 20;
-    } params;
+    primitive_params_t params;
 
     void make_primitive();
 
@@ -57,7 +63,7 @@ namespace graphics {
   public:
     Primitive(PrimitiveType type = PrimitiveType::smooth_sphere);
 
-    Primitive(PrimitiveType type, params_t params);
+    Primitive(PrimitiveType type, primitive_params_t params);
 
     PrimitiveType get_type();
     
