@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/mesh.h>
+#include <graphics/primitive.h>
 #include <memory>
 
 namespace graphics {
