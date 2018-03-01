@@ -40,9 +40,8 @@ namespace graphics {
   struct Facet {
     GLuint* indices[3];
     GLuint a, b, c;
-
+    
     Facet(GLuint a, GLuint b, GLuint c);
-
     GLuint operator[](int idx);
   };
 
