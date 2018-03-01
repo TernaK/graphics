@@ -9,8 +9,90 @@ void PrimitiveMaker::make_flat_sphere(std::vector<Vertex>& vertices, std::vector
                                       int st, int sc) {
 }
 
-void PrimitiveMaker::make_smooth_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
+void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
                                         int st, int sc) {
+  GLfloat r = 1.0;
+  if(st < 2 || sc < 3)
+    throw runtime_error("cannot have < 2 stacks or < 3 slices");
+  std::vector<glm::vec3> positions;
+  std::vector<GLint> indices;
+
+  vector<vector<int>> grid_indices(st + 1, {}); //position indices of grid points
+  int accum = 0;
+
+  //top section
+  grid_indices.front().push_back(accum++);
+  positions.emplace_back(0,r,0);
+  //mid sections
+  float per_st_angle = 180.0 / st;
+  float per_sc_angle = 360.0 / sc;
+  for(int i = 1; i < st; i++) {
+    float st_angle = 90.0 - (per_st_angle * i);
+    float sc_r = r * cos(glm::radians(st_angle));
+    float y = r * sin(glm::radians(st_angle));
+    for(int j = 0; j < sc; j++) {
+      float sc_angle = per_sc_angle * j;
+      float x = sc_r * sin(glm::radians(sc_angle));
+      float z = sc_r * cos(glm::radians(sc_angle));
+
+      positions.emplace_back(x,y,z);
+      grid_indices[i].push_back(accum++);
+    }
+  }
+  //low section
+  grid_indices.back().push_back(accum++);
+  positions.emplace_back(0,-r,0);
+
+  //assign vertices and indices
+  vector<bool> assigned = vector<bool>(positions.size(), false);
+  auto assign_facet_positions = [&](Facet& facet) {
+    GLuint idx[] = {facet.a, facet.b, facet.c};
+    for(int i = 0; i < 3; i++) {
+      if(assigned[idx[i]]) continue;
+      assigned[idx[i]] = true;
+      Vertex vert;
+      vert.v = positions[idx[i]];
+      vert.vn = vert.v;
+      vertices.push_back(vert);
+    }
+  };
+
+  //top
+  Vertex v1, v2, v3;
+  for(int j = 0; j < grid_indices[1].size(); j++) {
+    int a = grid_indices[0][0];
+    int b = grid_indices[1][j];
+    int c = grid_indices[1][(j + 1) % grid_indices[1].size()];
+    facets.emplace_back(a,b,c);
+    assign_facet_positions(facets.back());
+  }
+
+  //mid
+  for(int i = 1; i < grid_indices.size() - 2; i++) {
+    for(int j = 0; j < grid_indices[i].size(); j++) {
+      int a = grid_indices[i][j];
+      int b = grid_indices[i + 1][j];
+      int c = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
+      facets.emplace_back(a,b,c);
+      assign_facet_positions(facets.back());
+
+      int d = grid_indices[i][j];
+      int e = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
+      int f = grid_indices[i][(j + 1) % grid_indices[i].size()];
+      facets.emplace_back(d,e,f);
+      assign_facet_positions(facets.back());
+    }
+  }
+
+  //bottom
+  int pen_idx = grid_indices.size() - 2;
+  for(int j = 0; j < grid_indices[pen_idx].size(); j++) {
+    int a = grid_indices[pen_idx][j];
+    int b = grid_indices.back()[0];
+    int c = grid_indices[pen_idx][(j + 1) % grid_indices[pen_idx].size()];
+    facets.emplace_back(a,b,c);
+    assign_facet_positions(facets.back());
+  }
 }
 
 void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
@@ -57,15 +139,12 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
     {fll, flr, blr, bll}  //bottom
   };
   vector<glm::vec3> normals = {
-    glm::vec3(0,0,1),
-    glm::vec3(0,0,-1),
-    glm::vec3(-1,0,0),
-    glm::vec3(1,0,0),
-    glm::vec3(0,1,0),
-    glm::vec3(0,-1,0)
+    glm::vec3(0,0,1), glm::vec3(0,0,-1),
+    glm::vec3(-1,0,0), glm::vec3(1,0,0),
+    glm::vec3(0,1,0), glm::vec3(0,-1,0)
   };
   std::vector<int> indices = {0,2,1, 1,2,3};
-  
+
   for(int f = 0 ; f < positions.size(); f++) {
     for(int v = 0; v < positions[f].size(); v++) {
       //set vertex data
@@ -143,11 +222,13 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
   init_from_vertices();
 }
 
-Mesh::Mesh(MeshType mesh_type) : mesh_type(mesh_type) {
+Mesh::Mesh(MeshType mesh_type, primitive_params_t params) : mesh_type(mesh_type) {
   if(mesh_type == MeshType::box)
     make_box(vertices, facets);
   else if(mesh_type == MeshType::plane)
     make_plane(vertices, facets);
+  else if(mesh_type == MeshType::sphere)
+    make_sphere(vertices, facets, params.stacks, params.slices);
 
   create_indices_from_facets();
   init_from_vertices();

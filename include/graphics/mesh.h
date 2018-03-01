@@ -67,20 +67,25 @@ namespace graphics {
   struct primitive_params_t {
     int stacks = 20;
     int slices = 20;
+    primitive_params_t(int stacks = 20, int slices = 20)
+    : stacks(stacks), slices(slices) { };
   };
 
   enum struct MeshType {
-    basic, plane, box, smooth_sphere, flat_sphere
+    basic, plane, box, sphere, flat_sphere
   };
 
   struct PrimitiveMaker {
     void make_flat_sphere(std::vector<Vertex>& vertices,
                            std::vector<Facet>& facets,
                            int stacks = 10, int sections = 10);
-    void make_smooth_sphere(std::vector<Vertex>& vertices,
-                                           std::vector<Facet>& facets,
-                                           int stacks = 10, int sections = 10);
+
+    void make_sphere(std::vector<Vertex>& vertices,
+                     std::vector<Facet>& facets,
+                     int stacks = 10, int sections = 10);
+
     void make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets);
+
     void make_box(std::vector<Vertex>& vertices, std::vector<Facet>& facets);
   };
   
@@ -119,7 +124,7 @@ namespace graphics {
          const std::vector<Facet>& facets,
          primitive_params_t params);
 
-    Mesh(MeshType mesh_type);
+    Mesh(MeshType mesh_type, primitive_params_t params);
 
     ~Mesh();
 

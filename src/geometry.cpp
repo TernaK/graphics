@@ -16,6 +16,10 @@ Geometry::Geometry(const std::vector<glm::vec3>& _positions,
   meshes = { make_shared<Mesh>(_positions, _indices) };
 }
 
+Geometry::Geometry(MeshType mesh_type, primitive_params_t params) {
+  meshes = { make_shared<Mesh>(mesh_type, params) };
+}
+
 void Geometry::draw() {
   GLint old_state;
   glGetIntegerv(GL_POLYGON_MODE, &old_state);

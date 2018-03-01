@@ -11,6 +11,8 @@ namespace graphics {
 
     Geometry(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
+    Geometry(MeshType mesh_type, primitive_params_t params = primitive_params_t());
+
     Geometry(const std::vector<glm::vec3>& positions,
              const std::vector<GLuint>& indices);
 
