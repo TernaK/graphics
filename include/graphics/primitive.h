@@ -64,7 +64,7 @@ namespace graphics {
     virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform);
     
     bool hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
-                        glm::vec3 plane_normal);
+                        glm::vec3 plane_normal, glm::vec3 offset = VEC3ZERO);
     
     bool hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform);
   };

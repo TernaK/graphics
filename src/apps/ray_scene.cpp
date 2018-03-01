@@ -29,14 +29,13 @@ int main(int argc, char* args[]) {
     cv::Mat image = cv::Mat::zeros(200,200,CV_32FC3);
 //    transformable.position.x = 2 * sin(glfwGetTime());
 //    transformable.position.y = 2 * cos(glfwGetTime());
-//    transformable.rotation.z += 3;
+    transformable.rotation.z += 3;
     transformable.rotation.y += 5;
-//    transformable.rotation.x = 90;
+    transformable.rotation.x += 3;
     transform_t transform = transformable.get_transform();
     for(int i = 0; i < image.rows; i++) {
       for(int j = 0; j < image.cols; j++) {
         ray.d = glm::normalize(glm::vec3((float(j) * 2.0 / image.cols) - 1.0, -((float(i) * 2.0 / image.rows) - 1), -2));
-//        ray.d = glm::vec3(0,0,-1);
 
         cv::Vec3f color(0.2,0.2,0.2);
 

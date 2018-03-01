@@ -228,18 +228,17 @@ bool HitTestable::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
   return false;
 }
 
-bool HitTestable::hit_test_plane(ray_t& ray, hit_t& hit,
-                                 transform_t& transform,
-                                 glm::vec3 plane_normal) {
+bool HitTestable::hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
+                                 glm::vec3 plane_normal, glm::vec3 offset) {
   bool did_hit = false;
-  glm::vec3 plane_o = glm::vec3(transform.model[3]);
+  glm::vec3 plane_o = glm::vec3(transform.model[3]) + offset;
   glm::vec3 plane_n = glm::normalize(transform.normal * plane_normal);
   float dist;
   if(glm::intersectRayPlane(ray.p, ray.d, plane_o, plane_n, dist)) {
     hit.p = ray.p + dist * ray.d;
     hit.n = plane_n;
     hit.dist = dist;
-    glm::vec3 plane_hit = glm::vec3(transform.model_inv * glm::vec4(hit.p, 1.0));
+    glm::vec3 plane_hit = glm::vec3(transform.model_inv * glm::vec4(hit.p - offset, 1.0));
     glm::vec3 diff = glm::abs(plane_hit);
     if( glm::max(diff.x, max(diff.y, diff.z) ) < 1 )
       did_hit = true;
@@ -256,9 +255,8 @@ bool HitTestable::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
   };
   for(int i = 0; i < 6; i++) {
     transform_t plane_transform = transform;
-    plane_transform.model[3] += glm::vec4(normals[i], 0);
-    plane_transform.model_inv[3] -= glm::vec4(normals[i], 0);
-    hit_pairs[i].first = hit_test_plane(ray, hit_pairs[i].second, plane_transform, normals[i]);
+    glm::vec3 offset = glm::vec3(plane_transform.model * glm::vec4(normals[i], 1.0));
+    hit_pairs[i].first = hit_test_plane(ray, hit_pairs[i].second, plane_transform, normals[i], offset);
   }
   auto end = std::remove_if(hit_pairs.begin(), hit_pairs.end(),
                            [](const pair<bool, hit_t>& h) -> bool {
