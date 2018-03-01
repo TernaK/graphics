@@ -3,14 +3,14 @@
 #include <graphics/octree.h>
 
 namespace graphics {
-  struct PrimitiveSceneNode : public SceneNode {
-    PrimitiveSceneNode(std::shared_ptr<PrimitiveGeometry> geometry);
-//    std::vector<hit_t> get_ray_hits(ray_t& ray, glm::mat4 p_model = MAT4EYE);
-  };
+//  struct PrimitiveSceneNode : public SceneNode {
+//    PrimitiveSceneNode(std::shared_ptr<PrimitiveGeometry> geometry);
+////    std::vector<hit_t> get_ray_hits(ray_t& ray, glm::mat4 p_model = MAT4EYE);
+//  };
 
   class RaySceneRenderer : SceneRenderer {
     struct traversed_node_t {
-      std::shared_ptr<PrimitiveSceneNode> node;
+      std::shared_ptr<SceneNode> node;
       glm::mat4 p_model;
       int index;
     };

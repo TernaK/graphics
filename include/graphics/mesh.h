@@ -15,6 +15,27 @@ namespace graphics {
   const glm::vec3 VEC3ZERO = glm::vec3(0.0);
   const glm::vec4 VEC4EYE = glm::vec4(1.0);
   constexpr float RAYEPSILON = 0.001;
+
+  struct Vertex {
+    glm::vec3 v;
+    glm::vec3 vn;
+    glm::vec2 uv;
+  };
+
+  struct transform_t {
+    glm::mat4 model = MAT4EYE;
+    glm::mat3 normal = MAT4EYE;
+    glm::mat4 model_inv = MAT4EYE;
+    glm::mat3 normal_inv = MAT4EYE;
+  };
+
+  struct Transformable {
+    glm::vec3 rotation = VEC3ZERO;
+    glm::vec3 position = VEC3ZERO; //degrees
+    glm::vec3 scale = VEC3EYE;
+
+    transform_t get_transform(glm::mat4 p_model = MAT4EYE);
+  };
   
   struct Facet {
     GLuint* indices[3];
@@ -24,17 +45,58 @@ namespace graphics {
 
     GLuint operator[](int idx);
   };
+
+  struct hit_t {
+    glm::vec3 p;
+    glm::vec3 n;
+  };
+
+  struct ray_t {
+    glm::vec3 d;
+    glm::vec3 p;
+    float l;
+  };
+
+  struct HitTestable {
+    bool can_test_hit = false;
+    virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+      return false;
+    }
+  };
+
+  struct primitive_params_t {
+    int stacks = 20;
+    int slices = 20;
+  };
+
+  enum struct MeshType {
+    basic, plane, box, smooth_sphere, flat_sphere
+  };
+
+  struct PrimitiveMaker {
+    void make_flat_sphere(std::vector<Vertex>& vertices,
+                           std::vector<Facet>& facets,
+                           int stacks = 10, int sections = 10);
+    void make_smooth_sphere(std::vector<Vertex>& vertices,
+                                           std::vector<Facet>& facets,
+                                           int stacks = 10, int sections = 10);
+    void make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets);
+    void make_box(std::vector<Vertex>& vertices, std::vector<Facet>& facets);
+  };
   
-  struct Mesh {
+  struct Mesh : public HitTestable, public PrimitiveMaker {
+    std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
+    MeshType mesh_type = MeshType::basic;
 
     GLuint vao = 0;
-    BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> vertices_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> positions_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> texcoords_vbo;
     BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER> indices_ebo;
 
@@ -50,11 +112,22 @@ namespace graphics {
          std::vector<GLuint> indices = {},
          bool smooth = true);
 
+    Mesh(const std::vector<Vertex>& vertices,
+         const std::vector<Facet>& facets);
+
+    Mesh(const std::vector<Vertex>& vertices,
+         const std::vector<Facet>& facets,
+         primitive_params_t params);
+
+    Mesh(MeshType mesh_type);
+
     ~Mesh();
 
     void init_from_facets();
 
     void init_from_positions();
+
+    void init_from_vertices();
 
     void bind_vertex_data();
 

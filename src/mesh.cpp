@@ -3,6 +3,99 @@
 using namespace std;
 using namespace graphics;
 
+// Transformable
+//--------------------------------------------------
+void PrimitiveMaker::make_flat_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
+                                      int st, int sc) {
+}
+
+void PrimitiveMaker::make_smooth_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
+                                        int st, int sc) {
+}
+
+void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
+  GLfloat h = 1.0;
+
+  auto fl = glm::vec3(-h,0,h);   //front left
+  auto fr = glm::vec3(h,0,h);    //front right
+  auto bl = glm::vec3(h,0,-h);  //back left
+  auto br = glm::vec3(-h,0,-h);   //back right
+
+  vector<glm::vec3> positions = {
+    br, bl, fl, fr
+  };
+
+  for(int v = 0 ; v < positions.size(); v++) {
+    Vertex vertex;
+    vertex.v = positions[v];
+    vertex.vn = glm::vec3(0,1,0);
+    vertices.push_back(std::move(vertex));
+  }
+
+  facets.emplace_back(0,2,1);
+  facets.emplace_back(1,2,3);
+}
+
+void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
+  GLfloat h = 1;
+
+  auto ftl = glm::vec3(-h,h,h);   //front top left
+  auto ftr = glm::vec3(h,h,h);    //front top right
+  auto fll = glm::vec3(-h,-h,h);  //front low left
+  auto flr = glm::vec3(h,-h,h);   //front low right
+  auto btl = glm::vec3(h,h,-h);   //back top left
+  auto btr = glm::vec3(-h,h,-h);  //back top right
+  auto bll = glm::vec3(h,-h,-h);  //back low left
+  auto blr = glm::vec3(-h,-h,-h);  //back low right
+
+  vector<vector<glm::vec3>> positions = {
+    {ftl, ftr, fll, flr}, //front
+    {btl, btr, bll, blr}, //back
+    {btr, ftl, blr, fll}, //left
+    {ftr, btl, flr, bll}, //right
+    {btr, btl, ftl, ftr}, //top
+    {fll, flr, blr, bll}  //bottom
+  };
+  vector<glm::vec3> normals = {
+    glm::vec3(0,0,1),
+    glm::vec3(0,0,-1),
+    glm::vec3(-1,0,0),
+    glm::vec3(1,0,0),
+    glm::vec3(0,1,0),
+    glm::vec3(0,-1,0)
+  };
+  std::vector<int> indices = {0,2,1, 1,2,3};
+  
+  for(int f = 0 ; f < positions.size(); f++) {
+    for(int v = 0; v < positions[f].size(); v++) {
+      //set vertex data
+      Vertex vertex;
+      vertex.v = positions[f][v];
+      vertex.vn = normals[f];
+      vertices.push_back(std::move(vertex));
+    }
+    //set facet data
+    facets.emplace_back(indices[0] + f*4, indices[1] + f*4, indices[2] + f*4);
+    facets.emplace_back(indices[3] + f*4, indices[4] + f*4, indices[5] + f*4);
+  }
+}
+
+// Transformable
+//--------------------------------------------------
+transform_t Transformable::get_transform(glm::mat4 p_model) {
+  transform_t transform;
+  transform.model = glm::translate(glm::mat4(1.0), position);
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.x), glm::vec3(1,0,0));
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.y), glm::vec3(0,1,0));
+  transform.model = glm::rotate(transform.model, glm::radians(rotation.z), glm::vec3(0,0,1));
+  transform.model = glm::scale(transform.model, scale);
+  transform.model = p_model * transform.model;
+  transform.model_inv = glm::inverse(transform.model);
+  transform.normal = glm::transpose(glm::inverse(glm::mat3(transform.model)));
+  transform.normal_inv = glm::transpose(transform.normal);
+  return transform;
+}
+
 // Facet
 //--------------------------------------------------------------------------------
 Facet::Facet(GLuint a, GLuint b, GLuint c)
@@ -35,11 +128,58 @@ positions(std::move(_positions)), indices(std::move(_indices)) {
   init_from_positions();
 }
 
+Mesh::Mesh(const std::vector<Vertex>& vertices,
+           const std::vector<Facet>& facets)
+: vertices(std::move(vertices)), facets(std::move(facets)) {
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
+Mesh::Mesh(const std::vector<Vertex>& vertices,
+           const std::vector<Facet>& facets,
+           primitive_params_t params)
+: vertices(std::move(vertices)), facets(std::move(facets)) {
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
+Mesh::Mesh(MeshType mesh_type) : mesh_type(mesh_type) {
+  if(mesh_type == MeshType::box)
+    make_box(vertices, facets);
+  else if(mesh_type == MeshType::plane)
+    make_plane(vertices, facets);
+
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
 Mesh::~Mesh() {
   positions_vbo.release();
+  vertices_vbo.release();
   normals_vbo.release();
   texcoords_vbo.release();
   indices_ebo.release();
+}
+
+void Mesh::init_from_vertices() {
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  //vertices
+  vertices_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(&(vertices.front().v.x),
+                                                        vertices.size() * sizeof(Vertex) / sizeof(GLfloat),
+                                                        GL_STATIC_DRAW);
+  vertices_vbo.bind();
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  vertices_vbo.unbind();
+
+  //indices
+  indices_ebo = BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER>(indices.data(),
+                                                              indices.size(),
+                                                              GL_STATIC_DRAW);
+  glBindVertexArray(0);
 }
 
 void Mesh::init_from_facets() {

@@ -107,17 +107,18 @@ std::shared_ptr<Geometry> Geometry::create_terrain(int z_len, int x_len) {
 
 // PrimitiveGeometry
 //--------------------------------------------------------------------------------
-PrimitiveGeometry::PrimitiveGeometry(PrimitiveType type)
-: Geometry() {
-  auto mesh = make_shared<Primitive>(type);
-  meshes = { mesh };
-  primitive_types.push_back(type);
-}
+//PrimitiveGeometry::PrimitiveGeometry(PrimitiveType type)
+//: Geometry() {
+//  auto mesh = make_shared<Primitive>(type);
+//  meshes = { mesh };
+//  primitive_types.push_back(type);
+//}
+//
+//PrimitiveGeometry::PrimitiveGeometry(const std::vector<std::shared_ptr<Primitive>>& _meshes)
+//: Geometry() {
+//  for(auto &m: _meshes) {
+//    meshes.push_back(m);
+//    primitive_types.push_back(m->get_type());
+//  }
+//}
 
-PrimitiveGeometry::PrimitiveGeometry(const std::vector<std::shared_ptr<Primitive>>& _meshes)
-: Geometry() {
-  for(auto &m: _meshes) {
-    meshes.push_back(m);
-    primitive_types.push_back(m->get_type());
-  }
-}
