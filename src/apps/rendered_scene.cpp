@@ -41,7 +41,7 @@ int main(int argc, char* args[]) {
   shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
   plane->scale = glm::vec3(6);
   plane->position = glm::vec3(0,-2,0);
-  plane->material.color = glm::vec4(1.0);
+  plane->material.color = glm::vec4(0.8);
 
   auto smooth_sphere_geometry = make_shared<Geometry>(MeshType::sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);

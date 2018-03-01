@@ -3,7 +3,7 @@
 
 namespace graphics {
   enum struct MeshType {
-    basic, plane, box, sphere, flat_sphere
+    undefined, plane, box, sphere, flat_sphere
   };
   
   struct Mesh : public HitTestable, public PrimitiveMaker {
@@ -13,7 +13,7 @@ namespace graphics {
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
-    MeshType mesh_type = MeshType::basic;
+    MeshType mesh_type = MeshType::undefined;
 
     GLuint vao = 0;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> vertices_vbo;
