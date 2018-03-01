@@ -71,11 +71,11 @@ cv::Mat make_value_noise(cv::Size size, cv::Mat seed) {
 
 std::shared_ptr<Geometry> Geometry::create_terrain(int z_len, int x_len) {
   cv::Mat terrain = cv::Mat(z_len, x_len, CV_32F);
-  cv::Mat seed0 = make_random({3,3});
+  cv::Mat seed0 = make_random({4,5});
   cv::Mat seed1 = make_random({20,20});
   cv::Mat noise0 = make_value_noise(cv::Size(x_len,z_len), seed0);
   cv::Mat noise1 = make_value_noise(cv::Size(x_len,z_len), seed1);
-  cv::Mat noise = noise0 + 0.03 * noise1;
+  cv::Mat noise = noise0 + 0.1 * noise1;
 
   vector<glm::vec3> positions;
   for(int z = 0; z < z_len; z++) {
@@ -108,21 +108,3 @@ std::shared_ptr<Geometry> Geometry::create_terrain(int z_len, int x_len) {
   shared_ptr<graphics::Geometry> terrain_geometry = make_shared<Geometry>(meshes);
   return terrain_geometry;
 }
-
-// PrimitiveGeometry
-//--------------------------------------------------------------------------------
-//PrimitiveGeometry::PrimitiveGeometry(PrimitiveType type)
-//: Geometry() {
-//  auto mesh = make_shared<Primitive>(type);
-//  meshes = { mesh };
-//  primitive_types.push_back(type);
-//}
-//
-//PrimitiveGeometry::PrimitiveGeometry(const std::vector<std::shared_ptr<Primitive>>& _meshes)
-//: Geometry() {
-//  for(auto &m: _meshes) {
-//    meshes.push_back(m);
-//    primitive_types.push_back(m->get_type());
-//  }
-//}
-
