@@ -6,7 +6,7 @@ namespace graphics {
     undefined, plane, box, sphere, flat_sphere
   };
   
-  struct Mesh : public HitTestable, public PrimitiveMaker {
+  struct Mesh : public HitTester, public PrimitiveMaker {
     std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<glm::vec3> positions;

@@ -58,7 +58,7 @@ namespace graphics {
     float l;
   };
 
-  struct HitTestable {
+  struct HitTester {
     bool can_test_hit = false;
     
     virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform);
@@ -67,6 +67,8 @@ namespace graphics {
                         glm::vec3 plane_normal, glm::vec3 offset = VEC3ZERO);
     
     bool hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform);
+    
+    bool hit_test_sphere(ray_t& ray, hit_t& hit, transform_t& transform);
   };
 
   struct primitive_params_t {

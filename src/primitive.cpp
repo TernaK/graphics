@@ -222,13 +222,13 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
   }
 }
 
-// HitTestable
+// HitTester
 //--------------------------------------------------------------------------------
-bool HitTestable::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+bool HitTester::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
   return false;
 }
 
-bool HitTestable::hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
+bool HitTester::hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
                                  glm::vec3 plane_normal, glm::vec3 offset) {
   bool did_hit = false;
   glm::vec3 plane_o = glm::vec3(transform.model[3]) + offset;
@@ -246,7 +246,7 @@ bool HitTestable::hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
   return did_hit;
 }
 
-bool HitTestable::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
+bool HitTester::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
   vector<pair<bool, hit_t>> hit_pairs(6);
   static const vector<glm::vec3> normals = {
     glm::vec3(0,1,0), glm::vec3(0,-1,0),
@@ -275,3 +275,16 @@ bool HitTestable::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
   }
 }
 
+bool HitTester::hit_test_sphere(ray_t& ray, hit_t& hit, transform_t& transform) {
+  bool did_hit = false;
+  glm::vec3 center = glm::vec3(transform.model[3]);
+  float radius = glm::length(glm::vec3(transform.model * glm::vec4(1,0,0,0)));
+  float dist;
+  if(glm::intersectRaySphere(ray.p, ray.d, center, radius*radius, dist)) {
+    hit.p = ray.p + dist * ray.d;
+    hit.n = glm::normalize(hit.p - center);
+    hit.dist = dist;
+    did_hit = true;
+  }
+  return did_hit;
+}

@@ -38,6 +38,8 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
 }
 
 Mesh::Mesh(MeshType mesh_type, primitive_params_t params) : mesh_type(mesh_type) {
+  can_test_hit = true;
+  
   if(mesh_type == MeshType::box)
     make_box(vertices, facets);
   else if(mesh_type == MeshType::plane)
@@ -46,6 +48,8 @@ Mesh::Mesh(MeshType mesh_type, primitive_params_t params) : mesh_type(mesh_type)
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, true);
   else if(mesh_type == MeshType::flat_sphere)
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, false);
+  else
+    can_test_hit = false;
 
   create_indices_from_facets();
   init_from_vertices();
@@ -178,7 +182,7 @@ bool Mesh::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
   } else if(mesh_type == MeshType::box) {
     return hit_test_box(ray, hit, transform);
   } else if(mesh_type == MeshType::flat_sphere || mesh_type == MeshType::sphere) {
+    return hit_test_sphere(ray, hit, transform);
   }
-
   return did_hit;
 }
