@@ -221,3 +221,59 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
     facets.emplace_back(indices[3] + f*4, indices[4] + f*4, indices[5] + f*4);
   }
 }
+
+// HitTestable
+//--------------------------------------------------------------------------------
+bool HitTestable::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+  return false;
+}
+
+bool HitTestable::hit_test_plane(ray_t& ray, hit_t& hit,
+                                 transform_t& transform,
+                                 glm::vec3 plane_normal) {
+  bool did_hit = false;
+  glm::vec3 plane_o = glm::vec3(transform.model[3]);
+  glm::vec3 plane_n = glm::normalize(transform.normal * plane_normal);
+  float dist;
+  if(glm::intersectRayPlane(ray.p, ray.d, plane_o, plane_n, dist)) {
+    hit.p = ray.p + dist * ray.d;
+    hit.n = plane_n;
+    hit.dist = dist;
+    glm::vec3 plane_hit = glm::vec3(transform.model_inv * glm::vec4(hit.p, 1.0));
+    glm::vec3 diff = glm::abs(plane_hit);
+    if( glm::max(diff.x, max(diff.y, diff.z) ) < 1 )
+      did_hit = true;
+  }
+  return did_hit;
+}
+
+bool HitTestable::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
+  vector<pair<bool, hit_t>> hit_pairs(6);
+  static const vector<glm::vec3> normals = {
+    glm::vec3(0,1,0), glm::vec3(0,-1,0),
+    glm::vec3(-1,0,0), glm::vec3(1,0,0),
+    glm::vec3(0,0,1), glm::vec3(0,0,-1),
+  };
+  for(int i = 0; i < 6; i++) {
+    transform_t plane_transform = transform;
+    plane_transform.model[3] += glm::vec4(normals[i], 0);
+    plane_transform.model_inv[3] -= glm::vec4(normals[i], 0);
+    hit_pairs[i].first = hit_test_plane(ray, hit_pairs[i].second, plane_transform, normals[i]);
+  }
+  auto end = std::remove_if(hit_pairs.begin(), hit_pairs.end(),
+                           [](const pair<bool, hit_t>& h) -> bool {
+                             return h.first == false;
+                           });
+  hit_pairs.resize(end - hit_pairs.begin());
+  std::sort(hit_pairs.begin(), hit_pairs.end(),
+            [](const pair<bool, hit_t>& h1, const pair<bool, hit_t>& h2) -> bool {
+              return h1.second.dist < h2.second.dist;
+            });
+  if(!hit_pairs.empty()) {
+    hit = hit_pairs[0].second;
+    return true;
+  } else {
+    return false;
+  }
+}
+

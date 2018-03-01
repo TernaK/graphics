@@ -49,6 +49,7 @@ namespace graphics {
   struct hit_t {
     glm::vec3 p;
     glm::vec3 n;
+    float dist;
   };
 
   struct ray_t {
@@ -59,9 +60,13 @@ namespace graphics {
 
   struct HitTestable {
     bool can_test_hit = false;
-    virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
-      return false;
-    }
+    
+    virtual bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform);
+    
+    bool hit_test_plane(ray_t& ray, hit_t& hit, transform_t& transform,
+                        glm::vec3 plane_normal);
+    
+    bool hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform);
   };
 
   struct primitive_params_t {
