@@ -16,7 +16,7 @@ int main(int argc, char* args[]) {
   auto box_geometry = make_shared<Geometry>(MeshType::box);
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
   box->name = "box";
-  box->position.x = 0;
+  box->position.x = -3;
   box->position.z = 3;
   box->material.color = glm::vec3(0.6, 0.1, 0.1);
   box->material.shininess = 32;
@@ -26,7 +26,7 @@ int main(int argc, char* args[]) {
   terrain->name = "terrain";
   terrain->scale = glm::vec3(4);
   terrain->position.x = -2;
-  terrain->position.z = 2;
+  terrain->position.z = -2;
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
@@ -54,7 +54,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->geometry->wire_frame = true;
 
   box->add_child(flat_sphere);
-  terrain->geometry->wire_frame = true;
+//  terrain->geometry->wire_frame = true;
 
   auto light_node = make_shared<Object3D>();
   light_node->requires_camera = false;
@@ -75,7 +75,7 @@ int main(int argc, char* args[]) {
 
     scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
-    terrain->rotation.y += 1;
+//    terrain->rotation.y += 1;
     box->rotation.y += 2;
 
     renderer.render_scene(scene);

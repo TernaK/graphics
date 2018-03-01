@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/mesh.h>
+#include <glm/gtc/noise.hpp>
 #include <memory>
 
 namespace graphics {
