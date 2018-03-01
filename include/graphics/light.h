@@ -3,7 +3,7 @@
 #include <memory>
 
 namespace graphics {
-  enum LightType : int {
+  enum struct LightType : int {
     point = 0, directional = 1
   };
 

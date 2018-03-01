@@ -3,19 +3,6 @@
 using namespace std;
 using namespace graphics;
 
-// Facet
-//--------------------------------------------------------------------------------
-Facet::Facet(GLuint a, GLuint b, GLuint c)
-: a(a), b(b), c(c) {
-  indices[0] = &a;
-  indices[1] = &b;
-  indices[2] = &c;
-}
-
-GLuint Facet::operator[](int idx) {
-  return *(indices[idx]);
-}
-
 // Mesh
 //--------------------------------------------------------------------------------
 Mesh::Mesh(std::vector<Facet> _facets,
@@ -35,11 +22,62 @@ positions(std::move(_positions)), indices(std::move(_indices)) {
   init_from_positions();
 }
 
+Mesh::Mesh(const std::vector<Vertex>& vertices,
+           const std::vector<Facet>& facets)
+: vertices(std::move(vertices)), facets(std::move(facets)) {
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
+Mesh::Mesh(const std::vector<Vertex>& vertices,
+           const std::vector<Facet>& facets,
+           primitive_params_t params)
+: vertices(std::move(vertices)), facets(std::move(facets)) {
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
+Mesh::Mesh(MeshType mesh_type, primitive_params_t params) : mesh_type(mesh_type) {
+  if(mesh_type == MeshType::box)
+    make_box(vertices, facets);
+  else if(mesh_type == MeshType::plane)
+    PrimitiveMaker::make_plane(vertices, facets);
+  else if(mesh_type == MeshType::sphere)
+    PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, true);
+  else if(mesh_type == MeshType::flat_sphere)
+    PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, false);
+
+  create_indices_from_facets();
+  init_from_vertices();
+}
+
 Mesh::~Mesh() {
   positions_vbo.release();
+  vertices_vbo.release();
   normals_vbo.release();
   texcoords_vbo.release();
   indices_ebo.release();
+}
+
+void Mesh::init_from_vertices() {
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  //vertices
+  vertices_vbo = BufferObject<GLfloat, GL_ARRAY_BUFFER>(&(vertices.front().v.x),
+                                                        vertices.size() * sizeof(Vertex) / sizeof(GLfloat),
+                                                        GL_STATIC_DRAW);
+  vertices_vbo.bind();
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  vertices_vbo.unbind();
+
+  //indices
+  indices_ebo = BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER>(indices.data(),
+                                                              indices.size(),
+                                                              GL_STATIC_DRAW);
+  glBindVertexArray(0);
 }
 
 void Mesh::init_from_facets() {

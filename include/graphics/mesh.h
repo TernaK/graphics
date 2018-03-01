@@ -1,40 +1,24 @@
 #pragma once
-#include <graphics/buffer_object.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <opencv2/opencv.hpp>
-#include <vector>
-#include <functional>
-#include <iostream>
-#include <exception>
+#include <graphics/primitive.h>
 
 namespace graphics {
-  const glm::mat4 MAT4EYE = glm::mat4(1.0);
-  const glm::mat3 MAT3EYE = glm::mat3(1.0);
-  const glm::vec3 VEC3EYE = glm::vec3(1.0);
-  const glm::vec3 VEC3ZERO = glm::vec3(0.0);
-  const glm::vec4 VEC4EYE = glm::vec4(1.0);
-  constexpr float RAYEPSILON = 0.001;
-  
-  struct Facet {
-    GLuint* indices[3];
-    GLuint a, b, c;
-    
-    Facet(GLuint a, GLuint b, GLuint c);
-
-    GLuint operator[](int idx);
+  enum struct MeshType {
+    undefined, plane, box, sphere, flat_sphere
   };
   
-  struct Mesh {
+  struct Mesh : public HitTestable, public PrimitiveMaker {
+    std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
+    MeshType mesh_type = MeshType::undefined;
 
     GLuint vao = 0;
-    BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> vertices_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> positions_vbo;
+    BufferObject<GLfloat, GL_ARRAY_BUFFER> normals_vbo;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> texcoords_vbo;
     BufferObject<GLuint, GL_ELEMENT_ARRAY_BUFFER> indices_ebo;
 
@@ -50,11 +34,22 @@ namespace graphics {
          std::vector<GLuint> indices = {},
          bool smooth = true);
 
+    Mesh(const std::vector<Vertex>& vertices,
+         const std::vector<Facet>& facets);
+
+    Mesh(const std::vector<Vertex>& vertices,
+         const std::vector<Facet>& facets,
+         primitive_params_t params);
+
+    Mesh(MeshType mesh_type, primitive_params_t params = primitive_params_t());
+
     ~Mesh();
 
     void init_from_facets();
 
     void init_from_positions();
+
+    void init_from_vertices();
 
     void bind_vertex_data();
 

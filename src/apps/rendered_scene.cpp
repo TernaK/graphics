@@ -9,10 +9,11 @@ using namespace graphics;
 int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>();
   shared_ptr<Scene> scene = make_shared<Scene>(canvas);
+  SceneRenderer renderer;
 
   scene->camera->position = glm::vec3(0,5,10);
 
-  auto box_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::box);
+  auto box_geometry = make_shared<Geometry>(MeshType::box);
   shared_ptr<Object3D> box = make_shared<Object3D>(box_geometry);
   box->name = "box";
   box->position.x = 0;
@@ -29,19 +30,20 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.6, 0.1);
   terrain->material.shininess = 64;
 
-  auto flat_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::flat_sphere);
+  auto flat_sphere_geometry = make_shared<Geometry>(MeshType::flat_sphere);
   shared_ptr<Object3D> flat_sphere = make_shared<Object3D>(flat_sphere_geometry);
   flat_sphere->name = "flat_sphere";
   flat_sphere->position = glm::vec3(0, 2, 1);
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
+  flat_sphere->geometry->wire_frame = true;
 
-  auto plane_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::plane);
+  auto plane_geometry = make_shared<Geometry>(MeshType::plane);
   shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
-  plane->scale = glm::vec3(10);
+  plane->scale = glm::vec3(6);
   plane->position = glm::vec3(0,-2,0);
-  plane->material.color = glm::vec4(0.3);
+  plane->material.color = glm::vec4(0.8);
 
-  auto smooth_sphere_geometry = make_shared<PrimitiveGeometry>(PrimitiveType::smooth_sphere);
+  auto smooth_sphere_geometry = make_shared<Geometry>(MeshType::sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
   smooth_sphere->name = "smooth_sphere";
   smooth_sphere->position = glm::vec3(3,0,0);
@@ -49,6 +51,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->material.shininess = 256;
   smooth_sphere->material.strength.y = 0.9;
   smooth_sphere->material.shininess = 2;
+  smooth_sphere->geometry->wire_frame = true;
 
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;
@@ -58,6 +61,7 @@ int main(int argc, char* args[]) {
   light_node->requires_shader = false;
   auto light = make_shared<Light>(LightType::directional);
   light_node->light = light;
+  light->type = LightType::directional;
 
   scene->add_node(light_node);
   scene->add_node(box);
@@ -65,18 +69,18 @@ int main(int argc, char* args[]) {
   scene->add_node(smooth_sphere);
   scene->add_node(plane);
 
-  SceneRenderer renderer;
 
   while(canvas->still_open()) {
     scene->clear();
 
-//    scene->root->rotation.y -= 0.3;
+    scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
     terrain->rotation.y += 1;
     box->rotation.y += 2;
 
     renderer.render_scene(scene);
 
+    CanvasHelper::check_gl_errors();
     canvas->poll_events();
     canvas->swap_buffers();
   }

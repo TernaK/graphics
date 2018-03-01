@@ -14,7 +14,7 @@ int main(int argc, char* args[]) {
 //  auto tree = Octree<int>(2);
 //  cout << tree.get_level();
 
-  auto mesh = make_shared<Primitive>(PrimitiveType::box);
+  auto mesh = make_shared<Mesh>(MeshType::box);
 
   //make ray
   ray_t ray;
