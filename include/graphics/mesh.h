@@ -60,5 +60,7 @@ namespace graphics {
     glm::vec3 get_facet_normal(const Facet& facet);
 
     void draw();
+
+    bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) override;
   };
 }

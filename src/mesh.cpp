@@ -170,3 +170,23 @@ void Mesh::draw() {
   indices_ebo.unbind();
   glBindVertexArray(0);
 }
+
+bool Mesh::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+  bool did_hit = false;
+  if(mesh_type == MeshType::plane) {
+    glm::vec3 plane_o = glm::vec3(transform.model[3]);
+    glm::vec3 plane_n = glm::normalize(transform.normal * glm::vec3(0,1,0));
+    if(glm::intersectRayPlane(ray.p, ray.d, plane_o, plane_n, ray.l)) {
+      hit.p = ray.p + ray.l * ray.d;
+      hit.n = plane_n;
+      glm::vec3 hit_plane = glm::vec3(transform.model_inv * glm::vec4(hit.p, 1.0));
+      glm::vec3 diff = glm::abs(hit_plane);
+      if( glm::max(diff.x, max(diff.y, diff.z)) < 1 )
+        did_hit = true;
+    }
+  } else if(mesh_type == MeshType::box) {
+  } else if(mesh_type == MeshType::flat_sphere || mesh_type == MeshType::sphere) {
+  }
+
+  return did_hit;
+}
