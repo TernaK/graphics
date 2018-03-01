@@ -43,6 +43,7 @@ void main() {
   _frag_color_out = vec4(light_color * _material.color, _material.alpha);
 }
 
+// L = attenuate(k_d*L_d*(light.normal) + k_s*L_s*(reflected.view)^shine) + k_a*L_a
 void add_light_contribution(int idx,
                             inout vec3 ambient,
                             inout vec3 diffuse,
