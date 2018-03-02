@@ -1,10 +1,8 @@
 #pragma once
+#include <graphics/buffer_object.h>
 #include <graphics/primitive.h>
 
 namespace graphics {
-  enum struct MeshType {
-    undefined, plane, box, sphere, flat_sphere
-  };
   
   struct Mesh : public HitTester, public PrimitiveMaker {
     std::vector<Vertex> vertices;
@@ -13,7 +11,7 @@ namespace graphics {
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
-    MeshType mesh_type = MeshType::undefined;
+    ShapeType shape_type = ShapeType::undefined;
 
     GLuint vao = 0;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> vertices_vbo;
@@ -41,7 +39,7 @@ namespace graphics {
          const std::vector<Facet>& facets,
          primitive_params_t params);
 
-    Mesh(MeshType mesh_type, primitive_params_t params = primitive_params_t());
+    Mesh(ShapeType shape_type, primitive_params_t params = primitive_params_t());
 
     ~Mesh();
 

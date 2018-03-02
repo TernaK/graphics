@@ -21,14 +21,14 @@ transform_t Transformable::get_transform(glm::mat4 p_model) {
 
 // Facet
 //--------------------------------------------------------------------------------
-Facet::Facet(GLuint a, GLuint b, GLuint c)
+Facet::Facet(int32_t a, int32_t b, int32_t c)
 : a(a), b(b), c(c) {
   indices[0] = &a;
   indices[1] = &b;
   indices[2] = &c;
 }
 
-GLuint Facet::operator[](int idx) {
+int32_t Facet::operator[](int idx) {
   return *(indices[idx]);
 }
 
@@ -85,7 +85,7 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
   //assign vertices and indices
   vector<bool> assigned = vector<bool>(positions.size(), false);
   auto assign_smooth_facet_vertices = [&](Facet& facet) {
-    GLuint idx[] = {facet.a, facet.b, facet.c};
+    int32_t idx[] = {facet.a, facet.b, facet.c};
     for(int i = 0; i < 3; i++) {
       if(assigned[idx[i]]) continue;
       assigned[idx[i]] = true;

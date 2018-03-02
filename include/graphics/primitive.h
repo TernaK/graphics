@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/buffer_object.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -17,6 +16,10 @@ namespace graphics {
   const glm::vec4 VEC4EYE = glm::vec4(1.0);
   constexpr float RAYEPSILON = 0.001;
 
+  enum struct ShapeType {
+    undefined, plane, box, sphere, flat_sphere
+  };
+
   struct Vertex {
     glm::vec3 v;
     glm::vec3 vn;
@@ -28,6 +31,14 @@ namespace graphics {
     glm::mat3 normal = MAT4EYE;
     glm::mat4 model_inv = MAT4EYE;
     glm::mat3 normal_inv = MAT4EYE;
+    transform_t operator<<(const transform_t& t) {
+      transform_t transform = *this;
+      transform.model = t.model * transform.model;
+      transform.normal = t.normal * transform.normal;
+      transform.model_inv = t.model_inv * transform.model_inv;
+      transform.normal_inv = t.normal_inv * transform.normal_inv;
+      return transform;
+    }
   };
 
   struct Transformable {
@@ -39,11 +50,11 @@ namespace graphics {
   };
 
   struct Facet {
-    GLuint* indices[3];
-    GLuint a, b, c;
+    int32_t* indices[3];
+    int32_t a, b, c;
     
-    Facet(GLuint a, GLuint b, GLuint c);
-    GLuint operator[](int idx);
+    Facet(int32_t a, int32_t b, int32_t c);
+    int32_t operator[](int idx);
   };
 
   struct hit_t {
