@@ -4,6 +4,12 @@
 #include <tuple>
 
 namespace graphics {
+  struct implicit_test_t {
+    bool did_hit;
+    hit_t hit;
+    Material material;
+  };
+  
   struct ImplicitNode : public Transformable, public Hittable<ImplicitNode> {
     std::string name = "node";
     std::vector<ShapeType> shapes;
@@ -13,8 +19,7 @@ namespace graphics {
 
     ImplicitNode(std::vector<ShapeType> shape, std::vector<Material> materials);
 
-    bool hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
-                      Material& material);
+    implicit_test_t hit_test(ray_t& ray, transform_t& transform);
 
     bool hit_test_idx(ray_t& ray, hit_t& hit, transform_t& transform, int& idx);
   };

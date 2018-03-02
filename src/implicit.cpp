@@ -13,13 +13,14 @@ ImplicitNode::ImplicitNode(std::vector<ShapeType> shapes,
 
 }
 
-bool ImplicitNode::hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
-                                Material& material) {
+implicit_test_t ImplicitNode::hit_test(ray_t& ray, transform_t& transform) {
+  implicit_test_t test;
   int idx;
-  bool did_hit = hit_test_idx(ray, hit, transform, idx);
-  if(did_hit)
-    material = materials[idx];
-  return did_hit;
+  test.did_hit = hit_test_idx(ray, test.hit, transform, idx);
+  if(test.did_hit) {
+    test.material = materials[idx];
+  }
+  return test;
 }
 
 bool ImplicitNode::hit_test_idx(ray_t& ray, hit_t& hit, transform_t& transform, int& idx) {

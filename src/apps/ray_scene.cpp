@@ -57,26 +57,22 @@ int main(int argc, char* args[]) {
       ray.p = glm::vec3(0,0,10);
       ray.d = glm::normalize(glm::vec3(ray_dx, ray_dy, -camera.z_near));
 
-      hit_t hit;
       float cos_t = 0;
-      Material material;
       glm::vec3 color = clear_color;
-      if(node.hit_test(ray, hit, transform, material)) {
-        material.shininess = 32;
-        material.strength.x = 0.3;
-        material.color = glm::vec3(1.0, 0, 0);
+      implicit_test_t test = node.hit_test(ray, transform);
+      if(test.did_hit) {
         glm::vec3 ambient, diffuse, specular;
-        ambient = material.strength.x * light.ambient;
-        glm::vec3 l_vec = glm::normalize(light.position - hit.p);
-        cos_t = glm::dot(l_vec, hit.n);
+        ambient = test.material.strength.x * light.ambient;
+        glm::vec3 l_vec = glm::normalize(light.position - test.hit.p);
+        cos_t = glm::dot(l_vec, test.hit.n);
         cos_t = cos_t < 0 ? 0 : cos_t;
-        diffuse = material.strength.y * light.color * cos_t;
-        glm::vec3 r = glm::reflect(-l_vec, hit.n);
-        glm::vec3 v = glm::normalize(ray.p - hit.p);
+        diffuse = test.material.strength.y * light.color * cos_t;
+        glm::vec3 r = glm::reflect(-l_vec, test.hit.n);
+        glm::vec3 v = glm::normalize(ray.p - test.hit.p);
         float spec = glm::dot(r, v);
         spec = spec < 0 ? 0 : spec;
-        specular = material.strength.z * light.color * pow(spec, material.shininess);
-        color = (ambient + diffuse + specular) * material.color;
+        specular = test.material.strength.z * light.color * pow(spec, test.material.shininess);
+        color = (ambient + diffuse + specular) * test.material.color;
         color = glm::clamp(color, 0.0f, 1.0f);
       }
       frag = cv::Vec3f(color.b, color.g, color.r);
