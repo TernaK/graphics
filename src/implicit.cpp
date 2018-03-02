@@ -35,6 +35,10 @@ bool ImplicitNode::_ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
     if(shape == ShapeType::plane) {
       std::get<0>(shape_hits[i]) = hit_test_plane(ray, std::get<1>(shape_hits[i]),
                                                   transform, glm::vec3(0,1,0));
+      if(!std::get<0>(shape_hits[i]))
+        std::get<0>(shape_hits[i]) = hit_test_plane(ray, std::get<1>(shape_hits[i]),
+                                                    transform, glm::vec3(0,-1,0));
+
     }
     else if(shape == ShapeType::box) {
       std::get<0>(shape_hits[i]) = hit_test_box(ray, std::get<1>(shape_hits[i]), transform);

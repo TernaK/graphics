@@ -277,14 +277,24 @@ bool HitTester::hit_test_box(ray_t& ray, hit_t& hit, transform_t& transform) {
 
 bool HitTester::hit_test_sphere(ray_t& ray, hit_t& hit, transform_t& transform) {
   bool did_hit = false;
-  glm::vec3 center = glm::vec3(transform.model[3]);
-  float radius = glm::length(glm::vec3(transform.model * glm::vec4(1,0,0,0)));
-  float dist;
-  if(glm::intersectRaySphere(ray.p, ray.d, center, radius*radius, dist)) {
-    hit.p = ray.p + dist * ray.d;
-    hit.n = glm::normalize(hit.p - center);
-    hit.dist = dist;
-    did_hit = true;
+  glm::vec3 p = glm::vec3(transform.model_inv * glm::vec4(ray.p, 1.0));
+  glm::vec3 d = glm::vec3(transform.normal_inv * glm::vec4(ray.d, 1.0));
+  float a = dot(d,d);
+  float b = 2 * dot(p,d);
+  float c = dot(p,p) - 1;
+  float det = b*b - 4*a*c;
+  if(det > 0) {
+    float sqrt_det = sqrt(det);
+    float t1 = (-b + sqrt_det) / (2*a);
+    float t2 = (-b - sqrt_det) / (2*a);
+    float t = min(t1, t2);
+    glm::vec3 hit_sphere = p + t * d;
+    if(t > 0 && fabs(glm::length(hit_sphere) - 1) < RAYEPSILON) {
+      did_hit = true;
+      hit.p = ray.p + t * ray.d;
+      hit.n = glm::normalize(transform.normal * hit_sphere);
+      hit.dist = glm::length(hit.p - ray.p);
+    }
   }
   return did_hit;
 }
