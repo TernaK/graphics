@@ -35,8 +35,8 @@ namespace graphics {
       transform_t transform = *this;
       transform.model = t.model * transform.model;
       transform.normal = t.normal * transform.normal;
-      transform.model_inv = t.model_inv * transform.model_inv;
-      transform.normal_inv = t.normal_inv * transform.normal_inv;
+      transform.model_inv = glm::inverse(transform.model);
+      transform.normal_inv = glm::transpose(transform.normal);
       return transform;
     }
   };

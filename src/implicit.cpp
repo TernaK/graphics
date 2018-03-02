@@ -13,30 +13,49 @@ ImplicitNode::ImplicitNode(std::vector<ShapeType> shapes,
 
 }
 
+bool ImplicitNode::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
+                                Material& material) {
+  int idx;
+  bool did_hit = _ray_hit_test(ray, hit, transform, idx);
+  if(did_hit)
+    material = materials[idx];
+  return did_hit;
+}
+
 bool ImplicitNode::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
-  vector<pair<bool,hit_t>> shape_hits = vector<pair<bool,hit_t>>(shapes.size());
+  int idx;
+  return _ray_hit_test(ray, hit, transform, idx);
+}
+
+bool ImplicitNode::_ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform, int& idx) {
+  vector<tuple<bool,hit_t,int>> shape_hits = vector<tuple<bool,hit_t,int>>(shapes.size());
   for(int i = 0; i < shapes.size(); i++) {
     auto& shape = shapes[i];
+    std::get<2>(shape_hits[i]) = i;
     if(shape == ShapeType::plane) {
-      shape_hits[i].first = hit_test_plane(ray, shape_hits[i].second, transform, glm::vec3(0,1,0));
-    } else if(shape == ShapeType::box) {
-      shape_hits[i].first = hit_test_box(ray, shape_hits[i].second, transform);
-    } else if(shape == ShapeType::flat_sphere || shape == ShapeType::sphere) {
-      shape_hits[i].first = hit_test_sphere(ray, shape_hits[i].second, transform);
+      std::get<0>(shape_hits[i]) = hit_test_plane(ray, std::get<1>(shape_hits[i]),
+                                                  transform, glm::vec3(0,1,0));
+    }
+    else if(shape == ShapeType::box) {
+      std::get<0>(shape_hits[i]) = hit_test_box(ray, std::get<1>(shape_hits[i]), transform);
+    }
+    else if(shape == ShapeType::flat_sphere || shape == ShapeType::sphere) {
+      std::get<0>(shape_hits[i]) = hit_test_sphere(ray, std::get<1>(shape_hits[i]), transform);
     }
   }
 
   auto end = std::remove_if(shape_hits.begin(), shape_hits.end(),
-                            [](const pair<bool, hit_t>& h) -> bool {
-                              return h.first == false;
+                            [](const tuple<bool,hit_t,int>& h) -> bool {
+                              return std::get<0>(h) == false;
                             });
   shape_hits.resize(end - shape_hits.begin());
   std::sort(shape_hits.begin(), shape_hits.end(),
-            [](const pair<bool, hit_t>& h1, const pair<bool, hit_t>& h2) -> bool {
-              return h1.second.dist < h2.second.dist;
+            [](const tuple<bool,hit_t,int>& h1, tuple<bool,hit_t,int>& h2) -> bool {
+              return std::get<1>(h1).dist < std::get<1>(h2).dist;
             });
   if(!shape_hits.empty()) {
-    hit = shape_hits[0].second;
+    hit = std::get<1>(shape_hits[0]);
+    idx = std::get<2>(shape_hits[0]);
     return true;
   } else {
     return false;

@@ -13,45 +13,65 @@ int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>(400,300,true);
 
   ImplicitNode node = ImplicitNode(ShapeType::sphere);
+//  node.scale *= 2;
   //make ray
   ray_t ray;
-  ray.p = glm::vec3(0,0,6);
+  ray.p = glm::vec3(0,0,10);
 
-  glm::vec3 light_position = glm::vec3(10,10,10);
+  Light light;
+  light.position = glm::vec3(10,10,10);
+
+//  Camera
 
   Transformable parent_transformable;
 
-  for(;;) {
+//  for(;;) {
     parent_transformable.position.y = 0.4 * sin(glfwGetTime());
     transform_t p_transform = parent_transformable.get_transform();
-    cv::Mat image = cv::Mat::zeros(200,200,CV_32FC3);
-    node.position.x = sin(glfwGetTime());
-    node.position.y = cos(glfwGetTime());
-//    node.rotation.z += 3;
-//    node.rotation.y += 5;
-//    node.rotation.x += 3;
-//    p_transform.mo
+  cv::Mat image = cv::Mat::zeros(100,100,CV_32FC3);
+    node.position.x = 0.5 * sin(glfwGetTime());
+    node.position.y = 0.5 * cos(glfwGetTime());
+    node.rotation.z += 3;
+    node.rotation.y += 5;
+    node.rotation.x += 3;
     transform_t transform = node.get_transform() << p_transform;
+    glm::vec3 clear_color(0.1);
 
-    for(int i = 0; i < image.rows; i++) {
-      for(int j = 0; j < image.cols; j++) {
-        ray.d = glm::normalize(glm::vec3((float(j) * 2.0 / image.cols) - 1.0, -((float(i) * 2.0 / image.rows) - 1), -3));
+//    for(int i = 0; i < image.rows; i++) {
+//      for(int j = 0; j < image.cols; j++) {
+  image.forEach<cv::Vec3f>([&](cv::Vec3f& frag, const int* loc) {
+//    printf("%d %d\n", loc[1], loc[0]);
+        ray.d = glm::normalize(glm::vec3((float(loc[1]) * 2.0 / image.cols) - 1.0, -((float(loc[0]) * 2.0 / image.rows) - 1), -3));
 
         hit_t hit;
         float cos_t = 0;
-        cv::Vec3f color(0.2,0.2,0.2);
-        if(node.ray_hit_test(ray, hit, transform)) {
-          cos_t = glm::dot(glm::normalize(light_position - hit.p), hit.n);
+        Material material;
+        glm::vec3 color = clear_color;
+        if(node.ray_hit_test(ray, hit, transform, material)) {
+          material.shininess = 2;
+          material.strength.x = 0.4;
+          material.color = glm::vec3(1.0, 0, 0);
+          glm::vec3 ambient, diffuse, specular;
+          ambient = material.strength.x * light.ambient;
+          glm::vec3 l_vec = glm::normalize(light.position - hit.p);
+          cos_t = glm::dot(l_vec, hit.n);
           cos_t = cos_t < 0 ? 0 : cos_t;
-          color = cv::Vec3f(0.1,0.7,0.7) * cos_t;
+          diffuse = material.strength.y * light.color * cos_t;
+          glm::vec3 r = glm::reflect(-l_vec, hit.n);
+          glm::vec3 v = glm::normalize(ray.p - hit.p);
+          float spec = glm::dot(r, v);
+          spec = spec < 0 ? 0 : spec;
+          specular = material.strength.z * light.color * pow(spec, material.shininess);
+          color = (ambient + diffuse + specular) * material.color;
+          color = glm::clamp(color, 0.0f, 1.0f);
         }
-
-        image.at<cv::Vec3f>(i,j) = color;
-      }
-    }
+    image.at<cv::Vec3f>(loc[0], loc[1]) = cv::Vec3f(color.b, color.g, color.r);
+//      }
+//    }
+  });
 
     cv::imshow("ray cast", image);
-    cv::waitKey(30);
-  }
+    cv::waitKey();
+//  }
 
 }
