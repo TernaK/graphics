@@ -77,10 +77,7 @@ Scene::Scene(std::shared_ptr<Canvas> _canvas)
 }
 
 void Scene::add_node(std::shared_ptr<SceneNode> node) {
-  if(!root)
-    root = node;
-  else
-    root->add_child(node);
+  root->add_child(node);
 }
 
 void Scene::clear() {

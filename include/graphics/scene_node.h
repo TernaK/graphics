@@ -18,7 +18,7 @@ namespace graphics {
 
     virtual void set_uniforms(std::shared_ptr<Shader> shader, transform_t transform);
 
-    virtual std::string get_shader_name() = 0;
+    virtual std::string get_shader_name() { return ""; };
 
     virtual void draw(std::shared_ptr<Shader> shader, glm::mat4 p_model = MAT4EYE);
 
