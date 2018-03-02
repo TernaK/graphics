@@ -38,7 +38,6 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
 }
 
 Mesh::Mesh(ShapeType shape_type, primitive_params_t params) : shape_type(shape_type) {
-  can_test_hit = true;
   
   if(shape_type == ShapeType::box)
     make_box(vertices, facets);
@@ -48,8 +47,6 @@ Mesh::Mesh(ShapeType shape_type, primitive_params_t params) : shape_type(shape_t
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, true);
   else if(shape_type == ShapeType::flat_sphere)
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, false);
-  else
-    can_test_hit = false;
 
   create_indices_from_facets();
   init_from_vertices();
@@ -175,7 +172,7 @@ void Mesh::draw() {
   glBindVertexArray(0);
 }
 
-bool Mesh::ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+bool Mesh::hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
   bool did_hit = false;
   if(shape_type == ShapeType::plane) {
     return hit_test_plane(ray, hit, transform, glm::vec3(0,1,0));

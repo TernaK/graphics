@@ -7,7 +7,7 @@ using namespace graphics;
 //
 //}
 //
-//void RaySceneRenderer::render_scene(std::shared_ptr<Scene> scene) {
+//void RaySceneRenderer::render_scene(std::shared_ptr<ImplicitNode> scene) {
 //
 //}
 

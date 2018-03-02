@@ -4,8 +4,6 @@
 #include <graphics/implicit.h>
 #include <graphics/ray.h>
 #include <opencv2/opencv.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <iostream>
 using namespace std;
 using namespace graphics;
 
@@ -13,7 +11,7 @@ int main(int argc, char* args[]) {
   shared_ptr<Canvas> canvas = make_shared<Canvas>(400,300,true);
 
   ImplicitNode node = ImplicitNode(ShapeType::sphere);
-  node.scale = glm::vec3(2,1,1);
+//  node.scale = glm::vec3(2,1,1);
 
   Light light;
   light.position = glm::vec3(6,6,6);
@@ -60,7 +58,7 @@ int main(int argc, char* args[]) {
       float cos_t = 0;
       Material material;
       glm::vec3 color = clear_color;
-      if(node.ray_hit_test(ray, hit, transform, material)) {
+      if(node.hit_test(ray, hit, transform, material)) {
         material.shininess = 32;
         material.strength.x = 0.3;
         material.color = glm::vec3(1.0, 0, 0);

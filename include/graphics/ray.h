@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/implicit.h>
+#include <graphics/camera.h>
 
 namespace graphics {
   class RaySceneRenderer {
@@ -20,9 +21,8 @@ namespace graphics {
 //
 //    std::vector<traversed_node_t> traverse_scene(std::shared_ptr<Scene> scene);
 //
-//  public:
-//    cv::Size size;
-//    RaySceneRenderer();
-//    void render_scene(std::shared_ptr<Scene> scene);
+  public:
+    RaySceneRenderer();
+    void render_scene(std::shared_ptr<ImplicitNode> root, std::shared_ptr<Camera> camera);
   };
 }

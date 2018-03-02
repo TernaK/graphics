@@ -4,7 +4,7 @@
 #include <tuple>
 
 namespace graphics {
-  struct ImplicitNode : public HitTester, public Transformable {
+  struct ImplicitNode : public Transformable, public Hittable<ImplicitNode> {
     std::string name = "node";
     std::vector<ShapeType> shapes;
     std::vector<Material> materials;
@@ -13,11 +13,9 @@ namespace graphics {
 
     ImplicitNode(std::vector<ShapeType> shape, std::vector<Material> materials);
 
-    bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
+    bool hit_test(ray_t& ray, hit_t& hit, transform_t& transform,
                       Material& material);
 
-    bool _ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform, int& idx);
-
-    bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) override;
+    bool hit_test_idx(ray_t& ray, hit_t& hit, transform_t& transform, int& idx);
   };
 }

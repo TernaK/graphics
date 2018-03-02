@@ -4,7 +4,7 @@
 
 namespace graphics {
   
-  struct Mesh : public HitTester, public PrimitiveMaker {
+  struct Mesh : public Hittable<Mesh>, public PrimitiveMaker {
     std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<glm::vec3> positions;
@@ -59,6 +59,6 @@ namespace graphics {
 
     void draw();
 
-    bool ray_hit_test(ray_t& ray, hit_t& hit, transform_t& transform) override;
+    bool hit_test(ray_t& ray, hit_t& hit, transform_t& transform);
   };
 }

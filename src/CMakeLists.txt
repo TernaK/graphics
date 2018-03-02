@@ -22,6 +22,7 @@ set(graphics_srcs
   ${CMAKE_SOURCE_DIR}/include/graphics/octree.h
   primitive.cpp ${CMAKE_SOURCE_DIR}/include/graphics/primitive.h
   implicit.cpp ${CMAKE_SOURCE_DIR}/include/graphics/implicit.h
+  types.cpp ${CMAKE_SOURCE_DIR}/include/graphics/types.h
 )
 set(libs_list ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm ${OpenCV_LIBRARIES})
 add_library(graphics_lib ${graphics_srcs})

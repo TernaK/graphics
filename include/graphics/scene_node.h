@@ -11,8 +11,6 @@ namespace graphics {
     bool hidden = false;
     bool requires_shader = false;
     bool requires_camera = false;
-//    std::string name = "node";
-//    std::list<std::shared_ptr<SceneNode>> children;
 
     SceneNode() = default;
 
@@ -28,11 +26,5 @@ namespace graphics {
     virtual void draw_node(std::shared_ptr<Shader> shader, glm::mat4 p_model = MAT4EYE);
 
     virtual void draw_children(std::shared_ptr<Shader> shader, glm::mat4 p_model = MAT4EYE);
-
-//    void add_child(std::shared_ptr<SceneNode> child);
-
-    void remove_child(std::shared_ptr<SceneNode> child);
-
-    std::vector<std::shared_ptr<SceneNode>> get_children_with_name(std::string name);
   };
 }
