@@ -8,10 +8,12 @@ using namespace std;
 using namespace graphics;
 
 int main(int argc, char* args[]) {
-  shared_ptr<Canvas> canvas = make_shared<Canvas>(400,300,true);
+  cv::Size frame_size(640, 480);
+  int supersample_factor = 5;
+  shared_ptr<Canvas> canvas = make_shared<Canvas>(frame_size.width,frame_size.height,true);
 
   ImplicitNode node = ImplicitNode(ShapeType::sphere);
-//  node.scale = glm::vec3(2,1,1);
+  node.scale = glm::vec3(2);
 
   Light light;
   light.position = glm::vec3(6,6,6);
@@ -27,12 +29,13 @@ int main(int argc, char* args[]) {
 
   Transformable parent_transformable;
 
-  for(;;) {
+//  for(;;) {
     parent_transformable.position.y = 0.4 * sin(glfwGetTime());
     transform_t p_transform = parent_transformable.get_transform();
-    cv::Mat image = cv::Mat::zeros(canvas->height, canvas->width, CV_32FC3);
-    node.position.x = 2 * sin(glfwGetTime());
-    node.position.y = 2 * cos(glfwGetTime());
+//  cv::Size size(canvas->width, canvas->height);
+    cv::Mat image = cv::Mat::zeros(frame_size * supersample_factor, CV_32FC3);
+//    node.position.x = 2 * sin(glfwGetTime());
+//    node.position.y = 2 * cos(glfwGetTime());
     node.rotation.z += 3;
     node.rotation.y += 5;
 //    node.rotation.x += 3;
@@ -79,8 +82,10 @@ int main(int argc, char* args[]) {
       frag = cv::Vec3f(color.b, color.g, color.r);
     });
 
+    cv::GaussianBlur(image, image, cv::Size(3,3), 1.2);
+    cv::resize(image, image, frame_size);
     cv::imshow("ray cast", image);
-    cv::waitKey(30);
-  }
+    cv::waitKey();
+//  }
 
 }
