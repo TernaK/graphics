@@ -9,79 +9,41 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   cv::Size frame_size(640, 480);
-  int supersample_factor = 5;
+  int supersample_factor = 3;
   shared_ptr<Canvas> canvas = make_shared<Canvas>(frame_size.width,frame_size.height,true);
 
-  ImplicitNode node = ImplicitNode(ShapeType::sphere);
-  node.scale = glm::vec3(2);
+  auto sphere = std::make_shared<ImplicitNode>(ShapeType::sphere);
+  sphere->scale = glm::vec3(2.0);
+  sphere->position = glm::vec3(0.5,0,3);
+  sphere->materials[0].color = glm::vec3(1.0,0.2,0.2);
+  
+  auto box = std::make_shared<ImplicitNode>(ShapeType::box);
+  box->scale = glm::vec3(3);
+  box->position = glm::vec3(-1,0,-3);
+  box->rotation = glm::vec3(10,40,0);
 
-  Light light;
-  light.position = glm::vec3(6,6,6);
+  //light
+  std::shared_ptr<Light> light = make_shared<Light>();
+  light->position = glm::vec3(6,6,6);
 
-//  Camera
-  Camera camera;
-  camera.position = glm::vec3(0,0,6);
-  camera.aspect_ratio = canvas->get_aspect_ratio();
-
-//  glm::vec3 cam_d = glm::normalize(camera.target - camera.position);
-  float y_near = camera.z_near * tan(glm::radians(camera.fovy/2.0));
-  float x_near = camera.aspect_ratio * y_near;
+  //camera
+  std::shared_ptr<Camera> camera = make_shared<Camera>();
+  camera->position = glm::vec3(0,0,4);
+  camera->aspect_ratio = canvas->get_aspect_ratio();
 
   Transformable parent_transformable;
-
-//  for(;;) {
-    parent_transformable.position.y = 0.4 * sin(glfwGetTime());
-    transform_t p_transform = parent_transformable.get_transform();
-//  cv::Size size(canvas->width, canvas->height);
-    cv::Mat image = cv::Mat::zeros(frame_size * supersample_factor, CV_32FC3);
-//    node.position.x = 2 * sin(glfwGetTime());
-//    node.position.y = 2 * cos(glfwGetTime());
-    node.rotation.z += 3;
-    node.rotation.y += 5;
-//    node.rotation.x += 3;
-    transform_t transform = node.get_transform() << p_transform;
-    glm::vec3 clear_color(0.1);
-
-    int width = image.cols;
-    int height = image.rows;
-
-    image.forEach<cv::Vec3f>([&](cv::Vec3f& frag, const int* row_col) {
-      int row = row_col[0];
-      int col = row_col[1];
-      //TODO: find the correct vectors
-      float ray_dx = ((2.0 * col - width) / width) * x_near;
-      float ray_dy = -((2.0 * row - height) / height) * y_near;
-
-      //make ray
-      ray_t ray;
-      ray.p = glm::vec3(0,0,10);
-      ray.d = glm::normalize(glm::vec3(ray_dx, ray_dy, -camera.z_near));
-
-      float cos_t = 0;
-      glm::vec3 color = clear_color;
-      implicit_test_t test = node.hit_test(ray, transform);
-      if(test.did_hit) {
-        glm::vec3 ambient, diffuse, specular;
-        ambient = test.material.strength.x * light.ambient;
-        glm::vec3 l_vec = glm::normalize(light.position - test.hit.p);
-        cos_t = glm::dot(l_vec, test.hit.n);
-        cos_t = cos_t < 0 ? 0 : cos_t;
-        diffuse = test.material.strength.y * light.color * cos_t;
-        glm::vec3 r = glm::reflect(-l_vec, test.hit.n);
-        glm::vec3 v = glm::normalize(ray.p - test.hit.p);
-        float spec = glm::dot(r, v);
-        spec = spec < 0 ? 0 : spec;
-        specular = test.material.strength.z * light.color * pow(spec, test.material.shininess);
-        color = (ambient + diffuse + specular) * test.material.color;
-        color = glm::clamp(color, 0.0f, 1.0f);
-      }
-      frag = cv::Vec3f(color.b, color.g, color.r);
-    });
-
-    cv::GaussianBlur(image, image, cv::Size(3,3), 1.2);
-    cv::resize(image, image, frame_size);
-    cv::imshow("ray cast", image);
-    cv::waitKey();
-//  }
-
+  
+  shared_ptr<RayScene> ray_scene = make_shared<RayScene>();
+  ray_scene->add_node(sphere);
+  ray_scene->add_node(box);
+  ray_scene->root->rotation.x = 20;
+  
+  auto scene_renderer = make_shared<RaySceneRenderer>(frame_size, camera);
+  scene_renderer->supersample_factor = supersample_factor;
+  scene_renderer->light = light;
+  
+  cv::Mat image = scene_renderer->render_scene(ray_scene);
+  
+  cv::imshow("ray cast", image);
+  cv::waitKey();
 }

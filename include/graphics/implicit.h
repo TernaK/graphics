@@ -10,11 +10,13 @@ namespace graphics {
     Material material;
   };
   
-  struct ImplicitNode : public Transformable, public Hittable<ImplicitNode> {
+  struct ImplicitNode : public Transformable, public Hittable<ImplicitNode>, public Inheritable<ImplicitNode> {
     std::string name = "node";
     std::vector<ShapeType> shapes;
     std::vector<Material> materials;
-
+    
+    ImplicitNode() = default;
+    
     ImplicitNode(ShapeType shape, Material material = Material());
 
     ImplicitNode(std::vector<ShapeType> shape, std::vector<Material> materials);
