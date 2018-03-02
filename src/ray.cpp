@@ -80,6 +80,13 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
           }
         }
         
+        float attenuation = 1.0;
+        if(light->type == LightType::point) {
+          attenuation = 1.0/(light->attenuation.x +
+                             light->attenuation.y * z_buffer_px +
+                             light->attenuation.z * z_buffer_px * z_buffer_px);
+        }
+        
         if(is_in_light) {
           glm::vec3 ambient, diffuse, specular;
           ambient = test.material.strength.x * light->ambient;
@@ -91,17 +98,11 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
           float spec = glm::dot(r, v_vec);
           spec = spec < 0 ? 0 : spec;
           specular = test.material.strength.z * light->color * pow(spec, test.material.shininess);
-          float attenuation = 1.0;
-          if(light->type == LightType::point) {
-            attenuation = 1.0/(light->attenuation.x +
-                               light->attenuation.y * z_buffer_px +
-                               light->attenuation.z * z_buffer_px * z_buffer_px);
-          }
           glm::vec3 color = (ambient + attenuation * (diffuse + specular)) * test.material.color;
           color = glm::clamp(color, 0.0f, 1.0f);
           frag = cv::Vec3f(color.b, color.g, color.r);
         } else {
-          glm::vec3 color = test.material.strength.x * light->ambient * test.material.color;
+          glm::vec3 color = attenuation * test.material.strength.x * light->ambient * test.material.color;
           frag = cv::Vec3f(color.b, color.g, color.r);
         }
       }

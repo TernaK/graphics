@@ -9,18 +9,18 @@ using namespace graphics;
 
 int main(int argc, char* args[]) {
   cv::Size frame_size(640, 480);
-  int supersample_factor = 3;
+  int supersample_factor = 2;
   shared_ptr<Canvas> canvas = make_shared<Canvas>(frame_size.width,frame_size.height,true);
 
   auto sphere = std::make_shared<ImplicitNode>(ShapeType::sphere);
   sphere->scale = glm::vec3(2.0);
-  sphere->position = glm::vec3(1.5,0,0);
+  sphere->position = glm::vec3(1,0,1);
   sphere->materials[0].color = glm::vec3(1.0,0.2,0.2);
   
   auto box = std::make_shared<ImplicitNode>(ShapeType::box);
   box->scale = glm::vec3(1.5);
-  box->position = glm::vec3(-2,0,0);
-//  box->rotation = glm::vec3(10,40,0);
+  box->position = glm::vec3(-1.5,0,0);
+  box->rotation = glm::vec3(10,0,0);
   box->materials[0].color = glm::vec3(0.2,0.9,0.2);
   
   auto plane = std::make_shared<ImplicitNode>(ShapeType::plane);
@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
 
   //light
   std::shared_ptr<Light> light = make_shared<Light>();
-  light->position = glm::vec3(3,6,5);
+  light->position = glm::vec3(3,5,5);
 
   //camera
   std::shared_ptr<Camera> camera = make_shared<Camera>();
