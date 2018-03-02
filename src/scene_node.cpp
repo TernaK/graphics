@@ -34,25 +34,3 @@ void SceneNode::draw_children(std::shared_ptr<Shader> shader, glm::mat4 p_model)
     x->draw(shader, p_model);
   });
 }
-
-void SceneNode::add_child(std::shared_ptr<SceneNode> child) {
-  children.push_back(child);
-}
-
-void SceneNode::remove_child(std::shared_ptr<SceneNode> child) {
-  children.remove_if([&child](const shared_ptr<SceneNode>& x) -> bool {
-    return child == x;
-  });
-}
-
-std::vector<std::shared_ptr<SceneNode>> SceneNode::get_children_with_name(std::string name) {
-  vector<shared_ptr<SceneNode>> matches;
-  for_each(children.begin(), children.end(),
-           [&name, &matches](const shared_ptr<SceneNode>& x) {
-             if(x->name == name)
-               matches.push_back(x);
-             auto child_matches = x->get_children_with_name(name);
-             matches.insert(matches.end(), child_matches.begin(), child_matches.end());
-           });
-  return matches;
-}

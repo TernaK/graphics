@@ -107,4 +107,41 @@ namespace graphics {
                           std::vector<glm::vec3> &positions,
                           int sc, int st);
   };
+
+  template<typename T>
+  struct Inheritable {
+    std::string name = "name";
+    std::list<std::shared_ptr<T>> children;
+
+    void add_child(std::shared_ptr<T> child);
+
+    void remove_child(std::shared_ptr<T> child);
+
+    std::vector<std::shared_ptr<T>> get_children_with_name(std::string name);
+  };
+
+  template<typename T>
+  void Inheritable<T>::add_child(std::shared_ptr<T> child) {
+    children.push_back(child);
+  }
+
+  template<typename T>
+  void Inheritable<T>::remove_child(std::shared_ptr<T> child) {
+    children.remove_if([&child](const std::shared_ptr<T>& x) -> bool {
+      return child == x;
+    });
+  }
+
+  template<typename T>
+  std::vector<std::shared_ptr<T>> Inheritable<T>::get_children_with_name(std::string name) {
+    std::vector<std::shared_ptr<T>> matches;
+    for_each(children.begin(), children.end(),
+             [&name, &matches](const std::shared_ptr<T>& x) {
+               if(x->name == name)
+                 matches.push_back(x);
+               auto child_matches = x->get_children_with_name(name);
+               matches.insert(matches.end(), child_matches.begin(), child_matches.end());
+             });
+    return matches;
+  }
 }

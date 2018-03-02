@@ -1,4 +1,4 @@
-#include <graphics/mesh.h>
+#include <graphics/primitive.h>
 #include <glm/gtx/string_cast.hpp>
 using namespace std;
 using namespace graphics;
@@ -37,7 +37,7 @@ int32_t Facet::operator[](int idx) {
 void PrimitiveMaker::make_sphere_grid(std::vector<vector<int>> &grid_indices,
                                       std::vector<glm::vec3> &positions,
                                       int sc, int st) {
-  GLfloat r = 1.0;
+  float r = 1.0;
   if(st < 2 || sc < 3)
     throw runtime_error("cannot have < 2 stacks or < 3 slices");
 
@@ -159,7 +159,7 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
 }
 
 void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
-  GLfloat h = 1.0;
+  float h = 1.0;
 
   auto fl = glm::vec3(-h,0,h);   //front left
   auto fr = glm::vec3(h,0,h);    //front right
@@ -182,7 +182,7 @@ void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet
 }
 
 void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
-  GLfloat h = 1;
+  float h = 1;
 
   auto ftl = glm::vec3(-h,h,h);   //front top left
   auto ftr = glm::vec3(h,h,h);    //front top right

@@ -18,7 +18,7 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
 
   transform_t this_transform = node->get_transform(parent_transform.model);
   for(auto& child: node->children)
-    traverse_node(child, this_transform, groups);
+    traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
 //  if(node->requires_shader) {
     std::string shader_name = node->get_shader_name();

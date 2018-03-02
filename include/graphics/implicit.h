@@ -5,6 +5,7 @@
 
 namespace graphics {
   struct ImplicitNode : public HitTester, public Transformable {
+    std::string name = "node";
     std::vector<ShapeType> shapes;
     std::vector<Material> materials;
 
