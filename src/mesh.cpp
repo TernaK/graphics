@@ -37,14 +37,15 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
   init_from_vertices();
 }
 
-Mesh::Mesh(MeshType mesh_type, primitive_params_t params) : mesh_type(mesh_type) {
-  if(mesh_type == MeshType::box)
+Mesh::Mesh(ShapeType shape_type, primitive_params_t params) : shape_type(shape_type) {
+  
+  if(shape_type == ShapeType::box)
     make_box(vertices, facets);
-  else if(mesh_type == MeshType::plane)
+  else if(shape_type == ShapeType::plane)
     PrimitiveMaker::make_plane(vertices, facets);
-  else if(mesh_type == MeshType::sphere)
+  else if(shape_type == ShapeType::sphere)
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, true);
-  else if(mesh_type == MeshType::flat_sphere)
+  else if(shape_type == ShapeType::flat_sphere)
     PrimitiveMaker::make_sphere(vertices, facets, params.stacks, params.slices, false);
 
   create_indices_from_facets();
@@ -169,4 +170,16 @@ void Mesh::draw() {
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
   indices_ebo.unbind();
   glBindVertexArray(0);
+}
+
+bool Mesh::hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
+  bool did_hit = false;
+  if(shape_type == ShapeType::plane) {
+    return hit_test_plane(ray, hit, transform, glm::vec3(0,1,0));
+  } else if(shape_type == ShapeType::box) {
+    return hit_test_box(ray, hit, transform);
+  } else if(shape_type == ShapeType::flat_sphere || shape_type == ShapeType::sphere) {
+    return hit_test_sphere(ray, hit, transform);
+  }
+  return did_hit;
 }

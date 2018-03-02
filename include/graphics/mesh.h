@@ -1,19 +1,17 @@
 #pragma once
+#include <graphics/buffer_object.h>
 #include <graphics/primitive.h>
 
 namespace graphics {
-  enum struct MeshType {
-    undefined, plane, box, sphere, flat_sphere
-  };
   
-  struct Mesh : public HitTestable, public PrimitiveMaker {
+  struct Mesh : public Hittable<Mesh>, public PrimitiveMaker {
     std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> tex_coords;
     std::vector<GLuint> indices;
-    MeshType mesh_type = MeshType::undefined;
+    ShapeType shape_type = ShapeType::undefined;
 
     GLuint vao = 0;
     BufferObject<GLfloat, GL_ARRAY_BUFFER> vertices_vbo;
@@ -41,7 +39,7 @@ namespace graphics {
          const std::vector<Facet>& facets,
          primitive_params_t params);
 
-    Mesh(MeshType mesh_type, primitive_params_t params = primitive_params_t());
+    Mesh(ShapeType shape_type, primitive_params_t params = primitive_params_t());
 
     ~Mesh();
 
@@ -60,5 +58,7 @@ namespace graphics {
     glm::vec3 get_facet_normal(const Facet& facet);
 
     void draw();
+
+    bool hit_test(ray_t& ray, hit_t& hit, transform_t& transform);
   };
 }

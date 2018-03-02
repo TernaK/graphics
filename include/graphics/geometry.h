@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/mesh.h>
+#include <glm/gtc/noise.hpp>
 #include <memory>
 
 namespace graphics {
@@ -11,7 +12,7 @@ namespace graphics {
 
     Geometry(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
-    Geometry(MeshType mesh_type = MeshType::flat_sphere,
+    Geometry(ShapeType mesh_type = ShapeType::flat_sphere,
              primitive_params_t params = primitive_params_t());
 
     Geometry(const std::vector<glm::vec3>& positions,

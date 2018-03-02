@@ -42,7 +42,7 @@ namespace graphics {
   // Scene
   //__________________________________________________
   struct Scene {
-    std::shared_ptr<SceneNode> root;
+    std::shared_ptr<SceneNode> root = std::make_shared<SceneNode>();
     std::shared_ptr<Canvas> canvas;
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     glm::vec4 clear_color = glm::vec4(0.8,0.8,0.8,1);

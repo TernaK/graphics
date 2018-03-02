@@ -50,6 +50,7 @@ void add_light_contribution(int idx,
                             inout vec3 specular) {
   float distance = length(_lights[idx].position - _frag_pos);
   float attenuation = (_lights[idx].type == DIRECTLIGHT) ? 1 : 1.0 / (_lights[idx].attenuation.x +
+                                                                      _lights[idx].attenuation.y * distance +
                                                                       _lights[idx].attenuation.z * distance * distance);
 
   ambient += _material.strength.x * _lights[idx].ambient;

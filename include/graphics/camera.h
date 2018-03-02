@@ -6,7 +6,7 @@
 namespace graphics {
   struct Camera {
     glm::vec3 position = glm::vec3(0,2,5);
-    GLfloat fov = 70.0;
+    GLfloat fovy = 70.0;
     GLfloat aspect_ratio = 1.0;
     GLfloat z_near = 0.1;
     GLfloat z_far = 50.0;

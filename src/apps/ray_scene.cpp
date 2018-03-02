@@ -1,54 +1,56 @@
 #include <graphics/scene.h>
 #include <graphics/object3d.h>
 #include <graphics/scene_renderer.h>
+#include <graphics/implicit.h>
 #include <graphics/ray.h>
 #include <opencv2/opencv.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <iostream>
 using namespace std;
 using namespace graphics;
 
 int main(int argc, char* args[]) {
-  shared_ptr<Canvas> canvas = make_shared<Canvas>(400,300,true);
+  cv::Size frame_size(640, 480);
+  int supersample_factor = 2;
+  shared_ptr<Canvas> canvas = make_shared<Canvas>(frame_size.width,frame_size.height,true);
 
-//  auto tree = Octree<int>(2);
-//  cout << tree.get_level();
+  auto sphere = std::make_shared<ImplicitNode>(ShapeType::sphere);
+  sphere->scale = glm::vec3(2.0);
+  sphere->position = glm::vec3(1,0,1);
+  sphere->materials[0].color = glm::vec3(1.0,0.2,0.2);
+  
+  auto box = std::make_shared<ImplicitNode>(ShapeType::box);
+  box->scale = glm::vec3(1.5);
+  box->position = glm::vec3(-1.5,0,0);
+  box->rotation = glm::vec3(10,0,0);
+  box->materials[0].color = glm::vec3(0.2,0.9,0.2);
+  
+  auto plane = std::make_shared<ImplicitNode>(ShapeType::plane);
+  plane->scale = glm::vec3(20);
+  plane->materials[0].color = glm::vec3(0.2,0.2,0.85);
+  plane->position.y = -3;
 
-  auto mesh = make_shared<Mesh>(MeshType::box);
+  //light
+  std::shared_ptr<Light> light = make_shared<Light>();
+  light->position = glm::vec3(3,5,5);
 
-  //make ray
-  ray_t ray;
-  ray.p = glm::vec3(0,0,5);
+  //camera
+  std::shared_ptr<Camera> camera = make_shared<Camera>();
+  camera->position = glm::vec3(0,0,4);
+  camera->aspect_ratio = canvas->get_aspect_ratio();
 
-  Transformable transformable;
-
-  glm::vec3 light_position = glm::vec3(10,10,10);
-
-  for(;;) {
-    cv::Mat image = cv::Mat::zeros(200,200,CV_32FC3);
-    transformable.position.x = 2 * sin(glfwGetTime());
-    transformable.position.y = 2 * cos(glfwGetTime());
-    transformable.rotation += glm::vec3(5,0,5);
-    transform_t transform = transformable.get_transform();
-    for(int i = 0; i < image.rows; i++) {
-      for(int j = 0; j < image.cols; j++) {
-        ray.d = glm::normalize(glm::vec3(j - image.cols/2, i - image.rows/2, -image.rows/2));
-
-        cv::Vec3f color(0.8,0.8,0.8);
-
-        hit_t hit;
-        if(mesh->ray_hit_test(ray, hit, transform)) {
-          float cos_t = glm::dot(glm::normalize(light_position - hit.p), hit.n);
-          if(cos_t < 0) cos_t = 0.1;
-          color = cv::Vec3f(0.1,0.1,0.7) * cos_t;
-        }
-
-        image.at<cv::Vec3f>(i,j) = color;
-      }
-    }
-
-    cv::imshow("ray cast", image);
-    cv::waitKey();
-  }
-
+  Transformable parent_transformable;
+  
+  shared_ptr<RayScene> ray_scene = make_shared<RayScene>();
+  ray_scene->add_node(sphere);
+  ray_scene->add_node(box);
+  ray_scene->add_node(plane);
+  ray_scene->root->rotation.x = 10;
+  
+  auto scene_renderer = make_shared<RaySceneRenderer>(frame_size, camera);
+  scene_renderer->supersample_factor = supersample_factor;
+  scene_renderer->light = light;
+  
+  cv::Mat image = scene_renderer->render_scene(ray_scene);
+  
+  cv::imshow("ray cast", image);
+  cv::waitKey();
 }
