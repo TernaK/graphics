@@ -13,7 +13,7 @@ namespace graphics {
   const glm::vec3 VEC3EYE = glm::vec3(1.0);
   const glm::vec3 VEC3ZERO = glm::vec3(0.0);
   const glm::vec4 VEC4EYE = glm::vec4(1.0);
-  constexpr float RAYEPSILON = 0.001;
+  constexpr float RAYEPSILON = 1E-4f;
 
   /// ShapeType
   //--------------------------------------------------
