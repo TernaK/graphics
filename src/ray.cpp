@@ -35,37 +35,64 @@ RaySceneRenderer::traverse_scene(std::shared_ptr<RayScene> scene) {
   return traversed_nodes;
 }
 
-cv::Vec3f shade_frag(hit_t& hit, Material& material, shared_ptr<Camera> camera, shared_ptr<Light> light) {
-  glm::vec3 l_vec = glm::normalize(light->position - hit.p);
-  glm::vec3 v_vec = glm::normalize(camera->position - hit.p);
-  float dist = glm::length(l_vec);
-  float attenuation = 1.0/(light->attenuation.x +
-                           light->attenuation.y * dist +
-                           light->attenuation.z * dist * dist);
-
-  glm::vec3 ambient, diffuse, specular;
-  ambient = material.strength.x * light->ambient;
-  float cos_t = 0;
-  cos_t = glm::dot(l_vec, hit.n);
-  cos_t = cos_t < 0 ? 0 : cos_t;
-  diffuse = material.strength.y * light->color * cos_t;
-  glm::vec3 r = glm::reflect(-l_vec, hit.n);
-  float spec = glm::dot(r, v_vec);
-  spec = spec < 0 ? 0 : spec;
-  specular = material.strength.z * light->color * pow(spec, material.shininess);
-  glm::vec3 color = (ambient + attenuation * (diffuse + specular)) * material.color;
-  color = glm::clamp(color, 0.0f, 1.0f);
-  cv::Vec3f frag = cv::Vec3f(color.b, color.g, color.r);
+cv::Vec3f RaySceneRenderer::shade_frag(hit_t& hit, Material& material,
+                                       shared_ptr<Camera> camera, shared_ptr<Light> light,
+                                       std::vector<traversed_node_t>& traversed_nodes) {
+  cv::Vec3f frag;
+  bool in_shadow = test_shadow(hit, light, traversed_nodes);
+  if(!in_shadow) {
+    glm::vec3 l_vec = glm::normalize(light->position - hit.p);
+    glm::vec3 v_vec = glm::normalize(camera->position - hit.p);
+    float dist = glm::length(light->position - hit.p);
+    float attenuation = 1.0/(light->attenuation.x +
+                             light->attenuation.y * dist +
+                             light->attenuation.z * dist * dist);
+    
+    glm::vec3 ambient = material.strength.x * light->ambient;
+    float cos_t = 0;
+    cos_t = glm::dot(l_vec, hit.n);
+    cos_t = cos_t < 0 ? 0 : cos_t;
+    glm::vec3 diffuse = material.strength.y * light->color * cos_t;
+    glm::vec3 r = glm::reflect(-l_vec, hit.n);
+    float spec = glm::dot(r, v_vec);
+    spec = spec < 0 ? 0 : spec;
+    glm::vec3 specular = material.strength.z * light->color * pow(spec, material.shininess);
+    glm::vec3 color = (ambient + attenuation * (diffuse + specular)) * material.color;
+    color = glm::clamp(color, 0.0f, 1.0f);
+    frag = cv::Vec3f(color.b, color.g, color.r);
+  } else {
+    glm::vec3 color = material.strength.x * light->ambient * material.color;
+    frag = cv::Vec3f(color.b, color.g, color.r);
+  }
   return frag;
 }
 
+bool RaySceneRenderer::test_shadow(hit_t& hit, std::shared_ptr<Light> light,
+                                   std::vector<traversed_node_t>& traversed_nodes) {
+  //cast a ray to the light
+  glm::vec3 l_vec = glm::normalize(light->position - hit.p);
+  ray_t light_ray;
+  light_ray.p = hit.p;
+  light_ray.d = l_vec;
+  bool is_in_light = true;
+  for(auto& l_traversed: traversed_nodes) {
+    implicit_test_t light_test = l_traversed.node->hit_test(light_ray, l_traversed.transform);
+    if(light_test.did_hit && (light_test.hit.dist > RAYEPSILON)) {
+      //avoid self hit
+      is_in_light = false;
+      break;
+    }
+  }
+  return !is_in_light;
+}
+
 cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_node_t>& traversed_nodes) {
-  cv::Mat image = cv::Mat(frame_size * supersample_factor, CV_32FC3, {clear_color.x, clear_color.y, clear_color.z});
-  cv::Mat z_buffer = cv::Mat(frame_size * supersample_factor, CV_32F, cv::Scalar::all(numeric_limits<float>::max()));
-  
+  cv::Mat image = cv::Mat(frame_size * supersample_factor, CV_32FC3,
+                          {clear_color.x, clear_color.y, clear_color.z});
+  cv::Mat z_buffer = cv::Mat(frame_size * supersample_factor, CV_32F,
+                             cv::Scalar::all(numeric_limits<float>::max()));
   int width = image.cols;
   int height = image.rows;
-  
   float y_near = camera->z_near * tan(glm::radians(camera->fovy/2.0));
   float x_near = camera->aspect_ratio * y_near;
   
@@ -86,7 +113,6 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
     vector<implicit_test_t> test_hits;
     for(auto& traversed: traversed_nodes) {
       implicit_test_t test = traversed.node->hit_test(ray, traversed.transform);
-      
       if(test.did_hit && test.hit.dist < z_buffer_px) {
         z_buffer_px = test.hit.dist;
         test_hits.push_back(std::move(test));
@@ -99,31 +125,11 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
                 [](const implicit_test_t& a, const implicit_test_t& b){
                   return a.hit.dist < b.hit.dist;
                 });
+      
       auto& best_hit = test_hits.front();
-
-      //cast a ray from the light
-      glm::vec3 l_vec = glm::normalize(light->position - best_hit.hit.p);
-      float light_dist = glm::length(light->position - best_hit.hit.p);
-      ray_t light_ray;
-      light_ray.p = light->position;
-      light_ray.d = -l_vec;
-      bool is_in_light = true;
-      for(auto& l_traversed: traversed_nodes) {
-        implicit_test_t light_test = l_traversed.node->hit_test(light_ray, l_traversed.transform);
-        if(light_test.did_hit && (light_dist - light_test.hit.dist) > RAYEPSILON) {
-          is_in_light = false;
-          break;
-        }
-      }
-
-      if(is_in_light) {
-        frag = shade_frag(best_hit.hit, best_hit.material, camera, light);//cv::Vec3f(color.b, color.g, color.r);
-      } else {
-        glm::vec3 color = best_hit.material.strength.x * light->ambient * best_hit.material.color;
-        frag = cv::Vec3f(color.b, color.g, color.r);
-      }
-
+      frag = shade_frag(best_hit.hit, best_hit.material, camera, light, traversed_nodes);
     }
+
   });
   
   cv::GaussianBlur(image, image, cv::Size(3,3), 0.8);

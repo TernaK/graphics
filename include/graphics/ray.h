@@ -29,6 +29,13 @@ namespace graphics {
     
     cv::Mat draw_scene(std::vector<RaySceneRenderer::traversed_node_t>& traversed);
 
+    cv::Vec3f shade_frag(hit_t& hit, Material& material,
+                         std::shared_ptr<Camera> camera, std::shared_ptr<Light> light,
+                         std::vector<traversed_node_t>& traversed_nodes);
+
+    bool test_shadow(hit_t& hit, std::shared_ptr<Light> light,
+                     std::vector<traversed_node_t>& traversed_nodes);
+
   public:
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     std::shared_ptr<Light> light = std::make_shared<Light>();

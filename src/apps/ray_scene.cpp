@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
 
   //light
   std::shared_ptr<Light> light = make_shared<Light>();
-  light->position = glm::vec3(3,5,5);
+  light->position = glm::vec3(5,10,10);
 
   //camera
   std::shared_ptr<Camera> camera = make_shared<Camera>();
