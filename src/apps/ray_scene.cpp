@@ -42,7 +42,7 @@ int main(int argc, char* args[]) {
 
   //camera
   std::shared_ptr<Camera> camera = make_shared<Camera>();
-  camera->position = glm::vec3(0,0,4);
+  camera->position = glm::vec3(0,0,10);
   camera->aspect_ratio = canvas->get_aspect_ratio();
 
   Transformable parent_transformable;

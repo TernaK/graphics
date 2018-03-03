@@ -95,19 +95,20 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
   int height = image.rows;
   float y_near = camera->z_near * tan(glm::radians(camera->fovy/2.0));
   float x_near = camera->aspect_ratio * y_near;
+
+  glm::mat4 cam_trans = glm::inverse(camera->get_view_mat());
   
   image.forEach<cv::Vec3f>([&](cv::Vec3f& frag, const int* row_col) {
     int row = row_col[0];
     int col = row_col[1];
     float& z_buffer_px = z_buffer.at<float>(row, col);
-    //TODO: find the correct vectors
-    float ray_dx = ((2.0 * col - width) / width) * x_near;
-    float ray_dy = -((2.0 * row - height) / height) * y_near;
     
     //make ray
+    float ray_dx = ((2.0 * col - width) / width) * x_near;
+    float ray_dy = -((2.0 * row - height) / height) * y_near;
     ray_t ray;
-    ray.p = glm::vec3(0,0,10);
-    ray.d = glm::normalize(glm::vec3(ray_dx, ray_dy, -camera->z_near));
+    ray.p = camera->position;
+    ray.d = glm::normalize(glm::mat3(cam_trans) * glm::vec3(ray_dx, ray_dy, -camera->z_near));
 
     //get all hits
     vector<implicit_test_t> test_hits;
