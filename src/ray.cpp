@@ -35,6 +35,30 @@ RaySceneRenderer::traverse_scene(std::shared_ptr<RayScene> scene) {
   return traversed_nodes;
 }
 
+cv::Vec3f shade_frag(hit_t& hit, Material& material, shared_ptr<Camera> camera, shared_ptr<Light> light) {
+  glm::vec3 l_vec = glm::normalize(light->position - hit.p);
+  glm::vec3 v_vec = glm::normalize(camera->position - hit.p);
+  float dist = glm::length(l_vec);
+  float attenuation = 1.0/(light->attenuation.x +
+                           light->attenuation.y * dist +
+                           light->attenuation.z * dist * dist);
+
+  glm::vec3 ambient, diffuse, specular;
+  ambient = material.strength.x * light->ambient;
+  float cos_t = 0;
+  cos_t = glm::dot(l_vec, hit.n);
+  cos_t = cos_t < 0 ? 0 : cos_t;
+  diffuse = material.strength.y * light->color * cos_t;
+  glm::vec3 r = glm::reflect(-l_vec, hit.n);
+  float spec = glm::dot(r, v_vec);
+  spec = spec < 0 ? 0 : spec;
+  specular = material.strength.z * light->color * pow(spec, material.shininess);
+  glm::vec3 color = (ambient + attenuation * (diffuse + specular)) * material.color;
+  color = glm::clamp(color, 0.0f, 1.0f);
+  cv::Vec3f frag = cv::Vec3f(color.b, color.g, color.r);
+  return frag;
+}
+
 cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_node_t>& traversed_nodes) {
   cv::Mat image = cv::Mat(frame_size * supersample_factor, CV_32FC3, {clear_color.x, clear_color.y, clear_color.z});
   cv::Mat z_buffer = cv::Mat(frame_size * supersample_factor, CV_32F, cv::Scalar::all(numeric_limits<float>::max()));
@@ -56,7 +80,8 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
     ray_t ray;
     ray.p = glm::vec3(0,0,10);
     ray.d = glm::normalize(glm::vec3(ray_dx, ray_dy, -camera->z_near));
-    
+
+    vector<implicit_test_t> tests;
     for(auto& traversed: traversed_nodes) {
       float& z_buffer_px = z_buffer.at<float>(row, col);
       implicit_test_t test = traversed.node->hit_test(ray, traversed.transform);
@@ -79,33 +104,15 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
             break;
           }
         }
-        
-        float attenuation = 1.0;
-        if(light->type == LightType::point) {
-          attenuation = 1.0/(light->attenuation.x +
-                             light->attenuation.y * z_buffer_px +
-                             light->attenuation.z * z_buffer_px * z_buffer_px);
-        }
-        
+
         if(is_in_light) {
-          glm::vec3 ambient, diffuse, specular;
-          ambient = test.material.strength.x * light->ambient;
-          float cos_t = 0;
-          cos_t = glm::dot(l_vec, test.hit.n);
-          cos_t = cos_t < 0 ? 0 : cos_t;
-          diffuse = test.material.strength.y * light->color * cos_t;
-          glm::vec3 r = glm::reflect(-l_vec, test.hit.n);
-          float spec = glm::dot(r, v_vec);
-          spec = spec < 0 ? 0 : spec;
-          specular = test.material.strength.z * light->color * pow(spec, test.material.shininess);
-          glm::vec3 color = (ambient + attenuation * (diffuse + specular)) * test.material.color;
-          color = glm::clamp(color, 0.0f, 1.0f);
-          frag = cv::Vec3f(color.b, color.g, color.r);
+          frag = shade_frag(test.hit, test.material, camera, light);//cv::Vec3f(color.b, color.g, color.r);
         } else {
-          glm::vec3 color = attenuation * test.material.strength.x * light->ambient * test.material.color;
+          glm::vec3 color = test.material.strength.x * light->ambient * test.material.color;
           frag = cv::Vec3f(color.b, color.g, color.r);
         }
       }
+
     }
   });
   
