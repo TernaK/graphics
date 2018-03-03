@@ -72,6 +72,7 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
   image.forEach<cv::Vec3f>([&](cv::Vec3f& frag, const int* row_col) {
     int row = row_col[0];
     int col = row_col[1];
+    float& z_buffer_px = z_buffer.at<float>(row, col);
     //TODO: find the correct vectors
     float ray_dx = ((2.0 * col - width) / width) * x_near;
     float ray_dy = -((2.0 * row - height) / height) * y_near;
@@ -81,36 +82,45 @@ cv::Mat RaySceneRenderer::draw_scene(std::vector<RaySceneRenderer::traversed_nod
     ray.p = glm::vec3(0,0,10);
     ray.d = glm::normalize(glm::vec3(ray_dx, ray_dy, -camera->z_near));
 
-    vector<implicit_test_t> tests;
+    //get all hits
+    vector<implicit_test_t> test_hits;
     for(auto& traversed: traversed_nodes) {
-      float& z_buffer_px = z_buffer.at<float>(row, col);
       implicit_test_t test = traversed.node->hit_test(ray, traversed.transform);
       
       if(test.did_hit && test.hit.dist < z_buffer_px) {
         z_buffer_px = test.hit.dist;
-        glm::vec3 l_vec = glm::normalize(light->position - test.hit.p);
-        glm::vec3 v_vec = glm::normalize(ray.p - test.hit.p);
-        float light_dist = glm::length(light->position - test.hit.p);
-        
-        //light ray
-        ray_t light_ray;
-        light_ray.p = light->position;
-        light_ray.d = -l_vec;
-        bool is_in_light = true;
-        for(auto& l_traversed: traversed_nodes) {
-          implicit_test_t light_test = l_traversed.node->hit_test(light_ray, l_traversed.transform);
-          if(light_test.did_hit && (light_dist - light_test.hit.dist) > RAYEPSILON) {
-            is_in_light = false;
-            break;
-          }
-        }
+        test_hits.push_back(std::move(test));
+      }
+    }
 
-        if(is_in_light) {
-          frag = shade_frag(test.hit, test.material, camera, light);//cv::Vec3f(color.b, color.g, color.r);
-        } else {
-          glm::vec3 color = test.material.strength.x * light->ambient * test.material.color;
-          frag = cv::Vec3f(color.b, color.g, color.r);
+    //if at least one hit, use the first
+    if(!test_hits.empty()) {
+      std::sort(test_hits.begin(), test_hits.end(),
+                [](const implicit_test_t& a, const implicit_test_t& b){
+                  return a.hit.dist < b.hit.dist;
+                });
+      auto& best_hit = test_hits.front();
+
+      //cast a ray from the light
+      glm::vec3 l_vec = glm::normalize(light->position - best_hit.hit.p);
+      float light_dist = glm::length(light->position - best_hit.hit.p);
+      ray_t light_ray;
+      light_ray.p = light->position;
+      light_ray.d = -l_vec;
+      bool is_in_light = true;
+      for(auto& l_traversed: traversed_nodes) {
+        implicit_test_t light_test = l_traversed.node->hit_test(light_ray, l_traversed.transform);
+        if(light_test.did_hit && (light_dist - light_test.hit.dist) > RAYEPSILON) {
+          is_in_light = false;
+          break;
         }
+      }
+
+      if(is_in_light) {
+        frag = shade_frag(best_hit.hit, best_hit.material, camera, light);//cv::Vec3f(color.b, color.g, color.r);
+      } else {
+        glm::vec3 color = best_hit.material.strength.x * light->ambient * best_hit.material.color;
+        frag = cv::Vec3f(color.b, color.g, color.r);
       }
 
     }
