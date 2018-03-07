@@ -55,15 +55,10 @@ int main(int argc, char* args[]) {
 
   box->add_child(flat_sphere);
 //  terrain->geometry->wire_frame = true;
-
-  auto light_node = make_shared<Object3D>();
-  light_node->requires_camera = false;
-  light_node->requires_shader = false;
   auto light = make_shared<Light>(LightType::directional);
-  light_node->light = light;
   light->type = LightType::directional;
 
-  scene->add_node(light_node);
+  box->light = light;
   scene->add_node(box);
   scene->add_node(terrain);
   scene->add_node(smooth_sphere);

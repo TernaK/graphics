@@ -171,15 +171,3 @@ void Mesh::draw() {
   indices_ebo.unbind();
   glBindVertexArray(0);
 }
-
-bool Mesh::hit_test(ray_t& ray, hit_t& hit, transform_t& transform) {
-  bool did_hit = false;
-  if(shape_type == ShapeType::plane) {
-    return hit_test_plane(ray, hit, transform, glm::vec3(0,1,0));
-  } else if(shape_type == ShapeType::box) {
-    return hit_test_box(ray, hit, transform);
-  } else if(shape_type == ShapeType::flat_sphere || shape_type == ShapeType::sphere) {
-    return hit_test_sphere(ray, hit, transform);
-  }
-  return did_hit;
-}

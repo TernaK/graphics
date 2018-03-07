@@ -24,7 +24,4 @@ target_link_libraries(terrain_geometry ${libs_list})
 add_executable(rendered_scene rendered_scene.cpp)
 target_link_libraries(rendered_scene ${libs_list})
 
-add_executable(ray_scene ray_scene.cpp)
-target_link_libraries(ray_scene ${libs_list})
-
 # add_subdirectory(rubiks)

@@ -20,17 +20,18 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
   for(auto& child: node->children)
     traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
-//  if(node->requires_shader) {
+  //TODO: fix this logic please
+  if(node->geometry) {
     std::string shader_name = node->get_shader_name();
     auto shader_ptr = shaders.find(shader_name);
     if(shader_ptr == shaders.end())
-      throw runtime_error("shader: shader_name not found");
+      throw runtime_error("shader:" + shader_name + " not found");
 
     if(node->light)
       groups[shader_ptr->second].lights.insert(node->light);
 
     groups[shader_ptr->second].nodes_trans.push_back({node, parent_transform});
-//  }
+  }
 }
 
 std::map<std::shared_ptr<Shader>, shader_group_t>
