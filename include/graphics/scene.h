@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics/canvas.h>
-#include <graphics/drawable.h>
 #include <graphics/scene_node.h>
 #include <graphics/camera.h>
 #include <graphics/light.h>

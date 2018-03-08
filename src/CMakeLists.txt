@@ -9,7 +9,6 @@ set(graphics_srcs
   material.cpp ${CMAKE_SOURCE_DIR}/include/graphics/material.h
   texture.cpp ${CMAKE_SOURCE_DIR}/include/graphics/texture.h
   sprite.cpp ${CMAKE_SOURCE_DIR}/include/graphics/sprite.h
-  drawable.cpp ${CMAKE_SOURCE_DIR}/include/graphics/drawable.h
   framebuffer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/framebuffer.h
   geometry.cpp ${CMAKE_SOURCE_DIR}/include/graphics/geometry.h
   ${CMAKE_SOURCE_DIR}/include/graphics/buffer_object.h
@@ -18,7 +17,6 @@ set(graphics_srcs
   scene_node.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_node.h
   scene_renderer.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene_renderer.h
   scene.cpp ${CMAKE_SOURCE_DIR}/include/graphics/scene.h
-  ${CMAKE_SOURCE_DIR}/include/graphics/octree.h
   primitive.cpp ${CMAKE_SOURCE_DIR}/include/graphics/primitive.h
   types.cpp ${CMAKE_SOURCE_DIR}/include/graphics/types.h
 )

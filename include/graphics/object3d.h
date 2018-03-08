@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics/buffer_object.h>
-#include <graphics/drawable.h>
 #include <graphics/scene_node.h>
 #include <graphics/material.h>
 #include <numeric>

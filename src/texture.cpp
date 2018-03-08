@@ -61,8 +61,8 @@ void Texture::set_uniforms(std::shared_ptr<Shader> shader, GLuint texture_unit) 
   shader->set_uniform(texture_name, (int)texture_unit);
 }
 
-void Texture::set_filpped() {
-  flipped = true;
+void Texture::set_filpped(bool value) {
+  flipped = value;
 }
 
 bool Texture::is_filpped() {

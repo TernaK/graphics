@@ -22,7 +22,7 @@ namespace graphics {
     void activate(GLuint texture_unit = 0);
     void set_uniforms(std::shared_ptr<Shader> shader, GLuint texture_unit = 0);
     GLuint get_texture_id();
-    void set_filpped();
+    void set_filpped(bool value = true);
     bool is_filpped();
   };
 }

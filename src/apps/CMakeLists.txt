@@ -9,8 +9,8 @@ target_link_libraries(triangle ${libs_list})
 # add_executable(material_cube material_cube.cpp)
 # target_link_libraries(material_cube ${libs_list})
 
-# add_executable(sprite_background sprite_background.cpp)
-# target_link_libraries(sprite_background ${libs_list})
+add_executable(sprite_background sprite_background.cpp)
+target_link_libraries(sprite_background ${libs_list})
 
 # add_executable(shapes_scene shapes_scene.cpp)
 # target_link_libraries(shapes_scene ${libs_list})
