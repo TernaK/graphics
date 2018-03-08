@@ -7,9 +7,7 @@
 namespace graphics {
   struct SceneNode : public Transformable, public Inheritable<SceneNode> {
     std::shared_ptr<Geometry> geometry;
-    std::shared_ptr<Light> light;
     bool hidden = false;
-//    bool requires_shader = false;
     bool requires_camera = false;
 
     SceneNode() = default;

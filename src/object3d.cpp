@@ -10,7 +10,6 @@ Object3D::~Object3D() {
 
 Object3D::Object3D(std::shared_ptr<Geometry> geometry, Material material)
 : SceneNode(geometry), material(material) {
-//  requires_shader = true;
   requires_camera = true;
 }
 

@@ -12,7 +12,6 @@ namespace graphics {
 
   struct shader_group_t {
     std::vector<Renderable> renderables;
-    std::set<std::shared_ptr<Light>> lights;
     std::shared_ptr<Camera> camera;
   };
 

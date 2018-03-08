@@ -25,10 +25,7 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
   auto shader_ptr = shaders.find(shader_name);
   if(shader_ptr == shaders.end())
     throw runtime_error("shader:" + shader_name + " not found");
-
-  if(node->light)
-    groups[shader_ptr->second].lights.insert(node->light);
-
+  
   if(node->geometry)
     groups[shader_ptr->second].renderables.push_back({node, parent_transform});
 }
@@ -56,10 +53,10 @@ void SceneRenderer::render_scene(std::shared_ptr<Scene> scene) {
     if(group.second.camera)
       group.second.camera->set_uniforms(shader);
 
-    if(!group.second.lights.empty()) {
-      shader->set_uniform("_num_lights", (int)group.second.lights.size());
-      for(int i = 0; i < group.second.lights.size(); i++)
-        group.second.lights.begin().operator*()->set_uniforms(shader, i);
+    if(!scene->lights.empty()) {
+      shader->set_uniform("_num_lights", (int)scene->lights.size());
+      for(int i = 0; i < scene->lights.size(); i++)
+        scene->lights.begin().operator*()->set_uniforms(shader, i);
     }
 
     for(auto& rendrable: group.second.renderables)

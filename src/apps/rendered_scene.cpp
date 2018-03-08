@@ -58,8 +58,8 @@ int main(int argc, char* args[]) {
   terrain->geometry->wire_frame = true;
   auto light = make_shared<Light>(LightType::directional);
   light->type = LightType::directional;
+  scene->lights.push_back(light);
 
-  box->light = light;
   scene->add_node(box);
   scene->add_node(terrain);
   scene->add_node(smooth_sphere);
