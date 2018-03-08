@@ -14,7 +14,6 @@ int main(int argc, char* args[]) {
   camera.position = glm::vec3(0,8,8);
   light.position.y = 10;
   light.type = LightType::directional;
-  light.ambient = glm::vec3(0.8);
 
   auto terrain_params = PrimitiveParams(50,50);
   auto terrain_geometry = make_shared<Geometry>(ShapeType::terrain, terrain_params);

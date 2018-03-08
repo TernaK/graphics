@@ -140,7 +140,6 @@ std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
   shader->add_attribute("_color");
   shader->add_attribute("_normal");
   shader->add_uniform("_light.color");
-  shader->add_uniform("_light.ambient");
   shader->add_uniform("_light.position");
   shader->add_uniform("_light.attenuation");
   shader->add_uniform("_proj_mat");

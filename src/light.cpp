@@ -14,10 +14,8 @@ Light::Light(LightType type) : type(type) {
 void Light::set_uniforms(std::shared_ptr<Shader> shader, int idx) const {
   shader->add_uniform(create_uniform_name(idx, "type"));
   shader->add_uniform(create_uniform_name(idx, "color"));
-  shader->add_uniform(create_uniform_name(idx, "ambient"));
   shader->set_uniform(create_uniform_name(idx, "type"), (int)type);
   shader->set_uniform(create_uniform_name(idx, "color"), color);
-  shader->set_uniform(create_uniform_name(idx, "ambient"), ambient);
 
   if(type == LightType::point) {
     shader->add_uniform(create_uniform_name(idx, "position"));
