@@ -6,10 +6,8 @@ using namespace graphics;
 SceneRenderer::SceneRenderer() {
   std::shared_ptr<Shader> object3d_shader = Shader::make_object3d_shader();
   shaders[object3d_shader->name] = object3d_shader;
-  std::shared_ptr<Shader> mesh_shader = Shader::make_mesh_point_shader();
-  shaders[mesh_shader->name] = object3d_shader;
   std::shared_ptr<Shader> sprite_shader = Shader::make_sprite_shader();
-  shaders[sprite_shader->name] = object3d_shader;
+  shaders[sprite_shader->name] = sprite_shader;
 }
 
 void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
@@ -20,14 +18,14 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
   for(auto& child: node->children)
     traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
-  //TODO: fix this logic please
-  std::string shader_name = node->get_shader_name();
-  auto shader_ptr = shaders.find(shader_name);
-  if(shader_ptr == shaders.end())
-    throw runtime_error("shader:" + shader_name + " not found");
-  
-  if(node->geometry)
+  if(node->geometry) {
+    std::string shader_name = node->get_shader_name();
+    auto shader_ptr = shaders.find(shader_name);
+    if(shader_ptr == shaders.end())
+      throw runtime_error("shader:" + shader_name + " not found");
+    
     groups[shader_ptr->second].renderables.push_back({node, parent_transform});
+  }
 }
 
 std::map<std::shared_ptr<Shader>, shader_group_t>
