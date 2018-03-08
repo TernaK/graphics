@@ -9,7 +9,7 @@ namespace graphics {
     std::shared_ptr<Geometry> geometry;
     std::shared_ptr<Light> light;
     bool hidden = false;
-    bool requires_shader = false;
+//    bool requires_shader = false;
     bool requires_camera = false;
 
     SceneNode() = default;
@@ -18,7 +18,7 @@ namespace graphics {
 
     virtual void set_uniforms(std::shared_ptr<Shader> shader, transform_t transform);
 
-    virtual std::string get_shader_name() { return ""; };
+    virtual std::string get_shader_name() { return "object3d"; };
 
     virtual void draw(std::shared_ptr<Shader> shader, glm::mat4 p_model = MAT4EYE);
 

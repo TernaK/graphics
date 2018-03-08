@@ -21,17 +21,16 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
     traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
   //TODO: fix this logic please
-  if(node->geometry) {
-    std::string shader_name = node->get_shader_name();
-    auto shader_ptr = shaders.find(shader_name);
-    if(shader_ptr == shaders.end())
-      throw runtime_error("shader:" + shader_name + " not found");
+  std::string shader_name = node->get_shader_name();
+  auto shader_ptr = shaders.find(shader_name);
+  if(shader_ptr == shaders.end())
+    throw runtime_error("shader:" + shader_name + " not found");
 
-    if(node->light)
-      groups[shader_ptr->second].lights.insert(node->light);
+  if(node->light)
+    groups[shader_ptr->second].lights.insert(node->light);
 
-    groups[shader_ptr->second].nodes_trans.push_back({node, parent_transform});
-  }
+  if(node->geometry)
+    groups[shader_ptr->second].renderables.push_back({node, parent_transform});
 }
 
 std::map<std::shared_ptr<Shader>, shader_group_t>
@@ -40,8 +39,8 @@ SceneRenderer::traverse_scene(std::shared_ptr<Scene> scene) {
   traverse_node(scene->root, transform_t(), groups);
 
   for(auto& group: groups) {
-    if(!group.second.nodes_trans.empty())
-      if(group.second.nodes_trans[0].node->requires_camera)
+    if(!group.second.renderables.empty())
+      if(group.second.renderables[0].node->requires_camera)
         group.second.camera = scene->camera;
   }
 
@@ -63,8 +62,8 @@ void SceneRenderer::render_scene(std::shared_ptr<Scene> scene) {
         group.second.lights.begin().operator*()->set_uniforms(shader, i);
     }
 
-    for(auto& node_trans: group.second.nodes_trans)
-      node_trans.node->draw_node(shader, node_trans.trans.model);
+    for(auto& rendrable: group.second.renderables)
+      rendrable.node->draw_node(shader, rendrable.trans.model);
   }
 }
 

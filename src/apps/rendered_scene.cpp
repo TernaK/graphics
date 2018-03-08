@@ -42,7 +42,7 @@ int main(int argc, char* args[]) {
   shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
   plane->scale = glm::vec3(6);
   plane->position = glm::vec3(0,-2,0);
-  plane->material.color = glm::vec4(0.8);
+  plane->material.color = glm::vec4(0.9);
 
   auto smooth_sphere_geometry = make_shared<Geometry>(ShapeType::sphere);
   shared_ptr<Object3D> smooth_sphere = make_shared<Object3D>(smooth_sphere_geometry);
@@ -55,7 +55,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->geometry->wire_frame = true;
 
   box->add_child(flat_sphere);
-//  terrain->geometry->wire_frame = true;
+  terrain->geometry->wire_frame = true;
   auto light = make_shared<Light>(LightType::directional);
   light->type = LightType::directional;
 
@@ -71,7 +71,7 @@ int main(int argc, char* args[]) {
 
     scene->root->rotation.y -= 0.3;
     flat_sphere->rotation.x += 0.3;
-//    terrain->rotation.y += 1;
+    terrain->rotation.y += 1;
     box->rotation.y += 2;
 
     renderer.render_scene(scene);

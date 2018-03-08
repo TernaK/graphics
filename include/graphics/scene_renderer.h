@@ -5,13 +5,13 @@
 #include <set>
 
 namespace graphics {
-  struct node_trans_t {
+  struct Renderable {
     std::shared_ptr<SceneNode> node;
     transform_t trans;
   };
 
   struct shader_group_t {
-    std::vector<node_trans_t> nodes_trans;
+    std::vector<Renderable> renderables;
     std::set<std::shared_ptr<Light>> lights;
     std::shared_ptr<Camera> camera;
   };
