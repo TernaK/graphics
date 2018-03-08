@@ -9,14 +9,14 @@ SceneNode::SceneNode(std::shared_ptr<Geometry> _geometry)
 
 }
 
-void SceneNode::set_uniforms(std::shared_ptr<Shader> shader, transform_t transform) {
+void SceneNode::set_uniforms(std::shared_ptr<Shader> shader, Transform transform) {
   shader->set_uniform("_model_mat", transform.model);
   shader->set_uniform("_normal_mat", transform.normal);
 }
 
 void SceneNode::draw(std::shared_ptr<Shader> shader, glm::mat4 p_model) {
   if(!children.empty() && !hidden) {
-    transform_t transform = get_transform(p_model);
+    Transform transform = get_transform(p_model);
     draw_children(shader, transform.model);//forward this model
   }
   draw_node(shader, p_model);//forward parent model
@@ -24,7 +24,7 @@ void SceneNode::draw(std::shared_ptr<Shader> shader, glm::mat4 p_model) {
 
 void SceneNode::draw_node(std::shared_ptr<Shader> shader, glm::mat4 p_model) {
   if(hidden || !geometry) return;
-  transform_t transform = get_transform(p_model);
+  Transform transform = get_transform(p_model);
   set_uniforms(shader, transform);
   geometry->draw();
 }

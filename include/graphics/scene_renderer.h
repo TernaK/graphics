@@ -7,7 +7,7 @@
 namespace graphics {
   struct Renderable {
     std::shared_ptr<SceneNode> node;
-    transform_t trans;
+    Transform trans;
   };
 
   struct shader_group_t {
@@ -22,7 +22,7 @@ namespace graphics {
     traverse_scene(std::shared_ptr<Scene> scene);
 
     void traverse_node(std::shared_ptr<SceneNode> node,
-                       transform_t parent_transform,
+                       Transform parent_transform,
                        std::map<std::shared_ptr<Shader>,shader_group_t>& groups);
 
   public:

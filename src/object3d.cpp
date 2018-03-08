@@ -15,7 +15,7 @@ Object3D::Object3D(std::shared_ptr<Geometry> geometry, Material material)
 }
 
 void Object3D::set_uniforms(std::shared_ptr<Shader> shader,
-                            transform_t transform) {
+                            Transform transform) {
   material.set_uniforms(shader);
   SceneNode::set_uniforms(shader, transform);
 }

@@ -13,7 +13,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
 
 Mesh::Mesh(ShapeType shape_type, PrimitiveParams params){
   if(shape_type == ShapeType::box)
-    make_box(vertices, facets);
+    PrimitiveMaker::make_box(vertices, facets);
   else if(shape_type == ShapeType::plane)
     PrimitiveMaker::make_plane(vertices, facets);
   else if(shape_type == ShapeType::sphere)

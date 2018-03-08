@@ -17,7 +17,7 @@ namespace graphics {
     ~Object3D();
 
     void set_uniforms(std::shared_ptr<Shader> shader,
-                      transform_t transform) override;
+                      Transform transform) override;
 
     std::string get_shader_name() override;
   };

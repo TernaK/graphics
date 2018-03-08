@@ -13,10 +13,10 @@ SceneRenderer::SceneRenderer() {
 }
 
 void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
-                                  transform_t parent_transform,
+                                  Transform parent_transform,
                                   std::map<std::shared_ptr<Shader>,shader_group_t>& groups) {
 
-  transform_t this_transform = node->get_transform(parent_transform.model);
+  Transform this_transform = node->get_transform(parent_transform.model);
   for(auto& child: node->children)
     traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
@@ -36,7 +36,7 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
 std::map<std::shared_ptr<Shader>, shader_group_t>
 SceneRenderer::traverse_scene(std::shared_ptr<Scene> scene) {
   std::map<std::shared_ptr<Shader>, shader_group_t> groups;
-  traverse_node(scene->root, transform_t(), groups);
+  traverse_node(scene->root, Transform(), groups);
 
   for(auto& group: groups) {
     if(!group.second.renderables.empty())

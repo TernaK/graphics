@@ -29,15 +29,15 @@ namespace graphics {
     glm::vec2 uv;
   };
 
-  /// transform_t
+  /// Transform
   //--------------------------------------------------
-  struct transform_t {
+  struct Transform {
     glm::mat4 model = MAT4EYE;
     glm::mat3 normal = MAT4EYE;
     glm::mat4 model_inv = MAT4EYE;
     glm::mat3 normal_inv = MAT4EYE;
-    transform_t operator<<(const transform_t& t) {
-      transform_t transform = *this;
+    Transform operator<<(const Transform& t) {
+      Transform transform = *this;
       transform.model = t.model * transform.model;
       transform.normal = t.normal * transform.normal;
       transform.model_inv = glm::inverse(transform.model);
@@ -53,7 +53,7 @@ namespace graphics {
     glm::vec3 position = VEC3ZERO; //degrees
     glm::vec3 scale = VEC3EYE;
 
-    transform_t get_transform(glm::mat4 p_model = MAT4EYE);
+    Transform get_transform(glm::mat4 p_model = MAT4EYE);
   };
 
   /// Facet

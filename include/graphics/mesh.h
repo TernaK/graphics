@@ -4,7 +4,7 @@
 
 namespace graphics {
   
-  struct Mesh : public PrimitiveMaker {
+  struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<Facet> facets;
     std::vector<GLuint> indices;

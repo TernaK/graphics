@@ -5,8 +5,8 @@ using namespace graphics;
 
 // Transformable
 //--------------------------------------------------------------------------------
-transform_t Transformable::get_transform(glm::mat4 p_model) {
-  transform_t transform;
+Transform Transformable::get_transform(glm::mat4 p_model) {
+  Transform transform;
   transform.model = glm::translate(glm::mat4(1.0), position);
   transform.model = glm::rotate(transform.model, glm::radians(rotation.x), glm::vec3(1,0,0));
   transform.model = glm::rotate(transform.model, glm::radians(rotation.y), glm::vec3(0,1,0));

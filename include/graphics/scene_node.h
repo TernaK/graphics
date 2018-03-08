@@ -16,7 +16,7 @@ namespace graphics {
 
     SceneNode(std::shared_ptr<Geometry> geometry);
 
-    virtual void set_uniforms(std::shared_ptr<Shader> shader, transform_t transform);
+    virtual void set_uniforms(std::shared_ptr<Shader> shader, Transform transform);
 
     virtual std::string get_shader_name() { return "object3d"; };
 
