@@ -191,3 +191,68 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
     facets.emplace_back(indices[3] + f*4, indices[4] + f*4, indices[5] + f*4);
   }
 }
+
+glm::vec3 PrimitiveMaker::get_facet_normal(const Facet& facet,
+                                           const std::vector<Vertex>& vertices) {
+  glm::vec3 pa = vertices[facet.a].v;
+  glm::vec3 pb = vertices[facet.b].v;
+  glm::vec3 pc = vertices[facet.c].v;
+  glm::vec3 normal = glm::normalize(glm::cross(pc - pb, pa - pb));
+  return normal;
+}
+
+void PrimitiveMaker::make_terrain(vector<Vertex>& vertices, vector<Facet>& facets,
+                                  int z_len, int x_len) {
+
+  vector<glm::vec3> positions;
+  for(int z = 0; z < z_len; z++) {
+    for(int x = 0; x < x_len; x++) {
+      float z_val = (float(z) / (z_len-1)) * 1.0 + -0.5;
+      float x_val = (float(x) / (x_len-1)) * 1.0 + -0.5;
+      float noise0 = 0.3 * glm::perlin(glm::vec2(2*x_val, 3*z_val));
+      float noise1 = 0.03 * glm::perlin(glm::vec2(10*x_val, 10*z_val));
+      positions.push_back(glm::vec3(x_val, noise0 + noise1, z_val));
+      Vertex vertex;
+      vertex.v = glm::vec3(x_val, noise0 + noise1, z_val);
+      vertices.push_back(vertex);
+    }
+  }
+  
+  auto find_idx = [](int z, int x, int X) -> int { return  X * z + x; };
+  for(int z = 0; z < z_len - 1; z++) {
+    for(int x = 0; x < x_len - 1; x++) {
+      int a,b,c;
+      //triangle 1
+      a = find_idx(z,x, x_len);
+      b = find_idx(z+1,x, x_len);
+      c = find_idx(z+1,x+1, x_len);
+      facets.push_back(Facet(a, b, c));
+      //triangle 2
+      a = find_idx(z,x, x_len);
+      b = find_idx(z+1,x+1, x_len);
+      c = find_idx(z,x+1, x_len);
+      facets.push_back(Facet(a, b, c));
+    }
+  }
+
+  compute_smooth_normals(vertices, facets);
+}
+
+void PrimitiveMaker::compute_smooth_normals(std::vector<Vertex>& vertices,
+                                            std::vector<Facet>& facets){
+  //each index represents a vertex index
+  vector<vector<Facet*>> assoc(vertices.size());
+  for(int i = 0; i < facets.size(); i++) {
+    assoc[facets[i].a].push_back( &(facets[i]) );
+    assoc[facets[i].b].push_back( &(facets[i]) );
+    assoc[facets[i].c].push_back( &(facets[i]) );
+  }
+  for(int i = 0; i < assoc.size(); i++) {
+    glm::vec3 normal;
+    for(int j = 0; j < assoc[i].size(); j++) {
+      normal += get_facet_normal( *(assoc[i][j]), vertices );
+      normal /= float(assoc[i].size());
+    }
+    vertices[i].vn = normal;
+  }
+}

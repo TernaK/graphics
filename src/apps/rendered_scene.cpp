@@ -21,7 +21,8 @@ int main(int argc, char* args[]) {
   box->material.color = glm::vec3(0.6, 0.1, 0.1);
   box->material.shininess = 32;
 
-  auto terrain_geometry = Geometry::create_terrain(50, 50);
+  auto terrain_params = PrimitiveParams(50,50);
+  auto terrain_geometry = make_shared<Geometry>(ShapeType::terrain, terrain_params);
   shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
   terrain->name = "terrain";
   terrain->scale = glm::vec3(4);

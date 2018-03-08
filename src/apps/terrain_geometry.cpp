@@ -16,9 +16,10 @@ int main(int argc, char* args[]) {
   light.type = LightType::directional;
   light.ambient = glm::vec3(0.8);
 
-  auto terrain_geometry = Geometry::create_terrain(50, 50);
+  auto terrain_params = PrimitiveParams(50,50);
+  auto terrain_geometry = make_shared<Geometry>(ShapeType::terrain, terrain_params);
   shared_ptr<Object3D> terrain = make_shared<Object3D>(terrain_geometry);
-//  terrain->geometry->wire_frame = true;
+  terrain->geometry->wire_frame = true;
   terrain->scale = glm::vec3(5);
   terrain->position.z = 2;
   terrain->material.color = glm::vec3(0.1, 0.4, 0.8);

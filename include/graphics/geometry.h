@@ -13,13 +13,8 @@ namespace graphics {
     Geometry(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
     Geometry(ShapeType mesh_type = ShapeType::flat_sphere,
-             primitive_params_t params = primitive_params_t());
-
-    Geometry(const std::vector<glm::vec3>& positions,
-             const std::vector<GLuint>& indices);
+             PrimitiveParams params = PrimitiveParams());
 
     void draw();
-
-    static std::shared_ptr<Geometry> create_terrain(int z_len, int x_len);
   };
 }

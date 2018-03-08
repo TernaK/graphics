@@ -18,7 +18,7 @@ namespace graphics {
   /// ShapeType
   //--------------------------------------------------
   enum struct ShapeType {
-    undefined, plane, box, sphere, flat_sphere
+    undefined, plane, box, sphere, flat_sphere, terrain
   };
 
   /// Vertex
@@ -66,12 +66,12 @@ namespace graphics {
     int32_t operator[](int idx);
   };
   
-  /// primitive_params_t
+  /// PrimitiveParams
   //--------------------------------------------------
-  struct primitive_params_t {
+  struct PrimitiveParams {
     int stacks = 20;
     int slices = 20;
-    primitive_params_t(int stacks = 20, int slices = 20)
+    PrimitiveParams(int stacks = 20, int slices = 20)
     : stacks(stacks), slices(slices) { };
   };
 
