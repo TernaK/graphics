@@ -72,8 +72,8 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
       Vertex tip = grid[0][0];
       Vertex vert10 = grid[1][c];
       Vertex vert11 = grid[1][c+1];
-      glm::vec3 normal = glm::normalize(glm::cross(vert11.v - vert10.v,
-                                                   vert10.v - tip.v));
+      glm::vec3 normal = glm::normalize(glm::cross(vert10.v - tip.v,
+                                                   vert11.v - tip.v));
       tip.vn = normal;
       vert10.vn = normal;
       vert11.vn = normal;
@@ -84,7 +84,7 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
       facets.emplace_back(idx, idx+1, idx+2);
       idx += 3;
     }
-    for(int r = 1; r < st; r++) {
+    for(int r = 1; r < st-1; r++) {
       for(int c = 0; c < sl; c++) {
         create_flat_face(r,c,idx);
       }
@@ -103,6 +103,7 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
       vertices.push_back(tip);
 
       facets.emplace_back(idx, idx+1, idx+2);
+      idx += 3;
     }
   }
 }
