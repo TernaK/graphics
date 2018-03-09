@@ -36,7 +36,7 @@ int main(int argc, char* args[]) {
   flat_sphere->name = "flat_sphere";
   flat_sphere->position = glm::vec3(0, 2, 1);
   flat_sphere->material.color = glm::vec3(0.3, 0.5, 0.5);
-  flat_sphere->geometry->wire_frame = true;
+//  flat_sphere->geometry->wire_frame = true;
 
   auto plane_geometry = make_shared<Geometry>(ShapeType::plane);
   shared_ptr<Object3D> plane = make_shared<Object3D>(plane_geometry);
@@ -52,7 +52,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->material.shininess = 256;
   smooth_sphere->material.strength.y = 0.9;
   smooth_sphere->material.shininess = 2;
-  smooth_sphere->geometry->wire_frame = true;
+//  smooth_sphere->geometry->wire_frame = true;
 
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;

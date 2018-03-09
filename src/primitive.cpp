@@ -4,127 +4,106 @@ using namespace graphics;
 
 // PrimitiveMaker
 //--------------------------------------------------
-void PrimitiveMaker::make_sphere_grid(std::vector<vector<int>> &grid_indices,
-                                      std::vector<glm::vec3> &positions,
-                                      int sc, int st) {
-  float r = 1.0;
-  if(st < 2 || sc < 3)
-    throw runtime_error("cannot have < 2 stacks or < 3 slices");
-
-
-  grid_indices = vector<vector<int>>(st + 1, {}); //position indices of grid points
-  int accum = 0;
-
-  //top section
-  grid_indices.front().push_back(accum++);
-  positions.emplace_back(0,r,0);
-  //mid sections
-  float per_st_angle = 180.0 / st;
-  float per_sc_angle = 360.0 / sc;
-  for(int i = 1; i < st; i++) {
-    float st_angle = 90.0 - (per_st_angle * i);
-    float sc_r = r * cos(glm::radians(st_angle));
-    float y = r * sin(glm::radians(st_angle));
-    for(int j = 0; j < sc; j++) {
-      float sc_angle = per_sc_angle * j;
-      float x = sc_r * sin(glm::radians(sc_angle));
-      float z = sc_r * cos(glm::radians(sc_angle));
-
-      positions.emplace_back(x,y,z);
-      grid_indices[i].push_back(accum++);
-    }
-  }
-  //low section
-  grid_indices.back().push_back(accum++);
-  positions.emplace_back(0,-r,0);
-}
-
-void PrimitiveMaker::make_flat_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
-                                      int st, int sc) {
-  vector<vector<int>> grid_indices;
-  std::vector<glm::vec3> positions;
-  make_sphere_grid(grid_indices, positions, sc, st);
-}
-
 void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Facet>& facets,
-                                 int st, int sc, bool smooth) {
-  vector<vector<int>> grid_indices;
-  std::vector<glm::vec3> positions;
-  make_sphere_grid(grid_indices, positions, sc, st);
+                                 int st, int sl, bool smooth) {
 
-  //assign vertices and indices
-  vector<bool> assigned = vector<bool>(positions.size(), false);
-  auto assign_smooth_facet_vertices = [&](Facet& facet) {
-    int32_t idx[] = {facet.a, facet.b, facet.c};
-    for(int i = 0; i < 3; i++) {
-      if(assigned[idx[i]]) continue;
-      assigned[idx[i]] = true;
+  vector<vector<Vertex>> grid(st+1);
+  for(int vidx = 0; vidx <= st; vidx++) {
+    for(int uidx = 0; uidx <= sl; uidx++) {
+      float az = 2 * M_PI * uidx / sl;
+      float el = M_PI_2 - M_PI * vidx / st;
+      float u = uidx / float(sl);
+      float v = (st - vidx) / float(st);
       Vertex vert;
-      vert.v = positions[idx[i]];
-      vert.vn = vert.v;
-      vertices.push_back(vert);
-    }
-    facets.push_back(facet);
-  };
-
-  int flat_idx = 0;
-  auto assign_flat_facet_vertices = [&](Facet& fake_facet) {
-    glm::vec3 facet_v[3] =  {
-      positions[fake_facet.a], positions[fake_facet.b], positions[fake_facet.c]
-    };
-    glm::vec3 normal = glm::normalize(glm::cross(facet_v[2] - facet_v[1], facet_v[0] - facet_v[1]));
-    for(int i = 0; i < 3; i++) {
-      Vertex vert;
-      vert.v = facet_v[i];
-      vert.vn = normal;
-      vertices.push_back(vert);
-    }
-    facets.emplace_back(flat_idx, flat_idx+1, flat_idx+2);
-    flat_idx += 3;
-  };
-
-  auto assign_facet = [&](Facet& facet) {
-    if(smooth)
-      assign_smooth_facet_vertices(facet);
-    else
-      assign_flat_facet_vertices(facet);
-  };
-
-  //top
-  Vertex v1, v2, v3;
-  for(int j = 0; j < grid_indices[1].size(); j++) {
-    int a = grid_indices[0][0];
-    int b = grid_indices[1][j];
-    int c = grid_indices[1][(j + 1) % grid_indices[1].size()];
-    Facet facet(a,b,c);
-    assign_facet(facet);
-  }
-
-  //mid
-  for(int i = 1; i < grid_indices.size() - 2; i++) {
-    for(int j = 0; j < grid_indices[i].size(); j++) {
-      int a = grid_indices[i][j];
-      int b = grid_indices[i + 1][j];
-      int c = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
-      Facet facet(a,b,c);
-      assign_facet(facet);
-
-      int d = grid_indices[i][j];
-      int e = grid_indices[i + 1][(j + 1) % grid_indices[i].size()];
-      int f = grid_indices[i][(j + 1) % grid_indices[i].size()];
-      facet = Facet(d,e,f);
-      assign_facet(facet);
+      vert.v = glm::vec3(cos(el)*sin(az), sin(el), cos(el)*cos(az));
+      vert.uv = glm::vec2(u,v);
+      grid[vidx].push_back(std::move(vert));
     }
   }
 
-  //bottom
-  int pen_idx = grid_indices.size() - 2;
-  for(int j = 0; j < grid_indices[pen_idx].size(); j++) {
-    int a = grid_indices[pen_idx][j];
-    int b = grid_indices.back()[0];
-    int c = grid_indices[pen_idx][(j + 1) % grid_indices[pen_idx].size()];
-    Facet facet(a,b,c);
-    assign_facet(facet);
+  auto get_idx = [](int r, int c, int C) {
+    return C*r + c;
+  };
+
+  auto create_flat_face = [&](int r, int c,
+                             int& idx) {
+    Vertex vert00 = grid[r][c];
+    Vertex vert01 = grid[r][c+1];
+    Vertex vert10 = grid[r+1][c];
+    Vertex vert11 = grid[r+1][c+1];
+    glm::vec3 normal = glm::normalize(glm::cross(vert10.v - vert00.v,
+                                                 vert01.v - vert00.v));
+    //triangle1
+    vertices.push_back(vert00);
+    vertices.back().vn = normal;
+    vertices.push_back(vert01);
+    vertices.back().vn = normal;
+    vertices.push_back(vert10);
+    vertices.back().vn = normal;
+
+    //triangle2
+    vertices.push_back(vert01);
+    vertices.back().vn = normal;
+    vertices.push_back(vert10);
+    vertices.back().vn = normal;
+    vertices.push_back(vert11);
+    vertices.back().vn = normal;
+
+    facets.emplace_back(idx, idx+1, idx+2);
+    facets.emplace_back(idx+3, idx+4, idx+5);
+    idx += 6;
+  };
+
+  if(smooth) {
+    for(int r = 0; r <= st; r++) {
+      for(int c = 0; c <= sl; c++) {
+        vertices.push_back(grid[r][c]);
+        vertices.back().vn = vertices.back().v;
+        int idx = get_idx(r,c,sl+1);
+        if(r < st && c < sl) {
+          facets.emplace_back(idx, idx+1, idx+sl+1);
+          facets.emplace_back(idx+1, idx+sl+1, idx+sl+2);
+        }
+      }
+    }
+  } else {
+    int idx = 0;
+    for(int c = 0; c < sl; c++) {
+      Vertex tip = grid[0][0];
+      Vertex vert10 = grid[1][c];
+      Vertex vert11 = grid[1][c+1];
+      glm::vec3 normal = glm::normalize(glm::cross(vert11.v - vert10.v,
+                                                   vert10.v - tip.v));
+      tip.vn = normal;
+      vert10.vn = normal;
+      vert11.vn = normal;
+      vertices.push_back(tip);
+      vertices.push_back(vert10);
+      vertices.push_back(vert11);
+
+      facets.emplace_back(idx, idx+1, idx+2);
+      idx += 3;
+    }
+    for(int r = 1; r < st; r++) {
+      for(int c = 0; c < sl; c++) {
+        create_flat_face(r,c,idx);
+      }
+    }
+    for(int c = 0; c < sl; c++) {
+      Vertex tip = grid[st][0];
+      Vertex vert00 = grid[st-1][c];
+      Vertex vert01 = grid[st-1][c+1];
+      glm::vec3 normal = glm::normalize(glm::cross(vert01.v - tip.v,
+                                                   vert00.v - tip.v));
+      tip.vn = normal;
+      vert00.vn = normal;
+      vert01.vn = normal;
+      vertices.push_back(vert00);
+      vertices.push_back(vert01);
+      vertices.push_back(tip);
+
+      facets.emplace_back(idx, idx+1, idx+2);
+    }
   }
 }
 
