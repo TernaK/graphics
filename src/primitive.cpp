@@ -129,20 +129,17 @@ void PrimitiveMaker::make_sphere(std::vector<Vertex>& vertices, std::vector<Face
 }
 
 void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
-  float h = 1.0;
-
-  auto fl = glm::vec3(-h,0,h);   //front left
-  auto fr = glm::vec3(h,0,h);    //front right
-  auto bl = glm::vec3(h,0,-h);  //back left
-  auto br = glm::vec3(-h,0,-h);   //back right
-
-  vector<glm::vec3> positions = {
-    br, bl, fl, fr
+  vector<pair<glm::vec3,glm::vec2>> pos_tex {
+    {glm::vec3(-1,0,-1), glm::vec2(0,1)},
+    {glm::vec3(1,0,-1), glm::vec2(1,1)},
+    {glm::vec3(-1,0,1), glm::vec2(0,0)},
+    {glm::vec3(1,0,1), glm::vec2(1,0)}
   };
 
-  for(int v = 0 ; v < positions.size(); v++) {
+  for(int v = 0 ; v < pos_tex.size(); v++) {
     Vertex vertex;
-    vertex.v = positions[v];
+    vertex.v = pos_tex[v].first;
+    vertex.uv = pos_tex[v].second;
     vertex.vn = glm::vec3(0,1,0);
     vertices.push_back(std::move(vertex));
   }
@@ -152,16 +149,14 @@ void PrimitiveMaker::make_plane(std::vector<Vertex>& vertices, std::vector<Facet
 }
 
 void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>& facets) {
-  float h = 1;
-
-  auto ftl = glm::vec3(-h,h,h);   //front top left
-  auto ftr = glm::vec3(h,h,h);    //front top right
-  auto fll = glm::vec3(-h,-h,h);  //front low left
-  auto flr = glm::vec3(h,-h,h);   //front low right
-  auto btl = glm::vec3(h,h,-h);   //back top left
-  auto btr = glm::vec3(-h,h,-h);  //back top right
-  auto bll = glm::vec3(h,-h,-h);  //back low left
-  auto blr = glm::vec3(-h,-h,-h);  //back low right
+  auto ftl = glm::vec3(-1,1,1);   //front top left
+  auto ftr = glm::vec3(1,1,1);    //front top right
+  auto fll = glm::vec3(-1,-1,1);  //front low left
+  auto flr = glm::vec3(1,-1,1);   //front low right
+  auto btl = glm::vec3(1,1,-1);   //back top left
+  auto btr = glm::vec3(-1,1,-1);  //back top right
+  auto bll = glm::vec3(1,-1,-1);  //back low left
+  auto blr = glm::vec3(-1,-1,-1);  //back low right
 
   vector<vector<glm::vec3>> positions = {
     {ftl, ftr, fll, flr}, //front
@@ -176,6 +171,12 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
     glm::vec3(-1,0,0), glm::vec3(1,0,0),
     glm::vec3(0,1,0), glm::vec3(0,-1,0)
   };
+  vector<glm::vec2> tex = {
+    glm::vec2(0,1),
+    glm::vec2(1,1),
+    glm::vec2(0,0),
+    glm::vec2(1,0)
+  };
   std::vector<int> indices = {0,2,1, 1,2,3};
 
   for(int f = 0 ; f < positions.size(); f++) {
@@ -184,6 +185,7 @@ void PrimitiveMaker::make_box(std::vector<Vertex>& vertices, std::vector<Facet>&
       Vertex vertex;
       vertex.v = positions[f][v];
       vertex.vn = normals[f];
+      vertex.uv = tex[v];
       vertices.push_back(std::move(vertex));
     }
     //set facet data
