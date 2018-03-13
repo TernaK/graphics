@@ -24,7 +24,7 @@ int main(int argc, char* args[]) {
   terrain->material.color = glm::vec3(0.1, 0.4, 0.8);
   terrain->material.shininess = 64;
 
-  auto shader = Shader::make_object3d_shader();
+  auto shader = terrain->shader;
 
   while(canvas->still_open()) {
     canvas->clear();
@@ -36,7 +36,7 @@ int main(int argc, char* args[]) {
 
     terrain->rotation.y += 0.3;
 
-    terrain->draw(shader);
+    terrain->draw();
 
     canvas->poll_events();
     canvas->swap_buffers();
