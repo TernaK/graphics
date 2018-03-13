@@ -52,7 +52,7 @@ int main(int argc, char* args[]) {
   smooth_sphere->material.shininess = 256;
   smooth_sphere->material.strength.y = 0.9;
   smooth_sphere->material.shininess = 2;
-  smooth_sphere->geometry->wire_frame = true;
+//  smooth_sphere->geometry->wire_frame = true;
 
   box->add_child(flat_sphere);
   terrain->geometry->wire_frame = true;

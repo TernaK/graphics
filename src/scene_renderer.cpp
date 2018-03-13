@@ -14,9 +14,8 @@ void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
     if(!groups.count(node->shader)) {
       ShaderGroup group;
       groups[node->shader] = group;
-    } else {
-      groups[node->shader].renderables.push_back({node, parent_transform});
     }
+    groups[node->shader].renderables.push_back({node, parent_transform});
   }
 }
 
