@@ -3,34 +3,26 @@
 using namespace std;
 using namespace graphics;
 
-SceneRenderer::SceneRenderer() {
-  std::shared_ptr<Shader> object3d_shader = Shader::make_object3d_shader();
-  shaders[object3d_shader->name] = object3d_shader;
-  std::shared_ptr<Shader> sprite_shader = Shader::make_sprite_shader();
-  shaders[sprite_shader->name] = sprite_shader;
-}
-
 void SceneRenderer::traverse_node(std::shared_ptr<SceneNode> node,
                                   Transform parent_transform,
-                                  std::map<std::shared_ptr<Shader>,shader_group_t>& groups) {
-
+                                  std::map<std::shared_ptr<Shader>,ShaderGroup>& groups) {
   Transform this_transform = node->get_transform(parent_transform.model);
   for(auto& child: node->children)
     traverse_node(dynamic_pointer_cast<SceneNode>(child), this_transform, groups);
 
   if(node->geometry) {
-    std::string shader_name = node->get_shader_name();
-    auto shader_ptr = shaders.find(shader_name);
-    if(shader_ptr == shaders.end())
-      throw runtime_error("shader:" + shader_name + " not found");
-    
-    groups[shader_ptr->second].renderables.push_back({node, parent_transform});
+    if(!groups.count(node->shader)) {
+      ShaderGroup group;
+      groups[node->shader] = group;
+    } else {
+      groups[node->shader].renderables.push_back({node, parent_transform});
+    }
   }
 }
 
-std::map<std::shared_ptr<Shader>, shader_group_t>
+std::map<std::shared_ptr<Shader>, SceneRenderer::ShaderGroup>
 SceneRenderer::traverse_scene(std::shared_ptr<Scene> scene) {
-  std::map<std::shared_ptr<Shader>, shader_group_t> groups;
+  std::map<std::shared_ptr<Shader>, ShaderGroup> groups;
   traverse_node(scene->root, Transform(), groups);
 
   for(auto& group: groups) {
@@ -58,7 +50,7 @@ void SceneRenderer::render_scene(std::shared_ptr<Scene> scene) {
     }
 
     for(auto& rendrable: group.second.renderables)
-      rendrable.node->draw_node(shader, rendrable.trans.model);
+      rendrable.node->draw_node(rendrable.trans.model);
   }
 }
 

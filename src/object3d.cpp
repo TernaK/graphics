@@ -10,15 +10,34 @@ Object3D::~Object3D() {
 
 Object3D::Object3D(std::shared_ptr<Geometry> geometry, Material material)
 : SceneNode(geometry), material(material) {
+  static const shared_ptr<Shader> default_shader = Shader::make_object3d_shader();
   requires_camera = true;
+  shader = default_shader;
 }
 
-void Object3D::set_uniforms(std::shared_ptr<Shader> shader,
-                            Transform transform) {
+void Object3D::set_uniforms(Transform transform) {
   material.set_uniforms(shader);
-  SceneNode::set_uniforms(shader, transform);
+  SceneNode::set_uniforms(transform);
 }
 
-std::string Object3D::get_shader_name() {
-  return "object3d";
-}
+/// Object3DTex
+//--------------------------------------------------
+//Object3DTex::~Object3DTex() {
+//
+//}
+//
+//Object3DTex::Object3DTex(std::shared_ptr<Geometry> geometry,
+//                         std::shared_ptr<Texture> texture)
+//: SceneNode(geometry), texture(texture) {
+//  requires_camera = true;
+//}
+//
+//void Object3DTex::set_uniforms(Transform transform) {
+//  texture->activate();
+//  texture->set_uniforms(shader);
+//  SceneNode::set_uniforms(transform);
+//}
+
+//std::string Object3DTex::get_shader_name() {
+//  return shader_name;
+//}
