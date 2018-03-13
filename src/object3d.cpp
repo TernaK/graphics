@@ -4,6 +4,8 @@
 using namespace graphics;
 using namespace std;
 
+/// Object3D
+//--------------------------------------------------
 Object3D::~Object3D() {
 
 }
@@ -22,22 +24,22 @@ void Object3D::set_uniforms(Transform transform) {
 
 /// Object3DTex
 //--------------------------------------------------
-//Object3DTex::~Object3DTex() {
-//
-//}
-//
-//Object3DTex::Object3DTex(std::shared_ptr<Geometry> geometry,
-//                         std::shared_ptr<Texture> texture)
-//: SceneNode(geometry), texture(texture) {
-//  requires_camera = true;
-//}
-//
-//void Object3DTex::set_uniforms(Transform transform) {
-//  texture->activate();
-//  texture->set_uniforms(shader);
-//  SceneNode::set_uniforms(transform);
-//}
+Object3DTex::~Object3DTex() {
 
-//std::string Object3DTex::get_shader_name() {
-//  return shader_name;
-//}
+}
+
+Object3DTex::Object3DTex(std::shared_ptr<Geometry> geometry,
+                         std::shared_ptr<Texture> texture)
+: SceneNode(geometry), texture(texture) {
+  static const shared_ptr<Shader> default_shader = Shader::make_object3dtex_shader();
+  requires_camera = true;
+  material.color = VEC3EYE;
+  shader = default_shader;
+}
+
+void Object3DTex::set_uniforms(Transform transform) {
+  texture->activate();
+  texture->set_uniforms(shader);
+  material.set_uniforms(shader);
+  SceneNode::set_uniforms(transform);
+}

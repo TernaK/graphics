@@ -189,13 +189,16 @@ void PrimitiveMaker::make_terrain(vector<Vertex>& vertices, vector<Facet>& facet
   vector<glm::vec3> positions;
   for(int z = 0; z < z_len; z++) {
     for(int x = 0; x < x_len; x++) {
-      float z_val = (float(z) / (z_len-1)) * 1.0 + -0.5;
-      float x_val = (float(x) / (x_len-1)) * 1.0 + -0.5;
+      float z_val = (float(z) / (z_len-1)) * 2.0 + -1.0;
+      float x_val = (float(x) / (x_len-1)) * 2.0 + -1.0;
       float noise0 = 0.3 * glm::perlin(glm::vec2(2*x_val, 3*z_val));
       float noise1 = 0.03 * glm::perlin(glm::vec2(10*x_val, 10*z_val));
       positions.push_back(glm::vec3(x_val, noise0 + noise1, z_val));
       Vertex vertex;
       vertex.v = glm::vec3(x_val, noise0 + noise1, z_val);
+      float u = (float(z) / (z_len-1));
+      float v = 1.0 - (float(x) / (x_len-1));
+      vertex.uv = glm::vec2(u,v);
       vertices.push_back(vertex);
     }
   }

@@ -18,16 +18,17 @@ namespace graphics {
     void set_uniforms(Transform transform) override;
   };
 
-//  struct Object3DTex : public SceneNode {
-//    std::shared_ptr<Texture> texture;
-//
-//    Object3DTex() = default;
-//
-//    Object3DTex(std::shared_ptr<Geometry> geometry,
-//                std::shared_ptr<Texture> texture);
-//
-//    ~Object3DTex();
-//
-//    void set_uniforms(Transform transform) override;
-//  };
+  struct Object3DTex : public SceneNode {
+    std::shared_ptr<Texture> texture;
+    Material material;
+
+    Object3DTex() = default;
+
+    Object3DTex(std::shared_ptr<Geometry> geometry,
+                std::shared_ptr<Texture> texture);
+
+    ~Object3DTex();
+
+    void set_uniforms(Transform transform) override;
+  };
 }

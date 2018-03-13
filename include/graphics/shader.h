@@ -45,6 +45,7 @@ namespace graphics {
     static std::shared_ptr<Shader> make_simple2d_shader();
     static std::shared_ptr<Shader> make_mesh_point_shader();
     static std::shared_ptr<Shader> make_object3d_shader();
+    static std::shared_ptr<Shader> make_object3dtex_shader();
     static std::shared_ptr<Shader> make_sprite_shader();
   };
 }

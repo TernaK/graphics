@@ -170,6 +170,28 @@ std::shared_ptr<Shader> Shader::make_object3d_shader() {
   return shader;
 }
 
+std::shared_ptr<Shader> Shader::make_object3dtex_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "object3d_vshader.glsl",
+                                    graphics::SHADERS_DIR + "object3dtex_fshader.glsl");
+  shader->name = "object3dtex";
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_normal");
+  shader->add_attribute("_tex");
+  shader->add_uniform("_texture0");
+  shader->add_uniform("_material.color");
+  shader->add_uniform("_material.alpha");
+  shader->add_uniform("_material.shininess");
+  shader->add_uniform("_material.strength");
+  shader->add_uniform("_num_lights");
+  shader->add_uniform("_proj_mat");
+  shader->add_uniform("_view_mat");
+  shader->add_uniform("_model_mat");
+  shader->add_uniform("_normal_mat");
+  shader->add_uniform("_cam_pos");
+  return shader;
+}
+
 std::shared_ptr<Shader> Shader::make_sprite_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "sprite_vshader.glsl",
                                     graphics::SHADERS_DIR + "sprite_fshader.glsl");
