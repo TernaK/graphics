@@ -1,0 +1,31 @@
+<scene>
+  <camera>
+    <position>0,0,6</position>
+  </camera>
+
+  <light>
+    <type>point</type>
+    <position>4,4,20</position>
+  </light>
+
+  <node>
+    <name>sphere1</name>
+    <type>sphere</type>
+    <scale>3,3,3</scale>
+    <position>2,0,2</position>
+  </node>
+
+  <node>
+    <name>sphere2</name>
+    <type>sphere</type>
+    <scale>2,2,2</scale>
+    <position>0,0,0</position>
+  </node>
+
+  <node>
+    <name>sphere3</name>
+    <type>sphere</type>
+    <scale>1.5,1.5,1.5</scale>
+    <position>-3,0,3</position>
+  </node>
+</scene>
