@@ -3,6 +3,31 @@
 using namespace std;
 using namespace graphics;
 
+/// Renderbuffer
+//--------------------------------------------------
+Renderbuffer::Renderbuffer(GLenum internal_format, std::shared_ptr<Canvas> canvas) {
+  int w, h;
+  canvas->get_true_frame_size(w, h);
+  glGenRenderbuffers(1, &rbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, internal_format, w, h);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+Renderbuffer::~Renderbuffer() {
+  unbind();
+}
+
+void Renderbuffer::bind() {
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+}
+
+void Renderbuffer::unbind() {
+  glDeleteRenderbuffers(1, &rbo);
+}
+
+/// Framebuffer
+//--------------------------------------------------
 Framebuffer::Framebuffer(std::shared_ptr<Canvas> _canvas,
                          bool _use_color,
                          bool _use_depth)
@@ -60,18 +85,12 @@ void Framebuffer::create_textures() {
 void Framebuffer::create_renderbuffers() {
   int w, h;
   canvas->get_true_frame_size(w, h);
-  if(!use_color) {
-    glGenRenderbuffers(1, &rbo_color);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo_color);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, w, h);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  }
-  if(!use_depth) {
-    glGenRenderbuffers(1, &rbo_depth);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo_depth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  }
+
+  if(!use_color)
+    color_rb = make_shared<Renderbuffer>(GL_RGBA, canvas);
+
+  if(!use_depth)
+    depth_rb = make_shared<Depthbuffer>(canvas);
 }
 
 void Framebuffer::create_framebuffer() {
@@ -81,12 +100,12 @@ void Framebuffer::create_framebuffer() {
   if(use_color)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture->get_texture_id(), 0);
   else
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo_color);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_rb->rbo);
   
   if(use_depth)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture->get_texture_id(), 0);
   else
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_depth);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb->rbo);
   
   //check completeness
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

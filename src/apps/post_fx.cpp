@@ -1,19 +1,40 @@
-#include <graphics/shape.h>
-#include <graphics/canvas.h>
-#include <graphics/sprite.h>
-#include <graphics/light.h>
-#include <graphics/camera.h>
+#include <graphics/scene.h>
+#include <graphics/object3d.h>
+#include <graphics/scene_renderer.h>
 #include <graphics/framebuffer.h>
+#include <graphics/sprite.h>
+#include <opencv2/opencv.hpp>
+#include <iostream>
 using namespace std;
 using namespace graphics;
 
-int main() {
-  shared_ptr<graphics::Canvas> canvas = make_shared<graphics::Canvas>(800,600,false);
+int main(int argc, char* args[]) {
+  shared_ptr<Canvas> canvas = make_shared<Canvas>();
   int width, height;
   canvas->get_true_frame_size(width, height);
   
-  auto post_shader = make_shared<Shader>(std::string(GRAPHICS_SHADERS_DIRECTORY) + "sprite_vshader.glsl",
-                                         std::string(GRAPHICS_SHADERS_DIRECTORY) + "sprite_fshader_post.glsl");
+  Light light;
+  Camera camera;
+  camera.aspect_ratio = canvas->get_aspect_ratio();
+  camera.position = glm::vec3(0,8,8);
+  light.position.y = 10;
+  light.type = LightType::directional;
+
+  auto texture = make_shared<Texture>(TEXTURES_DIR + "/triangles.jpg");
+
+  auto smooth_sphere_geometry = make_shared<Geometry>(ShapeType::terrain);
+  auto smooth_sphere = make_shared<Object3DTex>(smooth_sphere_geometry, texture);
+  smooth_sphere->name = "smooth_sphere";
+  smooth_sphere->position = glm::vec3(0,0,0);
+  smooth_sphere->scale = glm::vec3(3);
+  smooth_sphere->material.color = glm::vec3(0.1, 0.2, 0.6);
+  smooth_sphere->material.shininess = 256;
+  smooth_sphere->material.strength.y = 0.9;
+  smooth_sphere->material.shininess = 2;
+  auto shader = smooth_sphere->shader;
+  
+  auto post_shader = make_shared<Shader>(graphics::SHADERS_DIR + "sprite_vshader.glsl",
+                                         graphics::SHADERS_DIR + "sprite_fshader_post.glsl");
   post_shader->use();
   post_shader->add_attribute("_pos");
   post_shader->add_attribute("_tex_coord");
@@ -24,43 +45,28 @@ int main() {
   post_shader->set_uniform("_width", float(width));
   post_shader->set_uniform("_height", float(height));
 
-  auto solid_shader = Shader::make_solid_point_shader();
-
-  PointLight light;
-  Camera camera;
-  camera.position.z = 7;
-  camera.aspect_ratio = canvas->get_aspect_ratio();
-
-  graphics::Framebuffer framebuffer(canvas, true, false);
-  shared_ptr<graphics::Sprite> sprite = std::make_shared<graphics::Sprite>(framebuffer.color_texture);
-  shared_ptr<graphics::Solid> solid = graphics::SolidShape::make_sphere(1,2,4);
-  shared_ptr<graphics::Solid> cube = graphics::SolidShape::make_cube();
-  cube->material.color = glm::vec4(1,0,0,1);
+  auto framebuffer = make_shared<Framebuffer>(canvas);
+  auto sprite = make_shared<Sprite>(Sprite(framebuffer->color_texture));
 
   while(canvas->still_open()) {
-    framebuffer.begin_render(); //first bind framebuffer
-    //render the scene
+    framebuffer->begin_render();
     canvas->clear();
-    solid->position.x = 3 * cos(2*M_PI*glfwGetTime() * 0.2);
-    solid->position.z = -3 * sin(2*M_PI*glfwGetTime() * 0.2);
-    solid->rotation.y += 1;
-    cube->rotation.y -= 1.5;
-    cube->rotation.z += 1;
 
-    solid_shader->use();
-    light.set_uniforms(solid_shader);
-    camera.set_uniforms(solid_shader);
-    solid->draw(solid_shader);
-    cube->draw(solid_shader);
-    framebuffer.end_render(); //unbind framebuffer
+    shader->use();
+    light.set_uniforms(shader);
+    camera.set_uniforms(shader);
 
-    //render the post-shaded result
+    smooth_sphere->rotation += glm::vec3(0.3,0.1,0.2);
+
+    smooth_sphere->draw();
+    framebuffer->end_render();
+
     canvas->clear();
     post_shader->use();
     post_shader->set_uniform("_time", (float)glfwGetTime());
     sprite->draw(post_shader);
-
-    canvas->poll_events(); //don't forget to poll for events otherwise nothing will show
-    canvas->swap_buffers(); //and of course swap buffers
+    
+    canvas->poll_events();
+    canvas->swap_buffers();
   }
 }
