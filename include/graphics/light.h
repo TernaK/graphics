@@ -15,8 +15,10 @@ namespace graphics {
     glm::vec3 attenuation = glm::vec3(1.0, 0.001, 0.0005);
     glm::vec3 direction = glm::vec3(-0.3,-1,-1);
 
-    virtual void set_uniforms(std::shared_ptr<Shader> shader, int idx = 0) const;
-
     Light(LightType type = LightType::point);
+
+    virtual ~Light() = default;
+
+    virtual void set_uniforms(std::shared_ptr<Shader> shader, int idx = 0) const;
   };
 }

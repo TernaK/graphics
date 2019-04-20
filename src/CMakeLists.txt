@@ -1,6 +1,7 @@
 # graphics_lib library
 include_directories(${CMAKE_SOURCE_DIR}/include)
 set(graphics_srcs
+  point_cloud.cpp ${CMAKE_SOURCE_DIR}/include/graphics/point_cloud.h
   canvas.cpp ${CMAKE_SOURCE_DIR}/include/graphics/canvas.h
   shader.cpp ${CMAKE_SOURCE_DIR}/include/graphics/shader.h
   light.cpp ${CMAKE_SOURCE_DIR}/include/graphics/light.h

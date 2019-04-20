@@ -15,6 +15,8 @@ namespace graphics {
 
     SceneNode(std::shared_ptr<Geometry> geometry);
 
+    virtual ~SceneNode() = default;
+
     virtual void set_uniforms(Transform transform);
 
     virtual void draw(glm::mat4 p_model = MAT4EYE);
