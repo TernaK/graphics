@@ -3,7 +3,7 @@
 #include <graphics/primitive.h>
 
 namespace graphics {
-  
+
   struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<Facet> facets;

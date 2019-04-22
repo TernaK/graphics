@@ -6,9 +6,14 @@ using namespace graphics;
 // PointCloud
 //--------------------------------------------------------------------------------
 PointCloud::PointCloud(const std::vector<glm::vec3>& vertices,
-                       const std::vector<glm::vec4>& colors)
-: vertices(std::move(vertices)), colors(std::move(colors)) {
+                       const std::vector<glm::vec4>& colors,
+                       std::shared_ptr<Camera>& camera,
+                       int point_size)
+: vertices(std::move(vertices)), colors(std::move(colors)), camera(camera), point_size(point_size) {
   init();
+
+  const static std::shared_ptr<Shader> default_shader = Shader::make_point_cloud_shader();
+  shader = default_shader;
 }
 
 PointCloud::~PointCloud() {
@@ -44,7 +49,42 @@ void PointCloud::bind_vertex_data() {
 
 void PointCloud::draw() {
   if(vao == 0) return;
+
+  shader->use();
+  shader->set_uniform("_proj_mat", camera->get_proj_mat());
+  shader->set_uniform("_view_mat", camera->get_view_mat());
+  shader->set_uniform("_model_mat", get_transform().model);
+
+  glPointSize(point_size);
   glBindVertexArray(vao);
   glDrawArrays(GL_POINTS, 0, (GLint)vertices.size());
   glBindVertexArray(0);
+}
+
+PointCloud::PCStats PointCloud::get_stats() {
+  //sort each one and take 25th 50th & 75th percentiles as min mean and max
+  std::vector<int> sort_idxs(vertices.size());
+  std::iota(sort_idxs.begin(), sort_idxs.end(), 0);
+  auto x_idxs = std::move(sort_idxs);
+  auto y_idxs = x_idxs;
+  auto z_idxs = x_idxs;
+  std::sort(x_idxs.begin(), x_idxs.end(), [&](const int &a, const int &b) -> bool {
+    return vertices[a].x < vertices[b].x;
+  });
+  std::sort(y_idxs.begin(), y_idxs.end(), [&](const int &a, const int &b) -> bool {
+    return vertices[a].y < vertices[b].y;
+  });
+  std::sort(z_idxs.begin(), z_idxs.end(), [&](const int &a, const int &b) -> bool {
+    return vertices[a].z < vertices[b].z;
+  });
+
+  int idx_minth = round(vertices.size() * 0.2);
+  int idx_meanth = round(vertices.size() * 0.5);
+  int idx_maxth = round(vertices.size() * 0.8);
+
+  PCStats stats;
+  stats.mean_pt = glm::vec3(vertices[x_idxs[idx_meanth]].x, vertices[y_idxs[idx_meanth]].y, vertices[z_idxs[idx_meanth]].z);
+  stats.min_pt = glm::vec3(vertices[x_idxs[idx_minth]].x, vertices[y_idxs[idx_minth]].y, vertices[z_idxs[idx_minth]].z);
+  stats.max_pt = glm::vec3(vertices[x_idxs[idx_maxth]].x, vertices[y_idxs[idx_maxth]].y, vertices[z_idxs[idx_maxth]].z);
+  return stats;
 }

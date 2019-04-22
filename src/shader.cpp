@@ -131,6 +131,19 @@ std::shared_ptr<Shader> Shader::make_simple2d_shader() {
   return shader;
 }
 
+std::shared_ptr<Shader> Shader::make_point_cloud_shader() {
+  auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "simple3d_vshader.glsl",
+                                    graphics::SHADERS_DIR + "simple3d_fshader.glsl");
+  shader->name = "simple3d";
+  shader->use();
+  shader->add_attribute("_pos");
+  shader->add_attribute("_color");
+  shader->add_uniform("_proj_mat");
+  shader->add_uniform("_view_mat");
+  shader->add_uniform("_model_mat");
+  return shader;
+}
+
 std::shared_ptr<Shader> Shader::make_mesh_point_shader() {
   auto shader = make_shared<Shader>(graphics::SHADERS_DIR + "mesh_point_vshader.glsl",
                                     graphics::SHADERS_DIR + "mesh_point_fshader.glsl");

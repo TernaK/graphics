@@ -1,5 +1,6 @@
 #pragma once
-#include <graphics/mesh.h>
+#include "mesh.h"
+#include "point_cloud.h"
 #include <glm/gtc/noise.hpp>
 #include <memory>
 

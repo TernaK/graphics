@@ -4,7 +4,7 @@
 using namespace graphics;
 using namespace std;
 
-/// Object3D
+// Object3D
 //--------------------------------------------------
 Object3D::~Object3D() {
 
@@ -22,7 +22,7 @@ void Object3D::set_uniforms(Transform transform) {
   SceneNode::set_uniforms(transform);
 }
 
-/// Object3DTex
+// Object3DTex
 //--------------------------------------------------
 Object3DTex::~Object3DTex() {
 
