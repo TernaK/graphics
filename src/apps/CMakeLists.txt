@@ -23,3 +23,6 @@ target_link_libraries(post_fx ${libs_list})
 
 add_executable(points points.cpp)
 target_link_libraries(points ${libs_list})
+
+add_executable(test_gl test_gl.cpp)
+target_link_libraries(test_gl ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw glm)
