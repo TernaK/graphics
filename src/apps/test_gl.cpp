@@ -71,14 +71,14 @@ struct BufferObject {
 
   BufferObject() = default;
 
-  ~BufferObject() = default;
-
   BufferObject(T* data_ptr, int length, GLenum usage = GL_STATIC_DRAW) {
     glGenBuffers(1, &buffer_object);
     glBindBuffer(target, buffer_object);
     glBufferData(target, length * sizeof(T), data_ptr, usage);
     glBindBuffer(target, 0);
   }
+
+  ~BufferObject() = default;
 
   void bind() { glBindBuffer(target, buffer_object); }
 
@@ -94,8 +94,15 @@ struct BufferObject {
 //--------------------------------------------------Texture
 struct Texture {
   GLuint texture;
+  int texture_unit { 0 };
+
   Texture() = default;
+
+  /// create a texture from raw data
   Texture(unsigned char* data, int width, int height, bool bgr = true);
+
+  /// activate the associated texture unit and bind to it
+  void activate();
 };
 
 Texture::Texture(unsigned char* data, int width, int height, bool bgr) {
@@ -110,6 +117,11 @@ Texture::Texture(unsigned char* data, int width, int height, bool bgr) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glGenerateMipmap(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture::activate() {
+  glActiveTexture(GL_TEXTURE0 + texture_unit);
+  glBindTexture(GL_TEXTURE_2D, texture);
 }
 
 //--------------------------------------------------main
@@ -155,10 +167,15 @@ int main() {
   shader.add_uniform("texture0");
   
   //data
-  cv::Mat image = cv::Mat::zeros(640,480,CV_8UC3);
-  cv::putText(image, "opencv + opengl text", cv::Point(30,150),
-              cv::FONT_HERSHEY_SIMPLEX, 1.0, {100,255,50}, 2);
-  Texture texture(image.data, image.cols, image.rows);
+  auto font = cv::FONT_HERSHEY_SIMPLEX;
+  cv::Mat image0 = cv::Mat::ones(640,480,CV_8UC3) * 100;
+  cv::putText(image0, "opencv + opengl text", {30,image0.rows/2}, font, 1.0, {100,255,50}, 2);
+  cv::Mat image1 = cv::Mat::ones(640,480,CV_8UC3) * 100;
+  cv::putText(image1, "opencv + opengl text", {30,image1.rows/2}, font, 1.0, {255,100,50}, 1);
+  
+  Texture texture0(image0.data, image0.cols, image0.rows);
+  Texture texture1(image1.data, image1.cols, image1.rows);
+
   std::vector<GLfloat> pos_data {
     -0.5,-0.5,0, 0.5,-0.5,0, 0.5,0.5,0,
     0.5,0.5,0, -0.5,0.5,0, -0.5,-0.5,0
@@ -183,7 +200,9 @@ int main() {
   glBindVertexArray(0);
 
   //render
+  int i = 0;
   while(!window.should_close()) {
+    i++;
     window.clear();
 
     shader.use();
@@ -192,8 +211,10 @@ int main() {
     glm::mat4 rot = glm::rotate(glm::mat4(1.0), angle, glm::vec3(0,0,1));
     shader.set_uniform("rot", glm::mat3(rot));
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.texture);
+    Texture texture = i%15 < 7 ? texture0 : texture1;
+    texture.texture_unit = 0;
+    texture.activate();
+    shader.set_uniform("texture0", texture.texture_unit);
 
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 9);
