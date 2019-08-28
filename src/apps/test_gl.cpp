@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <exception>
 #include <unordered_map>
@@ -10,6 +11,7 @@
 #include <array>
 
 //--------------------------------------------------Window - interface
+/// manage opengl context/window
 class Window {
 public:
   glm::vec3 clear_color { 0.2, 0.2, 0.2 };
@@ -35,6 +37,7 @@ private:
 };
 
 //--------------------------------------------------Shader - interface
+/// interface to shaders, their uniforms & attributes
 class Shader {
 public:
   Shader(std::string v_text, std::string f_text);
@@ -61,6 +64,7 @@ private:
 };
 
 //--------------------------------------------------BufferObject
+/// hold device data
 template<GLenum target, typename T = GLfloat>
 struct BufferObject {
   GLuint buffer_object = 0;
@@ -87,6 +91,27 @@ struct BufferObject {
   }
 };
 
+//--------------------------------------------------Texture
+struct Texture {
+  GLuint texture;
+  Texture() = default;
+  Texture(unsigned char* data, int width, int height, bool bgr = true);
+};
+
+Texture::Texture(unsigned char* data, int width, int height, bool bgr) {
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  auto pixel_format = bgr ? GL_BGR : GL_RGB;
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
+               pixel_format, GL_UNSIGNED_BYTE, (void*)data);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 //--------------------------------------------------main
 int main() {
   Window window({640,480});
@@ -98,12 +123,13 @@ int main() {
   R"(
   #version 330 core
   layout (location = 0) in vec3 pos;
-  layout (location  = 1) in vec3 color;
-  out vec3 frag_color;
+  layout (location  = 1) in vec2 tex;
+  out vec2 frag_tex_coord;
+  uniform mat3 rot;
 
   void main() {
-    gl_Position = vec4(pos,1);
-    frag_color = color;
+    gl_Position = vec4(rot * pos,1);
+    frag_tex_coord = tex;
   }
   )";
 
@@ -111,11 +137,12 @@ int main() {
   std::string f_shader =
   R"(
   #version 330 core
-  in vec3 frag_color;
+  in vec2 frag_tex_coord;
   out vec4 color;
+  uniform sampler2D texture0;
 
   void main() {
-    color = vec4(frag_color,1);
+    color = texture(texture0, frag_tex_coord);
   }
   )";
 
@@ -123,13 +150,25 @@ int main() {
   Shader shader(v_shader, f_shader);
   shader.use();
   shader.add_attribute("pos");
-  shader.add_attribute("color");
+  shader.add_attribute("tex");
+  shader.add_uniform("rot");
+  shader.add_uniform("texture0");
   
   //data
-  std::array<GLfloat,9> pos_data { 0,-0.5,0, 0.5,0.5,0, -0.5,0.5,0 };
-  std::array<GLfloat,9> color_data { 1,0,0, 0,1,0, 0,0,1 };
+  cv::Mat image = cv::Mat::zeros(640,480,CV_8UC3);
+  cv::putText(image, "opencv + opengl text", cv::Point(30,150),
+              cv::FONT_HERSHEY_SIMPLEX, 1.0, {100,255,50}, 2);
+  Texture texture(image.data, image.cols, image.rows);
+  std::vector<GLfloat> pos_data {
+    -0.5,-0.5,0, 0.5,-0.5,0, 0.5,0.5,0,
+    0.5,0.5,0, -0.5,0.5,0, -0.5,-0.5,0
+  };
+  std::vector<GLfloat> tex_data {
+    0,1, 1,1, 1,0,
+    1,0, 0,0, 0,1,
+  };
   auto pos_buffer = BufferObject<GL_ARRAY_BUFFER>(pos_data.data(), sizeof(pos_data));
-  auto color_buffer = BufferObject<GL_ARRAY_BUFFER>(color_data.data(), sizeof(color_data));
+  auto color_buffer = BufferObject<GL_ARRAY_BUFFER>(tex_data.data(), sizeof(tex_data));
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -138,14 +177,24 @@ int main() {
   glVertexAttribPointer(shader.get_attribute("pos"), 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*)0);
   pos_buffer.unbind();
   color_buffer.bind();
-  glEnableVertexAttribArray(shader.get_attribute("color"));
-  glVertexAttribPointer(shader.get_attribute("color"), 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*)0);
+  glEnableVertexAttribArray(shader.get_attribute("tex"));
+  glVertexAttribPointer(shader.get_attribute("tex"), 2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), (GLvoid*)0);
   color_buffer.unbind();
   glBindVertexArray(0);
 
   //render
   while(!window.should_close()) {
     window.clear();
+
+    shader.use();
+
+    float angle = sin(2*M_PI*0.05*glfwGetTime()) * 2 * M_PI;
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0), angle, glm::vec3(0,0,1));
+    shader.set_uniform("rot", glm::mat3(rot));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture.texture);
+
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 9);
     glBindVertexArray(0);
