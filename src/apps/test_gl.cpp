@@ -112,7 +112,7 @@ Texture::Texture(unsigned char* data, int width, int height, bool bgr) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
                pixel_format, GL_UNSIGNED_BYTE, (void*)data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glGenerateMipmap(GL_TEXTURE_2D);
@@ -137,10 +137,12 @@ int main() {
   layout (location = 0) in vec3 pos;
   layout (location  = 1) in vec2 tex;
   out vec2 frag_tex_coord;
-  uniform mat3 rot;
+  uniform mat4 model;
+  uniform vec3 offsets[4];
 
   void main() {
-    gl_Position = vec4(rot * pos,1);
+    vec3 offset = offsets[gl_InstanceID];
+    gl_Position = vec4(offset,0) + model * vec4(pos,1);
     frag_tex_coord = tex;
   }
   )";
@@ -163,22 +165,18 @@ int main() {
   shader.use();
   shader.add_attribute("pos");
   shader.add_attribute("tex");
-  shader.add_uniform("rot");
+  shader.add_uniform("model");
   shader.add_uniform("texture0");
   
   //data
   auto font = cv::FONT_HERSHEY_SIMPLEX;
   cv::Mat image0 = cv::Mat::ones(640,480,CV_8UC3) * 100;
-  cv::putText(image0, "opencv + opengl text", {30,image0.rows/2}, font, 1.0, {100,255,50}, 2);
-  cv::Mat image1 = cv::Mat::ones(640,480,CV_8UC3) * 100;
-  cv::putText(image1, "opencv + opengl text", {30,image1.rows/2}, font, 1.0, {255,100,50}, 1);
-  
+  cv::putText(image0, "opengl + opencv", {30,image0.rows/2}, font, 1.5, {100,255,50}, 2);
   Texture texture0(image0.data, image0.cols, image0.rows);
-  Texture texture1(image1.data, image1.cols, image1.rows);
 
   std::vector<GLfloat> pos_data {
-    -0.5,-0.5,0, 0.5,-0.5,0, 0.5,0.5,0,
-    0.5,0.5,0, -0.5,0.5,0, -0.5,-0.5,0
+    -0.2,-0.2,0, 0.2,-0.2,0, 0.2,0.2,0,
+    0.2,0.2,0, -0.2,0.2,0, -0.2,-0.2,0
   };
   std::vector<GLfloat> tex_data {
     0,1, 1,1, 1,0,
@@ -199,6 +197,18 @@ int main() {
   color_buffer.unbind();
   glBindVertexArray(0);
 
+  std::vector<glm::vec3> offsets = {
+    glm::vec3(-0.7,0.7,0),
+    glm::vec3(0.7,0.7,0),
+    glm::vec3(-0.7,-0.7,0),
+    glm::vec3(0.7,-0.7,0)
+  };
+  for(size_t i = 0; i < 4; i++) {
+    std::string uniform = cv::format("offsets[%d]", i);
+    shader.add_uniform(uniform);
+    shader.set_uniform(uniform, offsets[i]);
+  }
+
   //render
   int i = 0;
   while(!window.should_close()) {
@@ -208,16 +218,17 @@ int main() {
     shader.use();
 
     float angle = sin(2*M_PI*0.05*glfwGetTime()) * 2 * M_PI;
-    glm::mat4 rot = glm::rotate(glm::mat4(1.0), angle, glm::vec3(0,0,1));
-    shader.set_uniform("rot", glm::mat3(rot));
+    glm::mat4 scale = glm::scale(glm::vec3(1.0));
+    glm::mat4 model = glm::rotate(scale, angle, glm::vec3(0,0,1));
+    shader.set_uniform("model", model);
 
-    Texture texture = i%15 < 7 ? texture0 : texture1;
-    texture.texture_unit = 0;
-    texture.activate();
-    shader.set_uniform("texture0", texture.texture_unit);
+    texture0.texture_unit = 0;
+    texture0.activate();
+    shader.set_uniform("texture0", texture0.texture_unit);
 
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 9);
+//    glDrawArrays(GL_TRIANGLES, 0, 9);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 9, 4);
     glBindVertexArray(0);
 
     window.check_errors();
