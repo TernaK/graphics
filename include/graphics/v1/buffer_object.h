@@ -1,27 +1,31 @@
 #pragma once
-#include "graphics.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 namespace graphics {
-  //--------------------------------------------------BufferObject
-  /// hold device data
-  template<GLenum target, typename T = GLfloat>
+  template<typename T, GLenum target>
   struct BufferObject {
     GLuint buffer_object = 0;
 
     BufferObject() = default;
 
-    BufferObject(T* data_ptr, int length, GLenum usage = GL_STATIC_DRAW) {
+    ~BufferObject() {
+    }
+
+    BufferObject(T* data_ptr, int length, GLenum usage) {
       glGenBuffers(1, &buffer_object);
       glBindBuffer(target, buffer_object);
       glBufferData(target, length * sizeof(T), data_ptr, usage);
       glBindBuffer(target, 0);
     }
 
-    ~BufferObject() = default;
+    void bind() const {
+      glBindBuffer(target, buffer_object);
+    }
 
-    void bind() { glBindBuffer(target, buffer_object); }
-
-    void unbind() { glBindBuffer(target, 0); }
+    void unbind() const {
+      glBindBuffer(target, 0);
+    }
 
     void release() {
       if(buffer_object == 0) return;

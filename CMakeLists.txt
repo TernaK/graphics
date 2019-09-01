@@ -10,7 +10,7 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(OpenCV REQUIRED)
 
-add_definitions(-DGRAPHICS_SHADERS_DIRECTORY="${CMAKE_SOURCE_DIR}/shaders/")
-add_definitions(-DGRAPHICS_TEXTURES_DIRECTORY="${CMAKE_SOURCE_DIR}/textures/")
+add_definitions(-DGRAPHICS_SHADERS_DIRECTORY="${PROJECT_SOURCE_DIR}/shaders/")
+add_definitions(-DGRAPHICS_TEXTURES_DIRECTORY="${PROJECT_SOURCE_DIR}/textures/")
 
 add_subdirectory(src)
